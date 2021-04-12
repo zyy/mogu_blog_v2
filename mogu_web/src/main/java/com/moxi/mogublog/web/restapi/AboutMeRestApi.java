@@ -1,6 +1,5 @@
 package com.moxi.mogublog.web.restapi;
 
-
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.web.log.BussinessLog;

@@ -121,6 +121,16 @@ public class Blog extends SuperEntity<Blog> {
      */
     private String outsideLink;
 
+    /**
+     * 投稿用户UID
+     */
+    private String userUid;
+
+    /**
+     * 文章来源【0 后台添加，1 用户投稿】
+     */
+    private String articleSource;
+
 
     // 以下字段不存入数据库，封装为了方便使用
 

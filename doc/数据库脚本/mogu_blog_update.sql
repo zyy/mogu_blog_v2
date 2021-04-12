@@ -344,3 +344,11 @@ insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_u
    @date 2021年4月9日18:14:28
 */
 ALTER TABLE t_system_config ADD open_email_activate TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启用户邮件激活功能【0 关闭，1 开启】';
+
+
+/*
+   修改t_system_config 表，增加 openEmailActivate 字段，是否开启注册用户邮件激活功能【0 关闭，1 开启】
+   @date 2021年4月9日18:14:28
+*/
+ALTER TABLE t_blog ADD user_uid VARCHAR(32) DEFAULT NULL COMMENT '投稿用户UID';
+ALTER TABLE t_blog ADD article_source TINYINT(1) NOT NULL DEFAULT 0 COMMENT '文章来源【0 后台添加，1 用户投稿】';

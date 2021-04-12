@@ -4,6 +4,7 @@ import com.moxi.mogublog.commons.entity.BlogSort;
 import com.moxi.mogublog.commons.entity.Tag;
 import com.moxi.mougblog.base.validator.annotion.IntegerNotNull;
 import com.moxi.mougblog.base.validator.annotion.NotBlank;
+import com.moxi.mougblog.base.validator.group.Default;
 import com.moxi.mougblog.base.validator.group.Insert;
 import com.moxi.mougblog.base.validator.group.Update;
 import com.moxi.mougblog.base.vo.BaseVO;
@@ -23,7 +24,7 @@ public class BlogVO extends BaseVO<BlogVO> {
     /**
      * 博客标题
      */
-    @NotBlank(groups = {Insert.class, Update.class})
+    @NotBlank(groups = {Insert.class, Update.class, Default.class})
     private String title;
 
     /**
@@ -34,18 +35,18 @@ public class BlogVO extends BaseVO<BlogVO> {
     /**
      * 博客内容
      */
-    @NotBlank(groups = {Insert.class, Update.class})
+    @NotBlank(groups = {Insert.class, Update.class, Default.class})
     private String content;
 
     /**
      * 标签uid
      */
-    @NotBlank(groups = {Insert.class, Update.class})
+    @NotBlank(groups = {Insert.class, Update.class, Default.class})
     private String tagUid;
     /**
      * 博客分类UID
      */
-    @NotBlank(groups = {Insert.class, Update.class})
+    @NotBlank(groups = {Insert.class, Update.class, Default.class})
     private String blogSortUid;
     /**
      * 标题图片UID
@@ -63,7 +64,7 @@ public class BlogVO extends BaseVO<BlogVO> {
     /**
      * 是否原创
      */
-    @NotBlank(groups = {Insert.class, Update.class})
+    @NotBlank(groups = {Insert.class, Update.class, Default.class})
     private String isOriginal;
     /**
      * 如果原创，作者为管理员名
@@ -150,10 +151,26 @@ public class BlogVO extends BaseVO<BlogVO> {
     private String orderByAscColumn;
 
     /**
+     * 投稿用户UID
+     */
+    private String userUid;
+
+    /**
+     * 文章来源【0 后台添加，1 用户投稿】
+     */
+    private String articleSource;
+
+    /**
+     * 是否是Web上的创建请求
+     */
+    private Boolean webFlag;
+
+    /**
      * 无参构造方法，初始化默认值
      */
     BlogVO() {
         this.level = 0;
         this.useSort = 0;
+        this.webFlag = false;
     }
 }

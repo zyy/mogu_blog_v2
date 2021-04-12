@@ -18,6 +18,7 @@ import com.moxi.mogublog.xo.service.*;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mougblog.base.enums.*;
+import com.moxi.mougblog.base.exception.exceptionType.UpdateException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.BaseSysConf;
 import com.moxi.mougblog.base.global.Constants;
@@ -580,6 +581,9 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if(!StringUtils.isEmpty(blogVO.getType())) {
             queryWrapper.eq(SQLConf.TYPE, blogVO.getType());
         }
+        if(!StringUtils.isEmpty(blogVO.getUserUid())) {
+            queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
+        }
 
         //分页
         Page<Blog> page = new Page<>();
@@ -714,21 +718,36 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         Blog blog = new Blog();
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
-        if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
-            Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
-            if (admin != null) {
-                if(StringUtils.isNotEmpty(admin.getNickName())) {
-                    blog.setAuthor(admin.getNickName());
-                } else {
-                    blog.setAuthor(admin.getUserName());
-                }
-                blog.setAdminUid(admin.getUid());
+        // 判断是否是Web端的新建请求，还是后台管理员创建的文章
+        if(blogVO.getWebFlag()) {
+            // 判断是否原创
+            if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                blog.setAuthor(request.getAttribute(SysConf.USER_NAME).toString());
+                blog.setArticlesPart(projectName);
+            } else {
+                blog.setAuthor(blogVO.getAuthor());
+                blog.setArticlesPart(blogVO.getArticlesPart());
             }
-            blog.setArticlesPart(projectName);
+            blog.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         } else {
-            blog.setAuthor(blogVO.getAuthor());
-            blog.setArticlesPart(blogVO.getArticlesPart());
+            Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
+            // 判断是否原创
+            if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                if (admin != null) {
+                    if(StringUtils.isNotEmpty(admin.getNickName())) {
+                        blog.setAuthor(admin.getNickName());
+                    } else {
+                        blog.setAuthor(admin.getUserName());
+                    }
+                }
+                blog.setArticlesPart(projectName);
+            } else {
+                blog.setAuthor(blogVO.getAuthor());
+                blog.setArticlesPart(blogVO.getArticlesPart());
+            }
+            blog.setAdminUid(admin.getUid());
         }
+
         blog.setTitle(blogVO.getTitle());
         blog.setSummary(blogVO.getSummary());
         blog.setContent(blogVO.getContent());
@@ -746,7 +765,12 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         //保存成功后，需要发送消息到solr 和 redis
         updateSolrAndRedis(isSave, blog);
-        return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
+        if(blogVO.getWebFlag()) {
+            return ResultUtil.successWithMessage("博客提交成功，请等待管理员审核后上架~");
+        } else {
+            return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
+        }
+        
     }
 
     @Override
@@ -769,19 +793,40 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             return addVerdictResult;
         }
         //如果是原创，作者为用户的昵称
-        Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
-        blog.setAdminUid(admin.getUid());
-        if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
-            if(StringUtils.isNotEmpty(admin.getNickName())) {
-                blog.setAuthor(admin.getNickName());
-            } else {
-                blog.setAuthor(admin.getUserName());
+        String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
+        // 判断是否是Web端的新建请求，还是后台管理员创建的文章
+        if(blogVO.getWebFlag()) {
+            // 判断用户是否能编辑博客
+            String userUid = request.getAttribute(SysConf.USER_UID).toString();
+            if(!userUid.equals(blog.getUserUid())) {
+                throw new UpdateException("您无权编辑其它用户的文章");
             }
-            String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
-            blog.setArticlesPart(projectName);
+            // 判断是否原创
+            if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                blog.setAuthor(userUid);
+                blog.setArticlesPart(projectName);
+            } else {
+                blog.setAuthor(blogVO.getAuthor());
+                blog.setArticlesPart(blogVO.getArticlesPart());
+            }
+            blog.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         } else {
-            blog.setAuthor(blogVO.getAuthor());
-            blog.setArticlesPart(blogVO.getArticlesPart());
+            Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
+            // 判断是否原创
+            if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                if (admin != null) {
+                    if(StringUtils.isNotEmpty(admin.getNickName())) {
+                        blog.setAuthor(admin.getNickName());
+                    } else {
+                        blog.setAuthor(admin.getUserName());
+                    }
+                }
+                blog.setArticlesPart(projectName);
+            } else {
+                blog.setAuthor(blogVO.getAuthor());
+                blog.setArticlesPart(blogVO.getArticlesPart());
+            }
+            blog.setAdminUid(admin.getUid());
         }
 
         blog.setTitle(blogVO.getTitle());
@@ -839,7 +884,6 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             }
         });
         Boolean save = blogService.updateBatchById(blogList);
-
         //保存成功后，需要发送消息到solr 和 redis
         if (save) {
             Map<String, Object> map = new HashMap<>();
@@ -854,6 +898,16 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
     @Override
     public String deleteBlog(BlogVO blogVO) {
         Blog blog = blogService.getById(blogVO.getUid());
+
+        // 判断是否是Web端的新建请求，还是后台管理员创建的文章
+        if(blogVO.getWebFlag()) {
+            // 判断用户是否能编辑博客
+            HttpServletRequest request = RequestHolder.getRequest();
+            String userUid = request.getAttribute(SysConf.USER_UID).toString();
+            if(!userUid.equals(blog.getUserUid())) {
+                throw new UpdateException("您无权删除其它用户的文章");
+            }
+        }
         blog.setStatus(EStatus.DISABLED);
         Boolean save = blog.updateById();
 

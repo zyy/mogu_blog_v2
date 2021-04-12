@@ -914,7 +914,6 @@ export default {
             }
           })
           .catch(() => {
-
             that.dialogFormVisible = true;
             that.form = that.getFormObject();
             that.$nextTick(() => {

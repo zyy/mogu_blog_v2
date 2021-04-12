@@ -126,8 +126,9 @@
         </div>
       </div>
 
-      <el-dropdown @command="handleCommand" class="userInfoAvatar">
+      <el-button type="primary" size="small" icon="el-icon-edit" class="createBlog" @click="createBlog(false, null)">创作</el-button>
 
+      <el-dropdown @command="handleCommand" class="userInfoAvatar">
         <span class="el-dropdown-link" >
           <el-badge  :value="userReceiveCommentCount"  class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
             <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">
@@ -221,6 +222,80 @@
         </el-form>
       </el-tab-pane>
 
+      <el-tab-pane label="我的文章" name="7">
+          <span slot="label"><i class="el-icon-message-solid"></i> 我的文章</span>
+          <div style="width: 100%; height: 840px;overflow:auto;">
+            <el-timeline>
+              <div
+                v-for="item in userBlogList"
+                :key="item.uid"
+                class="myArticle"
+              >
+                <el-timeline-item :timestamp="item.createTime" placement="top">
+                  <el-card>
+
+                    <el-row :gutter="24">
+                      <el-col :span="12">
+                          <span class="blogpic" @click="goToInfo(item)">
+                            <a href="javascript:void(0);" title>
+                              <img v-if="item.photoList.length > 0" :src="item.photoList[0]" alt>
+                            </a>
+                          </span>
+                      </el-col>
+
+                      <el-col :span="12">
+                        <div style="height: 70px;">
+                          <p class="blogtext" style="font-weight: bold; cursor: pointer;" @click="goToInfo(item)">{{item.title}}</p>
+                        </div>
+                      </el-col>
+
+                    </el-row>
+
+
+                    <div class="bloginfo">
+                      <ul>
+                        <li class="author">
+                          <span class="iconfont">&#xe60f;</span>
+                          <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+                        </li>
+                        <li class="lmname" v-if="item.blogSort">
+                          <span class="iconfont">&#xe603;</span>
+                          <a
+                            href="javascript:void(0);"
+                            @click="goToList(item.blogSort.uid)"
+                          >{{item.blogSort.sortName}}</a>
+                        </li>
+                        <li class="view">
+                          <span class="iconfont">&#xe8c7;</span>
+                          <span>{{item.clickCount}}</span>
+                        </li>
+                        <li class="like">
+                          <span class="iconfont">&#xe663;</span>
+                          {{item.collectCount}}
+                        </li>
+
+                        <li class="like">
+                          <el-tag v-if="item.isPublish==1" type="success" style="font-size: 12px">已上架</el-tag>
+                          <el-tag v-if="item.isPublish==0" type="info" style="font-size: 12px">未发布</el-tag>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="operation">
+                      <el-row :gutter="24">
+                        <el-button circle type="primary" size="small" icon="el-icon-edit" @click="createBlog(true, item)"></el-button>
+<!--                        <el-button circle type="warning" size="small" icon="el-icon-folder-opened"></el-button>-->
+                        <el-button circle type="danger" size="small" icon="el-icon-delete" @click="handleDelete(item)"></el-button>
+                      </el-row>
+                    </div>
+
+                  </el-card>
+                </el-timeline-item>
+              </div>
+            </el-timeline>
+          </div>
+        </el-tab-pane>
+
       <el-tab-pane label="我的评论" name="1">
         <span slot="label"><i class="el-icon-message-solid"></i> 我的评论</span>
         <div style="width: 100%; height: 840px;overflow:auto;">
@@ -299,7 +374,7 @@
           <el-timeline>
             <el-timeline-item v-for="praise in praiseList" :key="praise.uid" :timestamp="timeAgo(praise.createTime)" placement="top">
               <el-card>
-                <span>点赞</span><el-tag type="warning" style="cursor: pointer" v-if="praise.blog" @click.native="goToInfo(praise.blog.uid)">{{praise.blog.title}}</el-tag>
+                <span>点赞</span><el-tag type="warning" style="cursor: pointer" v-if="praise.blog" @click.native="goToInfo(praise.blog)">{{praise.blog.title}}</el-tag>
               </el-card>
             </el-timeline-item>
 
@@ -475,6 +550,8 @@
         </el-form>
 
       </el-tab-pane>
+
+
     </el-tabs>
   </el-drawer>
 
@@ -490,6 +567,7 @@
     @crop-upload-success="cropSuccess"
   />
 
+
   <div>
     <router-view/>
   </div>
@@ -500,6 +578,9 @@
       <a href="http://www.beian.gov.cn/portal/index.do">{{info.recordNum}}</a>
     </p>
   </footer>
+
+  <!--创建博客-->
+  <CreateBlog v-if="dialogFormVisible" :visible="dialogFormVisible" :isEdit="isEdit" :formData="formData" @beforeClose="beforeClose"></CreateBlog>
 
   <div>
     <a
@@ -513,6 +594,7 @@
 </template>
 
 <script>
+  import CreateBlog from '../components/CreateBlog'
   import AvatarCropper from '@/components/AvatarCropper'
   import {getWebConfig, getWebNavbar} from "../api/index";
   import {delCookie, getCookie, setCookie} from "@/utils/cookieUtils";
@@ -520,6 +602,7 @@
   import {getCommentListByUser, getPraiseListByUser, getUserReceiveCommentCount, readUserReceiveCommentCount} from "../api/comment";
   import LoginBox from "../components/LoginBox";
   import {getListByDictTypeList} from "@/api/sysDictData"
+  import {getUserBlogList, deleteBlog} from "@/api/createBlog"
   // vuex中有mapState方法，相当于我们能够使用它的getset方法
   import {mapMutations} from 'vuex';
   import {timeAgo} from "../utils/webUtils";
@@ -528,7 +611,8 @@
     name: "index",
     components: {
       LoginBox,
-      AvatarCropper
+      AvatarCropper,
+      CreateBlog
     },
     data() {
       return {
@@ -539,6 +623,7 @@
             span: ['class']
           }
         },
+        dialogFormVisible: false, // 控制创建博客的弹出
         activeNames: ['1', '2'], //激活的折叠面板
         activeName: "0", // 激活的标签
         yesNoDictList: [], // 是否 字典列表
@@ -569,10 +654,13 @@
         replyList: [], //我的回复
         praiseList: [], //我的点赞
         feedbackList: [], //我的反馈
+        userBlogList: [], // 用户博客列表
         openComment: "0", //是否开启评论
         defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
-        drawerSize: "30%",
+        drawerSize: "33%",
         userReceiveCommentCount: 0, // 用户收到的评论数
+        isEdit: false, // 是否编辑博客
+        formData: {}, // 表单数据
         rules: {
           qqNumber: [
             {pattern:  /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'},
@@ -685,7 +773,7 @@
         let clientWidth = document.body.clientWidth
         console.log("客户端宽度", clientWidth)
         if(clientWidth > 1360) {
-          this.drawerSize = "30%";
+          this.drawerSize = "33%";
           this.showSearch = true
         }else if(clientWidth < 1360 && clientWidth > 950) {
           this.drawerSize = "50%";
@@ -699,10 +787,14 @@
         }
       },
       //跳转到文章详情
-      goToInfo(uid) {
+      goToInfo(blog) {
+        if(blog.isPublish == 0) {
+          this.$message.error("该文章未发布，暂时无法查看！")
+          return
+        }
         let routeData = this.$router.resolve({
           path: "/info",
-          query: {blogUid: uid}
+          query: {blogUid: blog.uid}
         });
         window.open(routeData.href, '_blank');
       },
@@ -787,6 +879,39 @@
             this.praiseList = response.data.records;
           }
         })
+      },
+
+      // 获取用户博客列表
+      getBlogList: function() {
+        let params = {}
+        params.pageSize = 10;
+        params.currentPage = 1;
+        getUserBlogList(params).then(response => {
+          if(response.code == this.$ECode.SUCCESS) {
+            this.userBlogList = response.data.records;
+          }
+        })
+      },
+
+      // 删除博客
+      handleDelete: function(row) {
+        var that = this;
+        this.$confirm("此操作将把博客删除, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            var params = {};
+            params.uid = row.uid;
+            deleteBlog(params).then(response => {
+              that.$commonUtil.message.success(response.message)
+              that.getBlogList();
+            });
+          })
+          .catch(() => {
+            that.$commonUtil.message.info("已取消删除")
+          });
       },
 
       // 标签选择
@@ -1031,6 +1156,25 @@
           this.setLoginState(this.isLogin);
         }
       },
+
+      /********************** 创作相关 ********************/
+      createBlog: function (isEdit, formData) {
+        this.isEdit = isEdit
+        if(isEdit) {
+          this.formData = formData
+        }
+        if(!this.isLogin) {
+          this.showLogin = true;
+          return
+        }
+        this.dialogFormVisible = true
+      },
+      // 关闭模态框回调函数
+      beforeClose: function () {
+        this.dialogFormVisible = false
+      },
+      /********************** 创作相关结束 ********************/
+
       setUserReceiveCommentCount: function () {
         getUserReceiveCommentCount().then(response => {
           console.log("获取用户收到的评论数", response)
@@ -1155,6 +1299,8 @@
             this.getPraiseList()
             // 获取反馈列表
             this.getFeedback()
+            // 获取用户文章
+            this.getBlogList()
           } break;
         }
       },
@@ -1186,6 +1332,11 @@
 </style>
 
 <style scoped>
+  .createBlog {
+    position: absolute;
+    top: 16px;
+    right: -20px;
+  }
   .el-tag {
     height: 25px;
     line-height: 25px;
@@ -1325,5 +1476,29 @@
     display: inline-block;
     width: 240px;
     margin-bottom: 5px;
+  }
+
+  .myArticle .blogpic{
+    float: left;
+    max-height: 170px;
+    margin-right: 20px;
+    display: block;
+    overflow: hidden;
+  }
+  .myArticle .blogpic img{
+    width: 100%;
+    max-height: 70px;
+    -webkit-transition: all 0.6s ease;
+    transition: all 0.6s ease;
+    margin-bottom: 10px;
+  }
+  .myArticle .bloginfo {
+    margin-top: 5px;
+  }
+  .myArticle .operation {
+    float: right;
+    margin-top: 3px;
+    margin-left: 20px;
+    height: 40px;
   }
 </style>

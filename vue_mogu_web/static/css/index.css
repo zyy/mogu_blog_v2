@@ -32,7 +32,7 @@ header { position: fixed; top: 0; z-index: 99999 }
 .header-navigation { position: fixed; top: 0; width: 100%; height: 60px; line-height: 60px; background: rgba(0,0,0,.9); text-align: center; z-index: 2001; }
 .logo { float: left; font-size: 22px; font-weight: bold }
 .logo a { color: #00A7EB }
-nav { width: 1140px; margin: auto; position: relative }
+nav { width: 1480px; margin: auto; position: relative }
 #mnavh { display: none; width: 30px; height: 40px; text-align: center; padding: 0 5px }
 #starlist { float: left; margin-left: 50px; overflow:hidden; max-width: 1000px;}
 #starlist li { float: left;  display: block; font-size: 16px ; padding: 0 25px}
@@ -57,7 +57,7 @@ nav { width: 1140px; margin: auto; position: relative }
 #starlist .sub li a:hover { color: #000; position: relative }
 #starlist .sub li a:hover:after { position: absolute; content: ""; background: #000; width: 2px; height: 20px; left: -10px; bottom: 0 }
 /*search*/
-.searchbox { position: absolute; right: 0; top:0 }
+.searchbox { position: absolute; right: 130px; top:0 }
 .search_bar { position: relative; width: 0%; min-width: 60px; height: 60px; float: right; overflow: hidden; -webkit-transition: width 0.3s; -moz-transition: width 0.3s; transition: width 0.3s; -webkit-backface-visibility: hidden; }
 .search_bar .input { position: absolute; top: 16px; right: 0; border: none; outline: none; height: 30px; line-height: 30px; z-index: 10; font-size: 16px; color: #333; background: none }
 .search_ico, .search_btn { width: 60px; height: 60px; display: block; position: absolute; right: 0; top: 0; padding: 0; margin: 0; line-height: 60px; cursor: pointer; }
@@ -370,6 +370,9 @@ h1.t_nav { border-bottom: #bfbfbf 1px solid; font-size: 14px; font-weight: norma
 
 
 @media screen and (min-width: 768px) and (max-width: 1119px) {
+.createBlog {
+  display: none;
+}
 header, .blogsbox { width: 100%; margin: auto; }
 nav { width: 100%; position: relative }
 #starlist { height:0px; display: none; background: rgba(0,0,0,.5); width: 100%; margin-left: 0; }
@@ -405,6 +408,9 @@ h1.t_nav span { display: none }
 .pagebg { margin-top: 50px; }
 }
  @media only screen and (min-width: 480px) and (max-width: 767px) {
+.createBlog {
+ display: none;
+}
 header, .blogsbox, .banner { width: 100%; margin: auto; }
 nav { width: 100%; position: relative }
 #starlist { display: none; background: rgba(0,0,0,.5); width: 100%; margin-left: 0; }
@@ -473,6 +479,9 @@ h1.t_nav span { display: none }
 }
 
 @media only screen and (max-width: 479px) {
+.createBlog {
+  display: none;
+}
 .news_pl {
   overflow: scroll;
 }

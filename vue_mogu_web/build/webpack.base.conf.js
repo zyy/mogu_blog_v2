@@ -27,6 +27,7 @@ module.exports = {
     app: './src/main.js'
   },
   externals: {
+    "CKEDITOR": "window.CKEDITOR",
     'vue': 'Vue',
     'element-ui': 'ELEMENT'
   },

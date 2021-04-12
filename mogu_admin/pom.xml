@@ -72,12 +72,6 @@
             <artifactId>spring-boot-admin-starter-client</artifactId>
             <version>${springBootAdmin.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.moxi</groupId>
-            <artifactId>mogu_utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 
