@@ -109,7 +109,7 @@
 
       </ul>
 
-      <div class="searchbox">
+      <div class="searchbox" v-bind:class="showCreateBlog?'':'searchboxDefault'">
         <div id="search_bar" :class="(showSearch || keyword.length > 0)?'search_bar search_open':'search_bar'">
           <input
             ref="searchInput"
@@ -126,7 +126,7 @@
         </div>
       </div>
 
-      <el-button type="primary" size="small" icon="el-icon-edit" class="createBlog" @click="createBlog(false, null)">创作</el-button>
+      <el-button v-if="showCreateBlog" type="primary" size="small" icon="el-icon-edit" class="createBlog" @click="createBlog(false, null)">创作</el-button>
 
       <el-dropdown @command="handleCommand" class="userInfoAvatar">
         <span class="el-dropdown-link" >
@@ -222,7 +222,7 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="我的文章" name="7">
+      <el-tab-pane v-if="showCreateBlog" label="我的文章" name="7">
           <span slot="label"><i class="el-icon-message-solid"></i> 我的文章</span>
           <div style="width: 100%; height: 840px;overflow:auto;">
             <el-timeline>
@@ -661,6 +661,7 @@
         userReceiveCommentCount: 0, // 用户收到的评论数
         isEdit: false, // 是否编辑博客
         formData: {}, // 表单数据
+        showCreateBlog: false, // 是否显示用户创作按钮
         rules: {
           qqNumber: [
             {pattern:  /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'},
@@ -1222,6 +1223,8 @@
           this.contact = webConfigData;
           this.mailto = "mailto:" + this.contact.email;
           this.openComment = webConfigData.openComment
+          console.log("是否开启投稿", webConfigData)
+          this.showCreateBlog = webConfigData.openCreateBlog == "1" ? true:false
         } else {
           getWebConfig().then(response => {
             if (response.code == this.$ECode.SUCCESS) {
@@ -1229,9 +1232,12 @@
               // 存储在Vuex中
               this.setWebConfigData(response.data)
               this.openComment = this.info.openComment
+              console.log("是否开启投稿", this.info)
+              this.showCreateBlog = this.info.openCreateBlog == "1" ? true:false
             }
           });
         }
+
       },
       /**
        * 截取URL中的参数
@@ -1356,6 +1362,12 @@
     width: 35px;
     height: 35px;
     border-radius: 50%;
+  }
+
+  .searchboxDefault {
+    position: absolute;
+    right: 1px;
+    top: 0
   }
 
   @media only screen and (max-width: 1300px) {

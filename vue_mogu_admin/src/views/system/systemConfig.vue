@@ -31,7 +31,7 @@
             <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openDashboardNotification" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
           </el-form-item>
 
-          <!-- 仪表盘弹框通知，在用户登录后台的时候会出现，可以手动关闭 -->
+          <!-- 用户前端用户注册后，邮件通知 -->
           <el-form-item label="注册用户邮件激活">
             <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openEmailActivate" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
           </el-form-item>

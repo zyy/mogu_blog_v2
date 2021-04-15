@@ -143,6 +143,11 @@ public class WebConfig extends SuperEntity<WebConfig> {
      */
     private String loginTypeList;
 
+    /**
+     * 是否开启用户创作【0 关闭，1 开启】
+     */
+    private String openCreateBlog;
+
 
     // 以下字段不存入数据库，封装为了方便使用
 

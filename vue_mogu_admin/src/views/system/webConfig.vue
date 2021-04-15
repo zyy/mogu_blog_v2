@@ -82,6 +82,13 @@
             </el-col>
           </el-row>
 
+          <el-row>
+            <!-- 是否开启注册用户投稿创作 -->
+            <el-form-item label="用户投稿">
+              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openCreateBlog" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
+            </el-form-item>
+          </el-row>
+
           <el-form-item>
             <el-button type="primary" @click="submitForm()" v-permission="'/webConfig/editWebConfig'">保 存</el-button>
           </el-form-item>

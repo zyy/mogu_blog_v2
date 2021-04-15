@@ -3,7 +3,7 @@
     <div class="pagebg sorts"></div>
     <div class="container">
       <h1 class="t_nav">
-        <span>有些的时候，正是为了爱才悄悄躲开。躲开的是身影，躲不开的却是那份默默的情怀。</span>
+<!--        <span>有些的时候，正是为了爱才悄悄躲开。躲开的是身影，躲不开的却是那份默默的情怀。</span>-->
         <a href="/" class="n1">网站首页</a>
         <a href="javascript:void(0);" class="n2">归档</a>
       </h1>

@@ -1,11 +1,13 @@
 package com.moxi.mogublog.web.restapi;
 
+import com.moxi.mogublog.commons.entity.WebConfig;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.xo.service.BlogService;
 import com.moxi.mogublog.xo.service.BlogSortService;
 import com.moxi.mogublog.xo.service.TagService;
+import com.moxi.mogublog.xo.service.WebConfigService;
 import com.moxi.mogublog.xo.vo.BlogSortVO;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mogublog.xo.vo.TagVO;
@@ -49,6 +51,8 @@ public class CreateBlogRestApi {
     private BlogSortService blogSortService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private WebConfigService webConfigService;
 
     @ApiOperation(value = "获取用户的博客列表", notes = "获取用户的博客列表", response = String.class)
     @PostMapping("/getUserBlogList")
@@ -58,6 +62,7 @@ public class CreateBlogRestApi {
         if(StringUtils.isEmpty(blogVO.getUserUid()) && request.getAttribute(SysConf.USER_UID) != null) {
             blogVO.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         }
+
         ThrowableUtils.checkParamArgument(result);
         return ResultUtil.successWithData(blogService.getPageList(blogVO));
     }
@@ -69,7 +74,11 @@ public class CreateBlogRestApi {
         if(request.getAttribute(SysConf.USER_UID) == null) {
             return ResultUtil.errorWithMessage("登录后才可以创建博客！");
         }
-
+        // 判断是否开启投稿功能
+        WebConfig webConfig = webConfigService.getWebConfig();
+        if(Constants.STR_ZERO.equals(webConfig.getOpenCreateBlog())) {
+            return ResultUtil.errorWithMessage("后台暂未开启投稿功能");
+        }
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
         // 文章类型只能是博客类型

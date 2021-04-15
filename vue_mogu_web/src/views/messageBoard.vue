@@ -3,7 +3,7 @@
     <div class="pagebg sorts"></div>
     <div class="container">
       <h1 class="t_nav">
-        <span>每个人都有自己故事，只是演绎的方式不同。</span>
+<!--        <span>每个人都有自己故事，只是演绎的方式不同。</span>-->
         <a href="/" class="n1">网站首页</a>
         <a href="javascript:void(0);" class="n2">留言</a>
       </h1>
