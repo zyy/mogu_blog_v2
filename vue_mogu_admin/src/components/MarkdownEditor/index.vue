@@ -63,7 +63,7 @@
               }
               let request = new XMLHttpRequest()
               // 图片上传路径
-              request.open('POST', process.env.PICTURE_API + '/ckeditor/imgUpload?token=' + getToken())
+              request.open('POST', process.env.PICTURE_API + '/file/ckeditorUploadFile?token=' + getToken())
               request.onload = that.onloadCallback
               request.send(formData)
             }

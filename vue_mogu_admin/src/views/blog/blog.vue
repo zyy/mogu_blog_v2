@@ -647,7 +647,7 @@ export default {
     },
     tagList: function() {
       var tagParams = {};
-      tagParams.pageSize = 100;
+      tagParams.pageSize = 500;
       tagParams.currentPage = 1;
       getTagList(tagParams).then(response => {
         this.tagData = response.data.records;
@@ -656,7 +656,7 @@ export default {
     },
     blogSortList: function() {
       var blogSortParams = {};
-      blogSortParams.pageSize = 100;
+      blogSortParams.pageSize = 500;
       blogSortParams.currentPage = 1;
       getBlogSortList(blogSortParams).then(response => {
         if(response.code == this.$ECode.SUCCESS) {
