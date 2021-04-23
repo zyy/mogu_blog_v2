@@ -722,7 +722,6 @@ export default {
           if(dictMap.sys_blog_type.defaultValue) {
             this.blogTypeDefault = dictMap.sys_blog_type.defaultValue;
           }
-
         }
       });
     },
