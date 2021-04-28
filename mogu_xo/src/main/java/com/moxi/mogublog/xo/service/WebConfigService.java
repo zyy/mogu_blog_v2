@@ -21,6 +21,7 @@ public interface WebConfigService extends SuperService<WebConfig> {
 
     /**
      * 获取网站名称
+     *
      * @return
      */
     String getWebSiteName();
@@ -42,6 +43,7 @@ public interface WebConfigService extends SuperService<WebConfig> {
 
     /**
      * 是否开启该登录方式【账号密码、码云、Github、QQ、微信】
+     *
      * @param loginType
      * @return
      */

@@ -18,7 +18,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        uid, userName, ip, url, type, calssPath, method, params, operation, logDate
+        uid
+        , userName, ip, url, type, calssPath, method, params, operation, logDate
     </sql>
 
 </mapper>

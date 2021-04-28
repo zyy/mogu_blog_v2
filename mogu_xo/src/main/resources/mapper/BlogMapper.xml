@@ -20,7 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        oid, uid, title, summary, content, taguid, clickcount, collectcount, photo, status, createtime, updatetime
+        oid
+        , uid, title, summary, content, taguid, clickcount, collectcount, photo, status, createtime, updatetime
     </sql>
 
 </mapper>

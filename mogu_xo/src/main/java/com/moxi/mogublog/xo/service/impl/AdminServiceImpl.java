@@ -227,7 +227,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
 
             // 设置已用容量大小和最大容量
             Storage storage = storageMap.get(item.getUid());
-            if(storage != null) {
+            if (storage != null) {
                 item.setStorageSize(storage.getStorageSize());
                 item.setMaxStorageSize(storage.getMaxStorageSize());
             } else {
@@ -325,7 +325,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         // 更新完成后，判断是否调整了网盘的大小
         String result = pictureFeignClient.editStorageSize(admin.getUid(), adminVO.getMaxStorageSize() * 1024 * 1024);
         Map<String, String> resultMap = webUtil.getMessage(result);
-        if(SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
+        if (SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
             return ResultUtil.successWithMessage(resultMap.get(SysConf.MESSAGE));
         } else {
             return ResultUtil.errorWithMessage(resultMap.get(SysConf.MESSAGE));
@@ -411,7 +411,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         List<String> tokenList = new ArrayList<>();
         tokenUidList.forEach(item -> {
             String token = redisUtil.get(RedisConf.LOGIN_UUID_KEY + RedisConf.SEGMENTATION + item);
-            if(StringUtils.isNotEmpty(token)) {
+            if (StringUtils.isNotEmpty(token)) {
                 tokenList.add(token);
             }
         });

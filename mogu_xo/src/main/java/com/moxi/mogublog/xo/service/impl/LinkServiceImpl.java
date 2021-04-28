@@ -75,10 +75,10 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         if (linkVO.getLinkStatus() != null) {
             queryWrapper.eq(SQLConf.LINK_STATUS, linkVO.getLinkStatus());
         }
-        if(StringUtils.isNotEmpty(linkVO.getOrderByAscColumn())) {
+        if (StringUtils.isNotEmpty(linkVO.getOrderByAscColumn())) {
             String column = StringUtils.underLine(new StringBuffer(linkVO.getOrderByAscColumn())).toString();
             queryWrapper.orderByAsc(column);
-        }else if(StringUtils.isNotEmpty(linkVO.getOrderByDescColumn())) {
+        } else if (StringUtils.isNotEmpty(linkVO.getOrderByDescColumn())) {
             String column = StringUtils.underLine(new StringBuffer(linkVO.getOrderByDescColumn())).toString();
             queryWrapper.orderByDesc(column);
         } else {
@@ -138,9 +138,9 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.insert();
 
         // 友链从申请状态到发布状态，需要发送邮件到站长邮箱
-        if(StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
+        if (StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
             log.info("发送友链申请通过的邮件通知");
-            String linkApplyText =  "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
+            String linkApplyText = "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
             rabbitMqUtil.sendSimpleEmail(link.getEmail(), linkApplyText);
         }
 
@@ -165,10 +165,10 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.updateById();
 
         // 友链从申请状态到发布状态，需要发送邮件到站长邮箱
-        if(StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
-            if(ELinkStatus.APPLY.equals(linkStatus) && ELinkStatus.PUBLISH.equals(linkVO.getLinkStatus())) {
+        if (StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
+            if (ELinkStatus.APPLY.equals(linkStatus) && ELinkStatus.PUBLISH.equals(linkVO.getLinkStatus())) {
                 log.info("发送友链申请通过的邮件通知");
-                String linkApplyText =  "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
+                String linkApplyText = "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
                 rabbitMqUtil.sendSimpleEmail(link.getEmail(), linkApplyText);
             }
         }

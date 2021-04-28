@@ -195,14 +195,14 @@ public class WebVisitServiceImpl extends SuperServiceImpl<WebVisitMapper, WebVis
         list.forEach(item -> {
             if (item.getBehavior().equals(EBehavior.BLOG_CONTNET.getBehavior())) {
                 // 从日志中提取出oid和uid
-                if(StringUtils.isNotEmpty(item.getModuleUid())) {
+                if (StringUtils.isNotEmpty(item.getModuleUid())) {
                     blogUids.add(item.getModuleUid());
-                }else if(StringUtils.isNotEmpty(item.getOtherData())) {
+                } else if (StringUtils.isNotEmpty(item.getOtherData())) {
                     blogOids.add(item.getOtherData());
                 }
             } else if (item.getBehavior().equals(EBehavior.BLOG_SORT.getBehavior()) || item.getBehavior().equals(EBehavior.VISIT_CLASSIFY.getBehavior())) {
                 sortUids.add(item.getModuleUid());
-            } else if (item.getBehavior().equals(EBehavior.BLOG_TAG.getBehavior()) || item.getBehavior().equals(EBehavior.VISIT_TAG.getBehavior()) ) {
+            } else if (item.getBehavior().equals(EBehavior.BLOG_TAG.getBehavior()) || item.getBehavior().equals(EBehavior.VISIT_TAG.getBehavior())) {
                 tagUids.add(item.getModuleUid());
             } else if (item.getBehavior().equals(EBehavior.FRIENDSHIP_LINK.getBehavior())) {
                 linkUids.add(item.getModuleUid());

@@ -52,7 +52,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
     public SystemConfig getConfig() {
         // 从Redis中获取系统配置
         String systemConfigJson = redisUtil.get(RedisConf.SYSTEM_CONFIG);
-        if(StringUtils.isEmpty(systemConfigJson)) {
+        if (StringUtils.isEmpty(systemConfigJson)) {
             QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
             queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
             queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -67,7 +67,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
             return systemConfig;
         } else {
             SystemConfig systemConfig = JsonUtils.jsonToPojo(systemConfigJson, SystemConfig.class);
-            if(systemConfig == null) {
+            if (systemConfig == null) {
                 throw new QueryException(ErrorCode.QUERY_DEFAULT_ERROR, "系统配置转换错误，请检查系统配置，或者清空Redis后重试！");
             }
             return systemConfig;
@@ -113,7 +113,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
         }
         // 图片显示优先级为Minio优先，必须开启图片上传Minio
         if ((EFilePriority.MINIO.equals(systemConfigVO.getPicturePriority())
-                ||EFilePriority.MINIO.equals(systemConfigVO.getContentPicturePriority()))
+                || EFilePriority.MINIO.equals(systemConfigVO.getContentPicturePriority()))
                 && EOpenStatus.CLOSE.equals(systemConfigVO.getUploadMinio())) {
             return ResultUtil.errorWithMessage(MessageConf.MUST_BE_OPEN_MINIO_UPLOAD);
         }
@@ -131,7 +131,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
             SystemConfig systemConfig = systemConfigService.getById(systemConfigVO.getUid());
 
             // 判断是否更新了图片显示优先级【如果更新了，需要请求Redis中的博客，否者将导致图片无法正常显示】
-            if(systemConfigVO.getPicturePriority() != systemConfig.getPicturePriority()) {
+            if (systemConfigVO.getPicturePriority() != systemConfig.getPicturePriority()) {
                 blogService.deleteRedisByBlog();
             }
 

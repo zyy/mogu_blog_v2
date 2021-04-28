@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.moxi.mogublog.commons.entity.SystemConfig;
 import com.moxi.mogublog.utils.JsonUtils;
 import com.moxi.mogublog.utils.RedisUtil;
-import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.xo.global.MessageConf;
 import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.global.SQLConf;
 import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mogublog.xo.service.SystemConfigService;
 import com.moxi.mougblog.base.enums.EFilePriority;
-import com.moxi.mougblog.base.enums.EOpenStatus;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.ErrorCode;
@@ -71,7 +69,7 @@ public class WebUtil {
             minioPictureBaseUrl = systemConfig.getMinioPictureBaseUrl();
         } else {
             SystemConfig systemConfig = JsonUtils.jsonToPojo(systemConfigJson, SystemConfig.class);
-            if(systemConfig == null) {
+            if (systemConfig == null) {
                 throw new QueryException(ErrorCode.QUERY_DEFAULT_ERROR, "系统配置转换错误，请检查系统配置，或者清空Redis后重试！");
             }
             picturePriority = systemConfig.getPicturePriority();
@@ -90,7 +88,7 @@ public class WebUtil {
                         // 判断文件显示优先级【需要显示存储在哪里的图片】
                         if (EFilePriority.QI_NIU.equals(picturePriority)) {
                             picUrls.add(qiNiuPictureBaseUrl + picData.get(i).get(SysConf.QI_NIU_URL));
-                        } else if (EFilePriority.MINIO.equals(picturePriority)){
+                        } else if (EFilePriority.MINIO.equals(picturePriority)) {
                             picUrls.add(minioPictureBaseUrl + picData.get(i).get(SysConf.MINIO_URL));
                         } else {
                             picUrls.add(localPictureBaseUrl + picData.get(i).get(SysConf.URL));
@@ -155,7 +153,7 @@ public class WebUtil {
                     // 判断文件显示优先级【需要显示存储在哪里的图片】
                     if (EFilePriority.QI_NIU.equals(picturePriority)) {
                         map.put(SysConf.URL, qiNiuPictureBaseUrl + picData.get(i).get(SysConf.QI_NIU_URL));
-                    } else if (EFilePriority.MINIO.equals(picturePriority)){
+                    } else if (EFilePriority.MINIO.equals(picturePriority)) {
                         map.put(SysConf.URL, minioPictureBaseUrl + picData.get(i).get(SysConf.MINIO_URL));
                     } else {
                         map.put(SysConf.URL, localPictureBaseUrl + picData.get(i).get(SysConf.URL));

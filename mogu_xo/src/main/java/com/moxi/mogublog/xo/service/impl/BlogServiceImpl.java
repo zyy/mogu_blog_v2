@@ -174,21 +174,21 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         StringBuffer fileUids = new StringBuffer();
         List<Map<String, Object>> picList = new ArrayList<>();
         // feign分页查询图片数据
-        if(fileUidSet.size() > 0) {
+        if (fileUidSet.size() > 0) {
             int count = 1;
-            for(String fileUid: fileUidSet) {
+            for (String fileUid : fileUidSet) {
                 fileUids.append(fileUid + ",");
-                System.out.println(count%10);
-                if(count%10 == 0) {
+                System.out.println(count % 10);
+                if (count % 10 == 0) {
                     pictureList = this.pictureFeignClient.getPicture(fileUids.toString(), ",");
                     List<Map<String, Object>> tempPicList = webUtil.getPictureMap(pictureList);
                     picList.addAll(tempPicList);
                     fileUids = new StringBuffer();
                 }
-                count ++;
+                count++;
             }
             // 判断是否存在图片需要获取
-            if(fileUids.length() >= Constants.NUM_32) {
+            if (fileUids.length() >= Constants.NUM_32) {
                 pictureList = this.pictureFeignClient.getPicture(fileUids.toString(), Constants.SYMBOL_COMMA);
                 List<Map<String, Object>> tempPicList = webUtil.getPictureMap(pictureList);
                 picList.addAll(tempPicList);
@@ -578,10 +578,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (!StringUtils.isEmpty(blogVO.getIsOriginal())) {
             queryWrapper.eq(SQLConf.IS_ORIGINAL, blogVO.getIsOriginal());
         }
-        if(!StringUtils.isEmpty(blogVO.getType())) {
+        if (!StringUtils.isEmpty(blogVO.getType())) {
             queryWrapper.eq(SQLConf.TYPE, blogVO.getType());
         }
-        if(!StringUtils.isEmpty(blogVO.getUserUid())) {
+        if (!StringUtils.isEmpty(blogVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
         }
 
@@ -591,11 +591,11 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         page.setSize(blogVO.getPageSize());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
 
-        if(StringUtils.isNotEmpty(blogVO.getOrderByAscColumn())) {
+        if (StringUtils.isNotEmpty(blogVO.getOrderByAscColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByAscColumn())).toString();
             queryWrapper.orderByAsc(column);
-        }else if(StringUtils.isNotEmpty(blogVO.getOrderByDescColumn())) {
+        } else if (StringUtils.isNotEmpty(blogVO.getOrderByDescColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByDescColumn())).toString();
             queryWrapper.orderByDesc(column);
@@ -651,7 +651,6 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             tagList = tagService.listByIds(tagUids);
         }
 
-
         Map<String, BlogSort> sortMap = new HashMap<>();
         Map<String, Tag> tagMap = new HashMap<>();
         Map<String, String> pictureMap = new HashMap<>();
@@ -668,14 +667,11 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             pictureMap.put(item.get(SQLConf.UID).toString(), item.get(SQLConf.URL).toString());
         });
 
-
         for (Blog item : list) {
-
             //设置分类
             if (StringUtils.isNotEmpty(item.getBlogSortUid())) {
                 item.setBlogSort(sortMap.get(item.getBlogSortUid()));
             }
-
             //获取标签
             if (StringUtils.isNotEmpty(item.getTagUid())) {
                 List<String> tagUidsTemp = StringUtils.changeStringToString(item.getTagUid(), SysConf.FILE_SEGMENTATION);
@@ -686,7 +682,6 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 });
                 item.setTagList(tagListTemp);
             }
-
             //获取图片
             if (StringUtils.isNotEmpty(item.getFileUid())) {
                 List<String> pictureUidsTemp = StringUtils.changeStringToString(item.getFileUid(), SysConf.FILE_SEGMENTATION);
@@ -719,7 +714,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if(blogVO.getWebFlag()) {
+        if (blogVO.getWebFlag()) {
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
                 blog.setAuthor(request.getAttribute(SysConf.USER_NAME).toString());
@@ -734,7 +729,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
                 if (admin != null) {
-                    if(StringUtils.isNotEmpty(admin.getNickName())) {
+                    if (StringUtils.isNotEmpty(admin.getNickName())) {
                         blog.setAuthor(admin.getNickName());
                     } else {
                         blog.setAuthor(admin.getUserName());
@@ -765,12 +760,12 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         //保存成功后，需要发送消息到solr 和 redis
         updateSolrAndRedis(isSave, blog);
-        if(blogVO.getWebFlag()) {
+        if (blogVO.getWebFlag()) {
             return ResultUtil.successWithMessage("博客提交成功，请等待管理员审核后上架~");
         } else {
             return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
         }
-        
+
     }
 
     @Override
@@ -795,10 +790,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if(blogVO.getWebFlag()) {
+        if (blogVO.getWebFlag()) {
             // 判断用户是否能编辑博客
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
-            if(!userUid.equals(blog.getUserUid())) {
+            if (!userUid.equals(blog.getUserUid())) {
                 throw new UpdateException("您无权编辑其它用户的文章");
             }
             // 判断是否原创
@@ -815,7 +810,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
                 if (admin != null) {
-                    if(StringUtils.isNotEmpty(admin.getNickName())) {
+                    if (StringUtils.isNotEmpty(admin.getNickName())) {
                         blog.setAuthor(admin.getNickName());
                     } else {
                         blog.setAuthor(admin.getUserName());
@@ -900,11 +895,11 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         Blog blog = blogService.getById(blogVO.getUid());
 
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if(blogVO.getWebFlag()) {
+        if (blogVO.getWebFlag()) {
             // 判断用户是否能编辑博客
             HttpServletRequest request = RequestHolder.getRequest();
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
-            if(!userUid.equals(blog.getUserUid())) {
+            if (!userUid.equals(blog.getUserUid())) {
                 throw new UpdateException("您无权删除其它用户的文章");
             }
         }
@@ -1022,10 +1017,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             if (EFilePriority.QI_NIU.equals(systemConfig.getContentPicturePriority())) {
                 // 获取七牛云上的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.QI_NIU_URL));
-            } else if(EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
+            } else if (EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
                 // 获取本地的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.PIC_URL));
-            } else if(EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
+            } else if (EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
                 // 获取MINIO的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.MINIO_URL));
             }
@@ -1056,10 +1051,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                                 if (EFilePriority.QI_NIU.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取七牛云上的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getQiNiuPictureBaseUrl() + map.getValue());
-                                } else if(EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
+                                } else if (EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取本地的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getLocalPictureBaseUrl() + map.getValue());
-                                } else if(EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
+                                } else if (EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取MINIO的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getMinioPictureBaseUrl() + map.getValue());
                                 }

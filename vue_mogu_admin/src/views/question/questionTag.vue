@@ -10,24 +10,9 @@
         v-model="keyword"
         placeholder="请输入标签名"
       ></el-input>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/tag/getList'">查找</el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/tag/add'">添加标签</el-button>
-      <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete" v-permission="'/tag/deleteBatch'">删除选中</el-button>
-      <el-button
-        class="filter-item"
-        type="info"
-        @click="handleTagSortByClickCount"
-        icon="el-icon-document"
-        v-permission="'/tag/tagSortByClickCount'"
-      >点击量排序</el-button>
-
-      <el-button
-        class="filter-item"
-        type="info"
-        @click="handleTagSortByCite"
-        icon="el-icon-document"
-        v-permission="'/tag/tagSortByCite'"
-      >引用量排序</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/questionTag/getList'">查找</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/questionTag/add'">添加标签</el-button>
+      <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete" v-permission="'/questionTag/deleteBatch'">删除选中</el-button>
     </div>
 
     <el-table :data="tableData"
@@ -45,7 +30,13 @@
 
       <el-table-column label="标签名" width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.content }}</span>
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="简介" width="100" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.summary }}</span>
         </template>
       </el-table-column>
 
@@ -89,9 +80,8 @@
 
       <el-table-column label="操作" fixed="right" min-width="230">
         <template slot-scope="scope">
-          <el-button @click="handleStick(scope.row)" type="warning" size="small" v-permission="'/tag/stick'">置顶</el-button>
-          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/tag/edit'">编辑</el-button>
-          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/tag/delete'">删除</el-button>
+          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/questionTag/edit'">编辑</el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/questionTag/delete'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -111,8 +101,12 @@
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="form">
 
-        <el-form-item label="标签名" :label-width="formLabelWidth" prop="content">
-          <el-input v-model="form.content" auto-complete="off"></el-input>
+        <el-form-item label="标签名" :label-width="formLabelWidth" prop="name">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="简介" :label-width="formLabelWidth" prop="summary">
+          <el-input v-model="form.summary" auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="排序" :label-width="formLabelWidth" prop="sort">
@@ -130,14 +124,11 @@
 
 <script>
 import {
-  getTagList,
-  addTag,
-  editTag,
-  deleteBatchTag,
-  stickTag,
-  tagSortByClickCount,
-  tagSortByCite
-} from "@/api/tag";
+  getQuestionTagList,
+  addQuestionTag,
+  editQuestionTag,
+  deleteBatchQuestionTag
+} from "@/api/questionTag";
 import { formatData } from "@/utils/webUtils";
 export default {
   data() {
@@ -155,10 +146,12 @@ export default {
       orderByDescColumn: "", // 降序字段
       orderByAscColumn: "", // 升序字段
       form: {
-        content: ""
+        name: "",
+        summary: "",
+        sort: 0,
       },
       rules: {
-        content: [
+        name: [
           {required: true, message: '分类名称不能为空', trigger: 'blur'},
           {min: 1, max: 10, message: '长度在1到10个字符'},
         ],
@@ -192,7 +185,7 @@ export default {
       params.pageSize = this.pageSize;
       params.orderByDescColumn = this.orderByDescColumn
       params.orderByAscColumn = this.orderByAscColumn
-      getTagList(params).then(response => {
+      getQuestionTagList(params).then(response => {
         this.tableData = response.data.records;
         this.currentPage = response.data.current;
         this.pageSize = response.data.size;
@@ -202,7 +195,8 @@ export default {
     getFormObject: function() {
       var formObject = {
         uid: null,
-        content: null,
+        name: null,
+        summary: null,
         clickCount: 0,
         sort: 0
       };
@@ -217,83 +211,11 @@ export default {
       this.form = this.getFormObject();
       this.isEditForm = false;
     },
-    // 通过点击量排序
-    handleTagSortByClickCount: function() {
-      this.$confirm(
-        "此操作将根据点击量对所有的标签进行降序排序, 是否继续?",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          tagSortByClickCount().then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-              this.tagList();
-            }
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消批量排序")
-        });
-    },
-    // 通过点击量排序
-    handleTagSortByCite: function() {
-      this.$confirm(
-        "此操作将根据博客引用量对所有的标签进行降序排序, 是否继续?",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
-
-					tagSortByCite().then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-              this.tagList();
-            }
-					});
-
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消批量排序")
-        });
-    },
     handleEdit: function(row) {
       this.title = "编辑标签";
       this.dialogFormVisible = true;
       this.isEditForm = true;
       this.form = row;
-    },
-    handleStick: function(row) {
-      this.$confirm("此操作将会把该标签放到首位, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-
-          var params = {};
-          params.uid = row.uid;
-
-          stickTag(params).then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.tagList();
-              this.$commonUtil.message.success(response.message)
-            } else {
-              this.$commonUtil.message.error(response.message)
-            }
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消置顶")
-        });
     },
     handleDelete: function(row) {
       var that = this;
@@ -303,10 +225,9 @@ export default {
         type: "warning"
       })
         .then(() => {
-
           var params = [];
           params.push(row);
-          deleteBatchTag(params).then(response => {
+          deleteBatchQuestionTag(params).then(response => {
             if(response.code == this.$ECode.SUCCESS) {
               this.$commonUtil.message.success(response.message)
             } else {
@@ -332,7 +253,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          deleteBatchTag(that.multipleSelection).then(response => {
+          deleteBatchQuestionTag(that.multipleSelection).then(response => {
             if(response.code == this.$ECode.SUCCESS) {
               this.$commonUtil.message.success(response.message)
             } else {
@@ -356,7 +277,7 @@ export default {
           return;
         } else {
           if (this.isEditForm) {
-            editTag(this.form).then(response => {
+            editQuestionTag(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 this.dialogFormVisible = false;
@@ -366,7 +287,7 @@ export default {
               }
             });
           } else {
-            addTag(this.form).then(response => {
+            addQuestionTag(this.form).then(response => {
               console.log(response);
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)

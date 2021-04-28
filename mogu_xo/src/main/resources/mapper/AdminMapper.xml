@@ -24,12 +24,15 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        uid, userName, passWord, gender, avatar, email, birthday, mobile, validCode, summary, loginCount, lastLoginTime,
+        uid
+        , userName, passWord, gender, avatar, email, birthday, mobile, validCode, summary, loginCount, lastLoginTime,
         lastLoginIp, status, createTime, updateTime
     </sql>
 
     <select id="getAdminByUid" resultType="com.moxi.mogublog.commons.entity.Admin">
-        select * from t_admin where uid = #{uid}
+        select *
+        from t_admin
+        where uid = #{uid}
     </select>
 
 </mapper>

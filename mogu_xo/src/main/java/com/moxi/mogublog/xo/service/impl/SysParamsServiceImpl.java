@@ -150,9 +150,9 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
             Collection<SysParams> sysParamsList = sysParamsService.listByIds(sysParamsUidList);
             // 更新完成数据库后，还需要清空Redis中的缓存，因此需要存储键值
             List<String> redisKeys = new ArrayList<>();
-            for(SysParams item : sysParamsList) {
+            for (SysParams item : sysParamsList) {
                 // 判断删除列表中是否含有系统内置参数
-                if(item.getParamsType() == Constants.NUM_ONE) {
+                if (item.getParamsType() == Constants.NUM_ONE) {
                     return ResultUtil.errorWithMessage("系统内置参数无法删除");
                 }
                 item.setStatus(EStatus.DISABLED);

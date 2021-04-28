@@ -219,10 +219,10 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
     public Boolean isOpenLoginType(String loginType) {
         String loginTypeJson = redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
         // 判断redis中是否包含该登录记录
-        if(StringUtils.isNotEmpty(loginTypeJson)) {
+        if (StringUtils.isNotEmpty(loginTypeJson)) {
             // 如果Redis中有内容，表示开启该登录方式
             return true;
-        }else if(loginTypeJson!= null && loginTypeJson.length() == 0) {
+        } else if (loginTypeJson != null && loginTypeJson.length() == 0) {
             // 如果内容为空串，表示没有开启该登录方式
             return false;
         }
@@ -256,7 +256,7 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
         }
         // 再次判断该登录方式是否开启
         loginTypeJson = redisUtil.get(RedisConf.LOGIN_TYPE + Constants.SYMBOL_COLON + loginType);
-        if(StringUtils.isNotEmpty(loginTypeJson)) {
+        if (StringUtils.isNotEmpty(loginTypeJson)) {
             return true;
         } else {
             // 设置一个为空的字符串【防止缓存穿透】

@@ -17,7 +17,6 @@ import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
-import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ErrorCode;
@@ -163,11 +162,11 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
             queryWrapper.eq(SQLConf.COMMENT_STATUS, userVO.getCommentStatus());
         }
 
-        if(StringUtils.isNotEmpty(userVO.getOrderByAscColumn())) {
+        if (StringUtils.isNotEmpty(userVO.getOrderByAscColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(userVO.getOrderByAscColumn())).toString();
             queryWrapper.orderByAsc(column);
-        } else if(StringUtils.isNotEmpty(userVO.getOrderByDescColumn())) {
+        } else if (StringUtils.isNotEmpty(userVO.getOrderByDescColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(userVO.getOrderByDescColumn())).toString();
             queryWrapper.orderByDesc(column);

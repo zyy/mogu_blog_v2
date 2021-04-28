@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moxi.mogublog.commons.entity.Blog;
-import com.moxi.mogublog.commons.entity.BlogSort;
-import com.moxi.mogublog.commons.entity.Collect;
 import com.moxi.mogublog.commons.entity.SubjectItem;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
@@ -201,13 +199,13 @@ public class SubjectItemServiceImpl extends SuperServiceImpl<SubjectItemMapper, 
         subjectItemList.forEach(item -> {
             blogUidList.add(item.getBlogUid());
         });
-        if(blogUidList.size() == 0) {
+        if (blogUidList.size() == 0) {
             return ResultUtil.errorWithMessage(MessageConf.UPDATE_FAIL);
         }
         Collection<Blog> blogList = blogService.listByIds(blogUidList);
         List<Blog> tempBlogList = new ArrayList<>();
         // 升序排列或降序排列
-        if(isDesc) {
+        if (isDesc) {
             tempBlogList = blogList.stream().sorted(Comparator.comparing(Blog::getCreateTime).reversed()).collect(Collectors.toList());
         } else {
             tempBlogList = blogList.stream().sorted(Comparator.comparing(Blog::getCreateTime)).collect(Collectors.toList());

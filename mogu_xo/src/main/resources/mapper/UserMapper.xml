@@ -26,7 +26,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        uid, userName, passWord, gender, avatar, email, birthday, mobile, qqNumber, weChat, validCode, summary,
+        uid
+        , userName, passWord, gender, avatar, email, birthday, mobile, qqNumber, weChat, validCode, summary,
         loginCount, lastLoginTime, lastLoginIp, status, createTime, updateTime
     </sql>
 

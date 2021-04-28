@@ -403,6 +403,28 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/question',
+    component: Layout,
+    redirect: '/question/question',
+    name: '问答管理',
+    meta: { title: '问答管理', icon: 'table' },
+    children: [
+      {
+        path: 'questionTag',
+        name: '问答标签',
+        component: () => import('@/views/question/questionTag'),
+        meta: { title: '问答标签', icon: 'table' }
+      },
+      {
+        path: 'question',
+        name: '问答管理',
+        component: () => import('@/views/question/question'),
+        meta: { title: '问答管理', icon: 'table' }
+      }
+    ]
+  },
+
+  {
     path: '/test',
     component: Layout,
     redirect: '/test/markdown',

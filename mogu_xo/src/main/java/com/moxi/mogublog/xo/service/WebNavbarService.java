@@ -1,15 +1,11 @@
 package com.moxi.mogublog.xo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.moxi.mogublog.commons.entity.BlogSort;
 import com.moxi.mogublog.commons.entity.WebNavbar;
-import com.moxi.mogublog.xo.vo.BlogSortVO;
-import com.moxi.mogublog.xo.vo.CategoryMenuVO;
 import com.moxi.mogublog.xo.vo.WebNavbarVO;
 import com.moxi.mougblog.base.service.SuperService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 门户页导航栏 服务类
@@ -26,7 +22,7 @@ public interface WebNavbarService extends SuperService<WebNavbar> {
      * @return
      */
     public IPage<WebNavbar> getPageList(WebNavbarVO webNavbarVO);
-    
+
     /**
      * 获取所有门户导航栏
      *

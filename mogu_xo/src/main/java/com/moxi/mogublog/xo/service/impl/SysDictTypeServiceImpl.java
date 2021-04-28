@@ -59,11 +59,11 @@ public class SysDictTypeServiceImpl extends SuperServiceImpl<SysDictTypeMapper, 
             queryWrapper.like(SQLConf.DICT_TYPE, sysDictTypeVO.getDictType().trim());
         }
 
-        if(StringUtils.isNotEmpty(sysDictTypeVO.getOrderByAscColumn())) {
+        if (StringUtils.isNotEmpty(sysDictTypeVO.getOrderByAscColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(sysDictTypeVO.getOrderByAscColumn())).toString();
             queryWrapper.orderByAsc(column);
-        }else if(StringUtils.isNotEmpty(sysDictTypeVO.getOrderByDescColumn())) {
+        } else if (StringUtils.isNotEmpty(sysDictTypeVO.getOrderByDescColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(sysDictTypeVO.getOrderByDescColumn())).toString();
             queryWrapper.orderByDesc(column);

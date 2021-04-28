@@ -352,3 +352,50 @@ ALTER TABLE t_system_config ADD open_email_activate TINYINT(1) NOT NULL DEFAULT 
 */
 ALTER TABLE t_blog ADD user_uid VARCHAR(32) DEFAULT NULL COMMENT '投稿用户UID';
 ALTER TABLE t_blog ADD article_source TINYINT(1) NOT NULL DEFAULT 0 COMMENT '文章来源【0 后台添加，1 用户投稿】';
+
+
+
+/*
+   新增问答标签表
+   @date 2021年4月26日21:22:08
+*/
+CREATE TABLE `t_question_tag` (
+  `uid` varchar(32) NOT NULL COMMENT '唯一uid',
+  `parent_uid` varchar(32) DEFAULT NULL COMMENT '父uid',  
+  `name` varchar(100) DEFAULT NULL COMMENT '标签名',
+  `summary` varchar(1000) DEFAULT NULL COMMENT '标签简介',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `click_count` int(11) DEFAULT '0' COMMENT '点击数',
+  `create_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `sort` int(11) DEFAULT '0' COMMENT '排序字段，越大越靠前',
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='问答标签表';
+
+
+/*
+   新增问答表
+   @date 2021年4月26日21:38:20
+*/
+CREATE TABLE `t_question` (
+  `uid` varchar(32) NOT NULL COMMENT '唯一uid',
+  `oid` int(11) NOT NULL AUTO_INCREMENT COMMENT '唯一oid',
+  `title` varchar(200) DEFAULT NULL COMMENT '问答标题',
+  `summary` varchar(200) DEFAULT NULL COMMENT '问答简介',
+  `content` longtext COMMENT '问答内容',
+  `question_tag_uid` varchar(255) DEFAULT NULL COMMENT '问答uid',
+  `click_count` int(11) DEFAULT '0' COMMENT '问答点击数',
+  `collect_count` int(11) DEFAULT '0' COMMENT '问答收藏数',
+  `file_uid` varchar(255) DEFAULT NULL COMMENT '标题图片uid',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `create_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `admin_uid` varchar(32) DEFAULT NULL COMMENT '管理员uid',
+  `user_uid` varchar(32) DEFAULT NULL COMMENT '用户UID',           
+  `is_publish` varchar(1) DEFAULT '1' COMMENT '是否发布：0：否，1：是',
+  `question_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '问答状态，0:创建，1:进行，2:已采纳',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序字段',
+  `open_comment` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否开启评论(0:否 1:是)',
+  PRIMARY KEY (`uid`,`oid`),
+  KEY `oid` (`oid`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';

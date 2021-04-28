@@ -18,7 +18,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        uid, useruid, touid, touseruid, username, content, bloguid, status, createtime, updatetime
+        uid
+        , useruid, touid, touseruid, username, content, bloguid, status, createtime, updatetime
     </sql>
 
 </mapper>
