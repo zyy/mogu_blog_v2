@@ -15,6 +15,7 @@ import com.moxi.mogublog.web.global.RedisConf;
 import com.moxi.mogublog.web.global.SQLConf;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.web.log.BussinessLog;
+import com.moxi.mogublog.web.utils.SensitiveUtils;
 import com.moxi.mogublog.xo.service.*;
 import com.moxi.mogublog.xo.utils.RabbitMqUtil;
 import com.moxi.mogublog.xo.utils.WebUtil;
@@ -78,6 +79,8 @@ public class CommentRestApi {
     private PictureFeignClient pictureFeignClient;
     @Autowired
     private CommentReportService commentReportService;
+    @Autowired
+    private SensitiveUtils sensitiveUtils;
     @Value(value = "${BLOG.USER_TOKEN_SURVIVAL_TIME}")
     private Long userTokenSurvivalTime;
     @Value(value = "${data.website.url}")
@@ -218,7 +221,6 @@ public class CommentRestApi {
     public String getListByApp(@Validated({GetList.class}) @RequestBody CommentVO commentVO, BindingResult result) {
 
         ThrowableUtils.checkParamArgument(result);
-
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
             queryWrapper.like(SQLConf.BLOG_UID, commentVO.getBlogUid());
@@ -522,14 +524,15 @@ public class CommentRestApi {
         }
         // 判断是否垃圾评论
         String content = commentVO.getContent();
-        if (StringUtils.isCommentSpam(content)) {
+        Map<String, String> sensitiveMap = sensitiveUtils.filter(content);
+        if (Integer.parseInt(sensitiveMap.get(SysConf.COUNT)) > Constants.NUM_ZERO) {
             if (StringUtils.isEmpty(jsonResult)) {
                 Integer count = 0;
                 redisUtil.setEx(RedisConf.USER_PUBLISH_SPAM_COMMENT_COUNT + BaseSysConf.REDIS_SEGMENTATION + userUid, count.toString(), 1, TimeUnit.HOURS);
             } else {
                 redisUtil.incrBy(RedisConf.USER_PUBLISH_SPAM_COMMENT_COUNT + BaseSysConf.REDIS_SEGMENTATION + userUid, 1);
             }
-            return ResultUtil.result(SysConf.ERROR, MessageConf.COMMENT_IS_SPAM);
+            commentVO.setContent(sensitiveMap.get(SysConf.CONTENT));
         }
         // 判断被评论的用户，是否开启了评论邮件提醒
         if (StringUtils.isNotEmpty(commentVO.getToUserUid())) {

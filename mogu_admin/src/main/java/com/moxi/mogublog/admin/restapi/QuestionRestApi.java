@@ -50,7 +50,6 @@ public class QuestionRestApi {
     @PostMapping("/getList")
     public String getList(@Validated({GetList.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
-        // 参数校验
         ThrowableUtils.checkParamArgument(result);
         log.info("获取问答列表");
         return ResultUtil.result(SysConf.SUCCESS, questionService.getPageList(questionVO));
@@ -63,7 +62,6 @@ public class QuestionRestApi {
     @PostMapping("/add")
     public String add(@Validated({Insert.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
-        // 参数校验
         ThrowableUtils.checkParamArgument(result);
         log.info("增加问答");
         return questionService.addQuestion(questionVO);
@@ -75,7 +73,6 @@ public class QuestionRestApi {
     @PostMapping("/edit")
     public String edit(@Validated({Update.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
-        // 参数校验
         ThrowableUtils.checkParamArgument(result);
         log.info("编辑问答");
         return questionService.editQuestion(questionVO);
@@ -87,7 +84,6 @@ public class QuestionRestApi {
     @PostMapping("/deleteBatch")
     public String delete(@Validated({Delete.class}) @RequestBody List<QuestionVO> questionVOList, BindingResult result) {
 
-        // 参数校验
         ThrowableUtils.checkParamArgument(result);
         log.info("批量删除问答");
         return questionService.deleteBatchQuestion(questionVOList);
