@@ -23,6 +23,13 @@ public interface QuestionService extends SuperService<Question> {
     IPage<Question> getPageList(QuestionVO questionVO);
 
     /**
+     * 获取问答详情
+     * @param questionVO
+     * @return
+     */
+    String getQuestion(QuestionVO questionVO);
+
+    /**
      * 新增问答
      *
      * @param questionVO

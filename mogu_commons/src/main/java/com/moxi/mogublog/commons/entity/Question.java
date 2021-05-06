@@ -89,7 +89,7 @@ public class Question extends SuperEntity<Question> {
     private String userUid;
 
     /**
-     * 问答状态，0:创建，1:进行，2:已采纳
+     * 问答状态，0:创建，1:回答，2:已采纳
      */
     private int questionStatus;
 
@@ -97,15 +97,27 @@ public class Question extends SuperEntity<Question> {
     // 以下字段不存入数据库，封装为了方便使用
 
     /**
-     * 标签,一篇博客对应多个标签
+     * 标签,一篇问答对应多个标签
      */
     @TableField(exist = false)
     private List<Tag> tagList;
 
     /**
-     * 博客标题图
+     * 问答标题图
      */
     @TableField(exist = false)
     private String photoUrl;
+
+    /**
+     * 问答标签列表
+     */
+    @TableField(exist = false)
+    private List<QuestionTag> questionTagList;
+
+    /**
+     * 提问用户
+     */
+    @TableField(exist = false)
+    private User user;
 
 }

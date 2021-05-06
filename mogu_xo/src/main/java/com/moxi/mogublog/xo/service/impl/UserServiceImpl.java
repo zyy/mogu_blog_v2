@@ -51,6 +51,8 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     private SysParamsService sysParamsService;
     @Resource
     private PictureFeignClient pictureFeignClient;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public User insertUserInfo(HttpServletRequest request, String response) {
@@ -149,6 +151,26 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     }
 
     @Override
+    public List<User> getUserListAndAvatarByIds(Collection<String> ids) {
+        List<User> userList = new ArrayList<>();
+        if (ids == null || ids.size() == 0) {
+            return userList;
+        }
+        Collection<User> userCollection = userService.listByIds(ids);
+        // 过滤用户敏感信息
+        userCollection.forEach(item -> {
+            User user = new User();
+            user.setAvatar(item.getAvatar());
+            user.setUid(item.getUid());
+            user.setNickName(item.getNickName());
+            user.setUserTag(item.getUserTag());
+            userList.add(user);
+        });
+        this.setUserAvatar(userList);
+        return userList;
+    }
+
+    @Override
     public IPage<User> getPageList(UserVO userVO) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         // 查询用户名
@@ -180,43 +202,9 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
         page.setSize(userVO.getPageSize());
         queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         IPage<User> pageList = userService.page(page, queryWrapper);
-
         List<User> list = pageList.getRecords();
-
-        final StringBuffer fileUids = new StringBuffer();
-        list.forEach(item -> {
-            if (StringUtils.isNotEmpty(item.getAvatar())) {
-                fileUids.append(item.getAvatar() + SysConf.FILE_SEGMENTATION);
-            }
-        });
-
-        Map<String, String> pictureMap = new HashMap<>();
-        String pictureResult = null;
-
-        if (fileUids != null) {
-            pictureResult = this.pictureFeignClient.getPicture(fileUids.toString(), SysConf.FILE_SEGMENTATION);
-        }
-        List<Map<String, Object>> picList = webUtil.getPictureMap(pictureResult);
-
-        picList.forEach(item -> {
-            pictureMap.put(item.get(SQLConf.UID).toString(), item.get(SQLConf.URL).toString());
-        });
-
-        for (User item : list) {
-            //获取图片
-            if (StringUtils.isNotEmpty(item.getAvatar())) {
-                List<String> pictureUidsTemp = StringUtils.changeStringToString(item.getAvatar(), SysConf.FILE_SEGMENTATION);
-                List<String> pictureListTemp = new ArrayList<>();
-                pictureUidsTemp.forEach(picture -> {
-                    if (pictureMap.get(picture) != null && pictureMap.get(picture) != "") {
-                        pictureListTemp.add(pictureMap.get(picture));
-                    }
-                });
-                if (pictureListTemp.size() > 0) {
-                    item.setPhotoUrl(pictureListTemp.get(0));
-                }
-            }
-        }
+        // 设置用户头像
+        this.setUserAvatar(list);
         pageList.setRecords(list);
         return pageList;
     }
@@ -270,5 +258,46 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
         user.setUpdateTime(new Date());
         user.updateById();
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);
+    }
+
+    /**
+     * 设置用户头像
+     * @param list
+     */
+    private void setUserAvatar(Collection<User> list) {
+        final StringBuffer fileUids = new StringBuffer();
+        list.forEach(item -> {
+            if (StringUtils.isNotEmpty(item.getAvatar())) {
+                fileUids.append(item.getAvatar() + SysConf.FILE_SEGMENTATION);
+            }
+        });
+
+        Map<String, String> pictureMap = new HashMap<>();
+        String pictureResult = null;
+
+        if (fileUids != null) {
+            pictureResult = this.pictureFeignClient.getPicture(fileUids.toString(), SysConf.FILE_SEGMENTATION);
+        }
+        List<Map<String, Object>> picList = webUtil.getPictureMap(pictureResult);
+
+        picList.forEach(item -> {
+            pictureMap.put(item.get(SQLConf.UID).toString(), item.get(SQLConf.URL).toString());
+        });
+
+        for (User item : list) {
+            //获取图片
+            if (StringUtils.isNotEmpty(item.getAvatar())) {
+                List<String> pictureUidsTemp = StringUtils.changeStringToString(item.getAvatar(), SysConf.FILE_SEGMENTATION);
+                List<String> pictureListTemp = new ArrayList<>();
+                pictureUidsTemp.forEach(picture -> {
+                    if (pictureMap.get(picture) != null && pictureMap.get(picture) != "") {
+                        pictureListTemp.add(pictureMap.get(picture));
+                    }
+                });
+                if (pictureListTemp.size() > 0) {
+                    item.setPhotoUrl(pictureListTemp.get(0));
+                }
+            }
+        }
     }
 }

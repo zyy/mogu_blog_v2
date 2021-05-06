@@ -33,6 +33,7 @@ public class BaseMessageConf {
     public static final String NO_COMMENTS_OPEN = "网站未开启评论功能";
 
     public static final String BLOG_NO_OPEN_COMMENTS = "本博客未开启评论功能";
+    public static final String QUESTION_NO_OPEN_COMMENTS = "本问答已关闭评论功能";
 
     public static final String LOGIN_DISABLE = "该账号已被封禁";
     public static final String LOGIN_ERROR = "用户名或密码错误，错误%d次后，账户将被锁定30分钟";

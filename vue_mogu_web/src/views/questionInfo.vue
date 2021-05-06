@@ -3,74 +3,53 @@
     <el-dialog :visible.sync="dialogPictureVisible" fullscreen>
       <img :src="dialogImageUrl" alt="dialogImageUrl" style="margin: 0 auto;" />
     </el-dialog>
-    <h1 class="t_nav">
-      <a href="/" class="n1">网站首页</a>
-      <a
-        href="javascript:void(0);"
-        v-if="blogData.blogSort.uid"
-        @click="goToSortList(blogData.blogSort.uid)"
-        class="n2"
-      >{{blogData.blogSort ? blogData.blogSort.sortName:""}}</a>
-    </h1>
+
     <div class="infosbox">
       <div class="newsview">
-        <h3 class="news_title" v-if="blogData.title">{{blogData.title}}</h3>
-        <div class="bloginfo" v-if="blogData.blogSort.uid">
+        <h3 class="news_title" v-if="questionData.title">{{questionData.title}}</h3>
+        <div class="bloginfo" >
           <ul>
+            <li style="margin-top: -6px; padding-right: 6px">
+              <el-avatar size="small" :src="questionData.user.photoUrl"></el-avatar>
+            </li>
             <li class="author">
-              <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(blogData.author)">{{blogData.author}}</a>
-            </li>
-            <li class="lmname">
-              <span class="iconfont">&#xe603;</span>
-              <a
-                href="javascript:void(0);"
-                @click="goToSortList(blogData.blogSort.uid)"
-              >{{blogData.blogSort ? blogData.blogSort.sortName:""}}</a>
-            </li>
-            <li class="createTime">
-              <span class="iconfont">&#xe606;</span>
-              {{blogData.createTime}}
+              <a href="javascript:void(0);" v-if="questionData.user" @click="goToAuthor(questionData.user.nickName)">{{questionData.user.nickName}}</a>
             </li>
             <li class="view">
               <span class="iconfont">&#xe8c7;</span>
-              {{blogData.clickCount}}
+              {{questionData.clickCount}}
             </li>
             <li class="like">
               <span class="iconfont">&#xe663;</span>
-              {{blogData.collectCount}}
+              {{questionData.collectCount}}
+            </li>
+            <li class="createTime">
+              <span class="iconfont">&#xe606;</span>
+              {{questionData.createTime}}
             </li>
           </ul>
         </div>
         <div class="tags">
           <a
-            v-if="blogData.tagList"
-            v-for="item in blogData.tagList"
+            v-for="item in questionData.questionTagList"
             :key="item.uid"
             href="javascript:void(0);"
             @click="goToList(item.uid)"
             target="_blank"
-          >{{item.content}}</a>
+          >{{item.name}}</a>
         </div>
-        <div class="news_about">
-          <strong>版权</strong>
-          <span v-html="blogData.copyright">
-            {{blogData.copyright}}
-          </span>
-        </div>
+
         <div
           class="news_con ck-content"
           v-html="blogContent"
           v-highlight
           @click="imageChange"
+          style="min-height: 300px"
         >{{blogContent}}</div>
       </div>
 
-      <!--付款码和点赞-->
-      <PayCode v-if="openAdmiration == '1'" :blogUid="blogUid" :praiseCount.sync="blogData.collectCount"></PayCode>
-
       <div class="otherlink" v-if="sameBlogData.length > 0">
-        <h2>相关文章</h2>
+        <h2>相关问答</h2>
         <ul>
           <li v-for="item in sameBlogData" :key="item.uid">
             <a
@@ -82,17 +61,19 @@
         </ul>
       </div>
       <div class="news_pl" :style="opemCommentCss">
-        <h2 v-if="openComment == '1'" class="title">文章评论</h2>
+        <h2 v-if="openComment == '1'" class="title">问答评论</h2>
         <ul v-if="openComment == '1'">
-            <CommentBox
+
+            <QuestionCommentBox
               :userInfo="userInfo"
               :commentInfo="commentInfo"
               @submit-box="submitBox"
               :showCancel="showCancel"
-            ></CommentBox>
+            ></QuestionCommentBox>
+
           <div class="message_infos">
-            <CommentList :comments="comments" :commentInfo="commentInfo"></CommentList>
-            <div class="noComment" v-if="comments.length ==0">还没有评论，快来抢沙发吧！</div>
+            <QuestionCommentList :comments="comments" :commentInfo="commentInfo"></QuestionCommentList>
+            <div class="noComment" v-if="comments.length ==0">还没有回复，快来抢沙发吧！</div>
           </div>
         </ul>
       </div>
@@ -109,9 +90,9 @@
 
 <script>
     import {getWebConfig} from "../api/index";
-    import { getBlogByUid, getSameBlogByBlogUid } from "../api/blogContent";
-    import CommentList from "../components/CommentList";
-    import CommentBox from "../components/CommentBox";
+    import { getQuestion } from "../api/question";
+    import QuestionCommentList from "../components/QuestionCommentList";
+    import QuestionCommentBox from "../components/QuestionCommentBox";
     // vuex中有mapState方法，相当于我们能够使用它的getset方法
     import { mapMutations } from "vuex";
     import ThirdRecommend from "../components/ThirdRecommend";
@@ -147,19 +128,17 @@
                 submitting: false,
                 comments: [],
                 commentInfo: {
-                    // 评论来源： MESSAGE_BOARD，ABOUT，BLOG_INFO 等 代表来自某些页面的评论
-                    source: "BLOG_INFO",
-                    blogUid: this.$route.query.blogUid
+                    // 评论来源： MESSAGE_BOARD，ABOUT，BLOG_INFO, QUESTION_INFO等 代表来自某些页面的评论
+                    source: "QUESTION_INFO"
                 },
                 currentPage: 1,
                 pageSize: 10,
                 total: 0, //总数量
                 toInfo: {},
                 userInfo: {},
-                blogUid: null, //传递过来的博客uid
-                blogOid: 0, // 传递过来的博客oid
-                blogData: {
-                  blogSort: {}
+                questionOid: 0, // 传递过来的问答oid
+                questionData: {
+                  user: {}
                 },
                 sameBlogData: [], //相关文章
                 dialogPictureVisible: false,
@@ -199,34 +178,27 @@
             HotBlog,
             FollowUs,
             PayCode,
-            CommentList,
-            CommentBox,
+            QuestionCommentList,
+            QuestionCommentBox,
             SideCatalog,
             Link,
             Sticky
         },
-      watch: {
-        $route(to, from) {
-          location.reload()
-        }
-      },
+        watch: {
+          $route(to, from) {
+            location.reload()
+          }
+        },
         mounted () {
           var that = this;
-          var params = new URLSearchParams();
-          if(this.blogUid) {
-            params.append("uid", this.blogUid);
-          }
-          if(this.blogOid) {
-            params.append("oid", this.blogOid)
-          }
-          getBlogByUid(params).then(response => {
+          var params = {};
+          params.oid = this.questionOid
+          getQuestion(params).then(response => {
             if (response.code == this.$ECode.SUCCESS) {
-              this.blogData = response.data;
-              this.blogUid = response.data.uid
-              this.blogOid = response.data.oid
-              this.commentInfo.blogUid = response.data.uid;
-              this.getSameBlog()
-              this.getCommentDataList();
+              this.questionData = response.data;
+              this.questionOid = response.data.oid
+              this.commentInfo.questionUid = response.data.uid;
+              this.commentInfo.questionOid = response.data.oid;
             }
             setTimeout(()=>{
               that.blogContent = response.data.content
@@ -248,10 +220,8 @@
             }
 
             if (winScrollHeight > after) {
-              // console.log("隐藏顶部栏", winScrollHeight)
               that.showSideCatalog = true
             } else {
-              // console.log("显示顶部栏", winScrollHeight)
               that.showSideCatalog = false
             }
             after = winScrollHeight;
@@ -263,9 +233,10 @@
               }
               let params = {};
               params.source = that.commentInfo.source;
-              params.blogUid = that.commentInfo.blogUid;
+              params.blogUid = that.commentInfo.questionUid;
               params.currentPage = that.currentPage + 1
               params.pageSize = that.pageSize;
+              console.log("获取评论列表")
               getCommentList(params).then(response => {
                 if (response.code == that.$ECode.SUCCESS) {
                   that.comments = that.comments.concat(response.data.records);
@@ -291,11 +262,11 @@
                 fullscreen: true,
                 text: "正在努力加载中~"
             });
-            this.blogUid = this.$route.query.blogUid;
-            this.blogOid = this.$route.query.blogOid;
+            this.questionOid = this.$route.query.oid;
             this.setCommentAndAdmiration()
             // 屏幕大于950px的时候，显示侧边栏
             this.showSidebar = document.body.clientWidth > 950
+            this.getCommentDataList()
         },
         methods: {
             //拿到vuex中的写的两个方法
@@ -357,9 +328,10 @@
                 });
             },
             getCommentDataList: function() {
+                console.log("开始获取评论列表")
                 let params = {};
                 params.source = this.commentInfo.source;
-                params.blogUid = this.commentInfo.blogUid;
+                params.blogUid = this.commentInfo.questionUid;
                 params.currentPage = this.currentPage;
                 params.pageSize = this.pageSize;
                 getCommentList(params).then(response => {

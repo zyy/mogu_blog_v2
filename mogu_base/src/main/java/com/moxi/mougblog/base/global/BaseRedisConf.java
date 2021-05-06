@@ -178,6 +178,11 @@ public class BaseRedisConf {
     public final static String USER_RECEIVE_COMMENT_COUNT = "USER_RECEIVE_COMMENT_COUNT";
 
     /**
+     * 问答点击
+     */
+    public final static String QUESTION_CLICK = "QUESTION_CLICK";
+
+    /**
      * 登录方式
      */
     public final static String LOGIN_TYPE = "LOGIN_TYPE";

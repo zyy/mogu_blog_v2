@@ -222,10 +222,15 @@
         params.append("pageSize", this.pageSize);
         getNewBlog(params).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
-            that.newBlogData = response.data.records;
+            let newBlogData = response.data.records;
+            that.newBlogData = newBlogData
             that.total = response.data.total;
             that.pageSize = response.data.size;
             that.currentPage = response.data.current;
+            //全部加载完毕
+            if (newBlogData.length < this.pageSize) {
+              this.isEnd = true;
+            }
           }
           that.loadingInstance.close();
         },function(err){
@@ -234,23 +239,23 @@
       },
 
       loadContent: function () {
-        var that = this;
+        let that = this;
         that.loading = false;
         that.currentPage = that.currentPage + 1;
-        var params = new URLSearchParams();
+        let params = new URLSearchParams();
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         getNewBlog(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;
-            var newData = that.newBlogData.concat(response.data.records);
+            let newBlogData = response.data.records;
+            let newData = that.newBlogData.concat(newBlogData);
             that.newBlogData = newData;
             that.total = response.data.total;
             that.pageSize = response.data.size;
             that.currentPage = response.data.current;
-
             //全部加载完毕
-            if (newData.length < that.pageSize) {
+            if (newBlogData.length < that.pageSize) {
               that.isEnd = true;
             }
           } else {

@@ -21,7 +21,12 @@ public enum ECommentSource {
     /**
      * 留言板
      */
-    MESSAGE_BOARD("MESSAGE_BOARD", "留言板");
+    MESSAGE_BOARD("MESSAGE_BOARD", "留言板"),
+
+    /**
+     * 问答详情
+     */
+    QUESTION_INFO("QUESTION_INFO", "问答详情");
 
 
     private final String code;

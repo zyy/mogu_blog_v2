@@ -72,6 +72,8 @@ public class CommentRestApi {
     @Autowired
     private BlogService blogService;
     @Autowired
+    private QuestionService questionService;
+    @Autowired
     private CommentService commentService;
     @Autowired
     private UserService userService;
@@ -497,19 +499,34 @@ public class CommentRestApi {
         if (SysConf.CAN_NOT_COMMENT.equals(webConfig.getOpenComment())) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.NO_COMMENTS_OPEN);
         }
-        // 判断该博客是否开启评论功能
-        if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
-            Blog blog = blogService.getById(commentVO.getBlogUid());
-            if (SysConf.CAN_NOT_COMMENT.equals(blog.getOpenComment())) {
-                return ResultUtil.result(SysConf.ERROR, MessageConf.BLOG_NO_OPEN_COMMENTS);
+
+        // 判断是否来自问答详情的评论
+        if(ECommentSource.QUESTION_INFO.getCode().equals(commentVO.getSource())) {
+            // 判断该问答是否开启评论功能
+            if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
+                Question question = questionService.getById(commentVO.getBlogUid());
+                if (SysConf.CAN_NOT_COMMENT.equals(question.getOpenComment())) {
+                    return ResultUtil.result(SysConf.ERROR, MessageConf.QUESTION_NO_OPEN_COMMENTS);
+                }
+            }
+        } else {
+            // 判断该博客是否开启评论功能
+            if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
+                Blog blog = blogService.getById(commentVO.getBlogUid());
+                if (SysConf.CAN_NOT_COMMENT.equals(blog.getOpenComment())) {
+                    return ResultUtil.result(SysConf.ERROR, MessageConf.BLOG_NO_OPEN_COMMENTS);
+                }
+            }
+            // 判断字数是否超过限制
+            if (commentVO.getContent().length() > SysConf.ONE_ZERO_TWO_FOUR) {
+                return ResultUtil.result(SysConf.ERROR, MessageConf.COMMENT_CAN_NOT_MORE_THAN_1024);
             }
         }
+
+
         String userUid = request.getAttribute(SysConf.USER_UID).toString();
         User user = userService.getById(userUid);
-        // 判断字数是否超过限制
-        if (commentVO.getContent().length() > SysConf.ONE_ZERO_TWO_FOUR) {
-            return ResultUtil.result(SysConf.ERROR, MessageConf.COMMENT_CAN_NOT_MORE_THAN_1024);
-        }
+
         // 判断该用户是否被禁言
         if (user.getCommentStatus() == SysConf.ZERO) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.YOU_DONT_HAVE_PERMISSION_TO_SPEAK);

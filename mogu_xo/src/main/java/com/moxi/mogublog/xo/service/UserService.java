@@ -6,6 +6,8 @@ import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mougblog.base.service.SuperService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,7 +40,7 @@ public interface UserService extends SuperService<User> {
      * @param status
      * @return
      */
-    public Integer getUserCount(int status);
+    Integer getUserCount(int status);
 
     /**
      * 设置Request相关，如浏览器，IP，IP来源
@@ -46,7 +48,7 @@ public interface UserService extends SuperService<User> {
      * @param user
      * @return
      */
-    public User serRequestInfo(User user);
+    User serRequestInfo(User user);
 
     /**
      * 通过ids获取用户列表
@@ -54,7 +56,14 @@ public interface UserService extends SuperService<User> {
      * @param ids
      * @return
      */
-    public List<User> getUserListByIds(List<String> ids);
+    List<User> getUserListByIds(List<String> ids);
+
+    /**
+     * 通过ids获取用户列表【携带用户头像】
+     * @param ids
+     * @return
+     */
+    List<User> getUserListAndAvatarByIds(Collection<String> ids);
 
     /**
      * 获取用户列表
@@ -62,28 +71,28 @@ public interface UserService extends SuperService<User> {
      * @param userVO
      * @return
      */
-    public IPage<User> getPageList(UserVO userVO);
+    IPage<User> getPageList(UserVO userVO);
 
     /**
      * 新增用户
      *
      * @param userVO
      */
-    public String addUser(UserVO userVO);
+    String addUser(UserVO userVO);
 
     /**
      * 编辑用户
      *
      * @param userVO
      */
-    public String editUser(UserVO userVO);
+    String editUser(UserVO userVO);
 
     /**
      * 删除用户
      *
      * @param userVO
      */
-    public String deleteUser(UserVO userVO);
+    String deleteUser(UserVO userVO);
 
     /**
      * 重置用户密码
@@ -91,7 +100,9 @@ public interface UserService extends SuperService<User> {
      * @param userVO
      * @return
      */
-    public String resetUserPassword(UserVO userVO);
+    String resetUserPassword(UserVO userVO);
+
+
 
 
 }
