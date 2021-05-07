@@ -41,7 +41,7 @@
         const that = this
         const options = {
           width: this.isMobile ? '100%' : '100%',
-          height: '0',
+          height: this.height,
           tab: '\t',
           counter: '999999',
           typewriterMode: true,
@@ -75,7 +75,6 @@
       },
       onloadCallback(oEvent) {
         const currentTarget = oEvent.currentTarget
-        console.log("返回的结果", currentTarget)
         if (currentTarget.status !== 200) {
           return this.$message({
             type: 'error',

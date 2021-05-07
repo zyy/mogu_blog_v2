@@ -81,6 +81,7 @@
           </li>
         </ul>
       </div>
+
       <div class="news_pl" :style="opemCommentCss">
         <h2 v-if="openComment == '1'" class="title">文章评论</h2>
         <ul v-if="openComment == '1'">

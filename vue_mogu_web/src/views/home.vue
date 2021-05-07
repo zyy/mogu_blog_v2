@@ -52,61 +52,6 @@
             <a v-if="webNavbar.isJumpExternalUrl == 1" :href="webNavbar.url" target="_blank" :class="[saveTitle == webNavbar.url ? 'title' : '']">{{ webNavbar.name }}</a>
           </span>
         </li>
-
-<!--        <li>-->
-<!--          <router-link to="/">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/' ? 'title' : '']">首页</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/about">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/about' ? 'title' : '']">关于我</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/sort">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">归档</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/classify">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/classify' ? 'title' : '']">分类</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/tag">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/subject">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/subject' ? 'title' : '']">专题</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/share">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/share' ? 'title' : '']">学习教程</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--          <router-link to="/time">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
-<!--        <li v-if="openComment=='1'">-->
-<!--          <router-link to="/messageBoard">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
-
       </ul>
 
       <div class="searchbox" v-bind:class="showCreateBlog?'':'searchboxDefault'">
@@ -222,7 +167,7 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane v-if="showCreateBlog" label="我的文章" name="7">
+      <el-tab-pane v-if="showCreateBlog" label="我的文章" name="1">
           <span slot="label"><i class="el-icon-message-solid"></i> 我的文章</span>
           <div style="width: 100%; height: 840px;overflow:auto;">
             <el-timeline>
@@ -238,7 +183,7 @@
                       <el-col :span="12">
                           <span class="blogpic" @click="goToInfo(item)">
                             <a href="javascript:void(0);" title>
-                              <img v-if="item.photoList.length > 0" :src="item.photoList[0]" alt>
+                              <img v-if="item.photoList && item.photoList.length > 0 " :src="item.photoList[0]" alt>
                             </a>
                           </span>
                       </el-col>
@@ -250,7 +195,6 @@
                       </el-col>
 
                     </el-row>
-
 
                     <div class="bloginfo">
                       <ul>
@@ -296,7 +240,7 @@
           </div>
         </el-tab-pane>
 
-      <el-tab-pane label="我的评论" name="1">
+      <el-tab-pane label="我的评论" name="2">
         <span slot="label"><i class="el-icon-message-solid"></i> 我的评论</span>
         <div style="width: 100%; height: 840px;overflow:auto;">
           <el-timeline>
@@ -329,7 +273,7 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="我的回复" name="2">
+      <el-tab-pane label="我的回复" name="3">
         <span slot="label">
           <el-badge  :value="userReceiveCommentCount"  class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
             <i class="el-icon-s-promotion"></i> 我的回复
@@ -368,7 +312,7 @@
           </el-timeline>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="我的点赞" name="3">
+      <el-tab-pane label="我的点赞" name="4">
         <span slot="label"><i class="el-icon-star-on"></i> 我的点赞</span>
         <div style="width: 100%; height: 840px;overflow:auto">
           <el-timeline>
@@ -386,7 +330,7 @@
           </el-timeline>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="我的反馈" name="4">
+      <el-tab-pane label="我的反馈" name="5">
         <span slot="label"><i class="el-icon-phone"></i> 我的反馈</span>
 
         <el-collapse v-model="activeNames">
@@ -470,7 +414,7 @@
         </el-form>
 
       </el-tab-pane>
-      <el-tab-pane label="申请友链" name="5">
+      <el-tab-pane label="申请友链" name="6">
         <span slot="label"><i class="el-icon-share"></i> 申请友链</span>
 
         <el-form label-position="left" :model="blogLink" label-width="100px" ref="blogLink" :rules="linkRules">
@@ -523,7 +467,7 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="修改密码" name="6">
+      <el-tab-pane label="修改密码" name="7">
         <span slot="label"><i class="el-icon-s-tools"></i> 修改密码</span>
         <el-collapse v-model="activeNames">
           <el-collapse-item title="修改密码须知" name="1">
@@ -920,18 +864,29 @@
 
       // 标签选择
       handleClick(tab, event) {
+        console.log("tableIndex", tab.index)
         switch(tab.index) {
           case "0": {
             console.log("点击个人中心")
           }; break;
           case "1": {
-            console.log("点击我的评论")
+            console.log("点击我的文章")
+            // 获取用户文章
+            this.getBlogList()
+
           }; break;
           case "2": {
+            // 获取评论列表
+            this.getCommentList();
+            console.log("点击我的评论")
+          }; break;
+          case "3": {
+            // 获取回复列表
+            this.getCommentList();
             console.log("点击我的回复")
             // 判断用户是否未读的回复
             if(this.userReceiveCommentCount > 0) {
-             // 设置已阅读
+              // 设置已阅读
               readUserReceiveCommentCount().then(response => {
                 if(response.code == this.$ECode.SUCCESS) {
                   // 阅读成功
@@ -940,17 +895,24 @@
                 }
               })
             }
-          }; break;
-          case "3": {
-            console.log("点击我的点赞")
+
           }; break;
           case "4": {
-            console.log("点击我的反馈")
+
+            // 获取点赞列表
+            this.getPraiseList()
+            console.log("点击我的点赞")
+
           }; break;
           case "5": {
-            console.log("点击申请友链")
+            // 获取反馈列表
+            this.getFeedback()
+            console.log("点击我的反馈")
           }; break;
           case "6": {
+            console.log("点击申请友链")
+          }; break;
+          case "7": {
             console.log("点击修改密码")
           }; break;
         }
@@ -1302,14 +1264,6 @@
           case "goUserInfo" : {
             // 打开抽屉
             this.drawer = true;
-            // 获取评论列表
-            this.getCommentList();
-            // 获取点赞列表
-            this.getPraiseList()
-            // 获取反馈列表
-            this.getFeedback()
-            // 获取用户文章
-            this.getBlogList()
           } break;
         }
       },

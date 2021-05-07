@@ -44,9 +44,10 @@
           v-html="blogContent"
           v-highlight
           @click="imageChange"
-          style="min-height: 300px"
+          style="min-height: 210px"
         >{{blogContent}}</div>
       </div>
+
 
       <div class="otherlink" v-if="sameBlogData.length > 0">
         <h2>相关问答</h2>
@@ -60,6 +61,7 @@
           </li>
         </ul>
       </div>
+
       <div class="news_pl" :style="opemCommentCss">
         <h2 v-if="openComment == '1'" class="title">问答评论</h2>
         <ul v-if="openComment == '1'">
@@ -199,6 +201,8 @@
               this.questionOid = response.data.oid
               this.commentInfo.questionUid = response.data.uid;
               this.commentInfo.questionOid = response.data.oid;
+
+              this.getCommentDataList()
             }
             setTimeout(()=>{
               that.blogContent = response.data.content
@@ -266,7 +270,7 @@
             this.setCommentAndAdmiration()
             // 屏幕大于950px的时候，显示侧边栏
             this.showSidebar = document.body.clientWidth > 950
-            this.getCommentDataList()
+
         },
         methods: {
             //拿到vuex中的写的两个方法
@@ -398,6 +402,9 @@
 </script>
 
 <style>
+  .news_pl {
+    border-top: 10px solid #f6f6f6;
+  }
   .emoji-panel-wrap {
     box-sizing: border-box;
     border: 1px solid #cccccc;

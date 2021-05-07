@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div v-for="item in comments" :key="item.uid">
+<!--    :class="item.toUid ? '':'commentBorder'"-->
+    <div v-for="item in comments" :key="item.uid" >
       <div class="commentList">
         <span class="left p1">
           <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
@@ -15,7 +16,7 @@
             <span class="timeAgo" v-else>刚刚</span>
           </div>
 
-          <div class="rightCenter" v-html="$xss(item.content, options)"></div>
+          <div class="rightCenter ck-content" v-html="$xss(item.content, options)" v-highlight></div>
 
           <div class="rightBottom">
             <el-link class="b1" :underline="false" @click="replyTo(item)">回复</el-link>
@@ -27,7 +28,7 @@
             <CommentBox class="comment" :userInfo="userInfo" :toInfo="toInfo" :id="item.uid" :commentInfo="commentInfo"
                         @submit-box="submitBox" @cancel-box="cancelBox"></CommentBox>
 
-            <CommentList class="commentStyle" :id="'commentStyle:' + item.uid" :comments="item.replyList" :commentInfo="commentInfo"></CommentList>
+            <CommentList class="commentStyle " :class="item.toUserUid ? '':'commentBorder'" :id="'commentStyle:' + item.uid" :comments="item.replyList" :commentInfo="commentInfo"></CommentList>
           </div>
         </span>
       </div>
@@ -43,6 +44,7 @@
   import {timeAgo} from "../../utils/webUtils"
   import {addComment, deleteComment, getCommentList, reportComment} from "../../api/comment";
   import {getListByDictTypeList} from "@/api/sysDictData"
+
   export default {
     name: "CommentList",
     props: ['comments', 'userInfos', 'commentInfo'],
@@ -52,7 +54,16 @@
         options : {
           whiteList: {
             a: ['href', 'title', 'target'],
-            span: ['class']
+            span: ['class'],
+            p: ['class'],
+            h1: [],
+            h2: [],
+            h3: [],
+            h4: [],
+            pre: [],
+            code: ['class'],
+            div: [],
+            img: ['src', 'alt'],
           }
         },
         taggleStatue: true,
@@ -324,6 +335,9 @@
 </script>
 
 <style scoped>
+  .commentBorder {
+    /*border-top: 5px solid #f6f6f6;*/
+  }
   .commentStyle {
     display: block;
     margin-top: 10px;
@@ -377,6 +391,7 @@
   }
   .commentList .rightBottom {
     margin-left: 10px;
+    margin-top: 5px;
     height: 30px;
   }
   .commentList .rightBottom el-link {
