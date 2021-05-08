@@ -8,6 +8,14 @@ export function getQuestionList(params) {
   })
 }
 
+export function getQuestionTagList(params) {
+  return request({
+    url: process.env.WEB_API + '/question/getTagList',
+    method: 'post',
+    data: params
+  })
+}
+
 export function getQuestion(params) {
   return request({
     url: process.env.WEB_API + '/question/getQuestion',

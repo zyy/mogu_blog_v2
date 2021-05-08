@@ -53,6 +53,11 @@ public class Question extends SuperEntity<Question> {
     private Integer clickCount;
 
     /**
+     * 回答次数
+     */
+    private Integer replyCount;
+
+    /**
      * 问答收藏数
      */
     private Integer collectCount;

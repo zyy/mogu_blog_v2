@@ -71,7 +71,19 @@
         </div>
       </div>
 
-      <el-button v-if="showCreateBlog" type="primary" size="small" icon="el-icon-edit" class="createBlog" @click="createBlog(false, null)">创作</el-button>
+
+
+      <el-dropdown @command="handleCommand" class="create">
+        <span class="el-dropdown-link" >
+          <el-button v-if="showCreateBlog" type="primary" size="small" icon="el-icon-edit" class="createBlog" >创作</el-button>
+        </span>
+
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="createBlog">写文章</el-dropdown-item>
+          <el-dropdown-item command="createQuestion">提问题</el-dropdown-item>
+        </el-dropdown-menu>
+
+      </el-dropdown>
 
       <el-dropdown @command="handleCommand" class="userInfoAvatar">
         <span class="el-dropdown-link" >
@@ -526,6 +538,8 @@
   <!--创建博客-->
   <CreateBlog v-if="dialogFormVisible" :visible="dialogFormVisible" :isEdit="isEdit" :formData="formData" @beforeClose="beforeClose"></CreateBlog>
 
+  <CreateQuestion v-if="questionDialogFormVisible" :visible="questionDialogFormVisible" :isEdit="isEdit" :formData="questionFormData" @beforeClose="questionBeforeClose"></CreateQuestion>
+
   <div>
     <a
       href="javascript:void(0);"
@@ -539,6 +553,7 @@
 
 <script>
   import CreateBlog from '../components/CreateBlog'
+  import CreateQuestion from '../components/CreateQuestion'
   import AvatarCropper from '@/components/AvatarCropper'
   import {getWebConfig, getWebNavbar} from "../api/index";
   import {delCookie, getCookie, setCookie} from "@/utils/cookieUtils";
@@ -547,7 +562,6 @@
   import LoginBox from "../components/LoginBox";
   import {getListByDictTypeList} from "@/api/sysDictData"
   import {getUserBlogList, deleteBlog} from "@/api/createBlog"
-  // vuex中有mapState方法，相当于我们能够使用它的getset方法
   import {mapMutations} from 'vuex';
   import {timeAgo} from "../utils/webUtils";
 
@@ -556,7 +570,8 @@
     components: {
       LoginBox,
       AvatarCropper,
-      CreateBlog
+      CreateBlog,
+      CreateQuestion
     },
     data() {
       return {
@@ -568,6 +583,7 @@
           }
         },
         dialogFormVisible: false, // 控制创建博客的弹出
+        questionDialogFormVisible: true, // 控制创建问题的弹出
         activeNames: ['1', '2'], //激活的折叠面板
         activeName: "0", // 激活的标签
         yesNoDictList: [], // 是否 字典列表
@@ -605,6 +621,7 @@
         userReceiveCommentCount: 0, // 用户收到的评论数
         isEdit: false, // 是否编辑博客
         formData: {}, // 表单数据
+        questionFormData: {}, // 问答数据
         showCreateBlog: false, // 是否显示用户创作按钮
         browserFlag: 1, // 浏览器标志【默认Chrome】
         rules: {
@@ -1141,6 +1158,24 @@
       },
       /********************** 创作相关结束 ********************/
 
+      /********************** 创作相关 ********************/
+      createQuestion: function (isEdit, formData) {
+        this.isEdit = isEdit
+        if(isEdit) {
+          this.questionFormData = formData
+        }
+        if(!this.isLogin) {
+          this.showLogin = true;
+          return
+        }
+        this.questionDialogFormVisible = true
+      },
+      // 关闭模态框回调函数
+      questionBeforeClose: function () {
+        this.questionDialogFormVisible = false
+      },
+      /********************** 创作相关结束 ********************/
+
       setUserReceiveCommentCount: function () {
         getUserReceiveCommentCount().then(response => {
           console.log("获取用户收到的评论数", response)
@@ -1265,6 +1300,18 @@
             // 打开抽屉
             this.drawer = true;
           } break;
+          case "createBlog" : {
+            // 创作博客
+            console.log("写博客")
+            this.createBlog(false, null)
+          } break;
+          case "createQuestion" : {
+            // 打开抽屉
+            console.log("提问题")
+            this.createQuestion(false, null)
+          } break;
+
+
         }
       },
       closeLoginBox: function () {
@@ -1322,6 +1369,14 @@
   #starlist li .title {
     color: #00a7eb;
   }
+
+  .create {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    right: 0px;
+  }
+
   .userInfoAvatar {
     width: 35px;
     height: 35px;

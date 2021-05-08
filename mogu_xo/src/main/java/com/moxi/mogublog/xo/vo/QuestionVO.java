@@ -48,6 +48,11 @@ public class QuestionVO extends BaseVO<QuestionVO> {
     private Integer collectCount;
 
     /**
+     * 回答次数
+     */
+    private Integer replyCount;
+
+    /**
      * 管理员UID
      */
     private String adminUid;
@@ -91,6 +96,11 @@ public class QuestionVO extends BaseVO<QuestionVO> {
      * OrderBy排序字段（asc: 升序）
      */
     private String orderByAscColumn;
+
+    /**
+     * 方法类型【用于区分 最新问答，最热问答 未回复问答】
+     */
+    private String methodType;
 
     /**
      * 无参构造方法，初始化默认值

@@ -502,11 +502,19 @@ public class CommentRestApi {
 
         // 判断是否来自问答详情的评论
         if(ECommentSource.QUESTION_INFO.getCode().equals(commentVO.getSource())) {
-            // 判断该问答是否开启评论功能
             if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
+                // 判断该问答是否开启评论功能
                 Question question = questionService.getById(commentVO.getBlogUid());
                 if (SysConf.CAN_NOT_COMMENT.equals(question.getOpenComment())) {
                     return ResultUtil.result(SysConf.ERROR, MessageConf.QUESTION_NO_OPEN_COMMENTS);
+                }
+
+                // 判断该评论是否是问答的一级回复
+                if(StringUtils.isEmpty(commentVO.getToUid())) {
+                    // 更新问答的回复数
+                    Integer replyCount = question.getReplyCount() + 1;
+                    question.setReplyCount(replyCount);
+                    question.updateById();
                 }
             }
         } else {
@@ -725,6 +733,22 @@ public class CommentRestApi {
         } else {
             // 删除的是一级评论
             firstCommentUid = comment.getUid();
+
+            // 判断要删除的一级评论是否是问答回复【需要将该问答下的回复-1】
+            if(ECommentSource.QUESTION_INFO.getCode().equals(comment.getSource())) {
+                // 通过ID获取对应的问答
+                if(StringUtils.isNotEmpty(comment.getBlogUid())) {
+                    Question question = questionService.getById(comment.getBlogUid());
+                    Integer replyCount = question.getReplyCount() - 1 ;
+                    if(replyCount < 0) {
+                        question.setReplyCount(0);
+                    } else {
+                        question.setReplyCount(replyCount);
+                    }
+                    question.updateById();
+                    log.info("问答回复数减1");
+                }
+            }
         }
 
         // 获取该评论一级评论下所有的子评论

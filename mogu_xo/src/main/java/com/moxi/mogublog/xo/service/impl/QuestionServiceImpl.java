@@ -74,17 +74,38 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         page.setSize(questionVO.getPageSize());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
 
-        if (StringUtils.isNotEmpty(questionVO.getOrderByAscColumn())) {
-            // 将驼峰转换成下划线
-            String column = StringUtils.underLine(new StringBuffer(questionVO.getOrderByAscColumn())).toString();
-            queryWrapper.orderByAsc(column);
-        } else if (StringUtils.isNotEmpty(questionVO.getOrderByDescColumn())) {
-            // 将驼峰转换成下划线
-            String column = StringUtils.underLine(new StringBuffer(questionVO.getOrderByDescColumn())).toString();
-            queryWrapper.orderByDesc(column);
+        // 判断问答方法
+        if(StringUtils.isNotEmpty(questionVO.getMethodType())) {
+            String methodType = questionVO.getMethodType();
+            switch (methodType) {
+                case "newQuestion": {
+                    queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
+                }; break;
+                case "hotQuestion": {
+                    queryWrapper.orderByDesc(SQLConf.REPLY_COUNT);
+                }; break;
+                case "waitQuestion": {
+                    queryWrapper.eq(SQLConf.REPLY_COUNT, 0);
+                    queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
+                }; break;
+                default: {
+                    throw new QueryException("输入错误的参数");
+                }
+            }
+
         } else {
-            // 使用默认按sort值大小倒序
-            queryWrapper.orderByDesc(SQLConf.SORT);
+            if (StringUtils.isNotEmpty(questionVO.getOrderByAscColumn())) {
+                // 将驼峰转换成下划线
+                String column = StringUtils.underLine(new StringBuffer(questionVO.getOrderByAscColumn())).toString();
+                queryWrapper.orderByAsc(column);
+            } else if (StringUtils.isNotEmpty(questionVO.getOrderByDescColumn())) {
+                // 将驼峰转换成下划线
+                String column = StringUtils.underLine(new StringBuffer(questionVO.getOrderByDescColumn())).toString();
+                queryWrapper.orderByDesc(column);
+            } else {
+                // 使用默认按sort值大小倒序
+                queryWrapper.orderByDesc(SQLConf.SORT);
+            }
         }
 
         IPage<Question> pageList = questionService.page(page, queryWrapper);

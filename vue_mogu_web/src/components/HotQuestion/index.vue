@@ -37,7 +37,7 @@ export default {
     //跳转到文章详情【或推广链接】
     goToInfo(question) {
       let routeData = this.$router.resolve({
-        path: "/questionInfo",
+        path: "/qInfo",
         query: {oid: question.oid}
       });
       window.open(routeData.href, '_blank');

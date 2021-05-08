@@ -447,7 +447,7 @@ export default {
         content: null,
         tagUid: null,
         fileUid: null,
-        isPublish: this.blogOriginalDefault, //是否发布
+        isPublish: this.blogPublishDefault, //是否发布
         type: this.blogTypeDefault, // 文章类型
         author: null, //作者
         openComment: this.openDefault, // 是否启动

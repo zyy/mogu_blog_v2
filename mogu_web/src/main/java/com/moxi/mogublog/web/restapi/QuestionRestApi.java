@@ -11,6 +11,8 @@ import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.web.log.BussinessLog;
 import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.service.QuestionService;
+import com.moxi.mogublog.xo.service.QuestionTagService;
+import com.moxi.mogublog.xo.vo.QuestionTagVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.enums.EBehavior;
 import com.moxi.mougblog.base.enums.EPublish;
@@ -37,7 +39,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 问答 RestApi
+ * 问答相关 RestApi
  *
  * @author 陌溪
  * @date 2021年5月5日18:13:52
@@ -50,11 +52,12 @@ public class QuestionRestApi {
 
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private QuestionTagService questionTagService;
 
     @ApiOperation(value = "获取问答列表", notes = "获取问答列表", response = String.class)
     @PostMapping("/getList")
     public String getList(@Validated({GetList.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
-
         ThrowableUtils.checkParamArgument(result);
         log.info("获取问答列表");
         return ResultUtil.result(SysConf.SUCCESS, questionService.getPageList(questionVO));
@@ -92,6 +95,16 @@ public class QuestionRestApi {
         ThrowableUtils.checkParamArgument(result);
         log.info("批量删除问答");
         return questionService.deleteBatchQuestion(questionVOList);
+    }
+
+    @ApiOperation(value = "获取标签列表", notes = "获取标签列表", response = String.class)
+    @PostMapping("/getTagList")
+    public String getTagList(@Validated({GetList.class}) @RequestBody QuestionTagVO questionTagVO, BindingResult result) {
+
+        // 参数校验
+        ThrowableUtils.checkParamArgument(result);
+        log.info("获取标签列表");
+        return ResultUtil.result(SysConf.SUCCESS, questionTagService.getPageList(questionTagVO));
     }
 }
 

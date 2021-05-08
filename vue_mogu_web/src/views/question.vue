@@ -6,13 +6,10 @@
         <span :class="activeName==1?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-collection-tag"></i> <span>最新</span></span>
       </el-tab-pane>
       <el-tab-pane name="2">
-        <span :class="activeName==2?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>待回答</span></span>
+        <span :class="activeName==3?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-tickets"></i> <span>最热</span></span>
       </el-tab-pane>
       <el-tab-pane name="3">
-        <span :class="activeName==3?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-tickets"></i> <span>周榜</span></span>
-      </el-tab-pane>
-      <el-tab-pane name="4">
-        <span :class="activeName==4?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-date"></i> <span>月榜</span></span>
+        <span :class="activeName==2?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>待回答</span></span>
       </el-tab-pane>
     </el-tabs>
 
@@ -26,16 +23,16 @@
         data-scroll-reveal="enter bottom over 1s"
       >
         <el-row  :span="24" class="questionLine">
-          <el-col  :span="4">
+          <el-col  :xs="6" :sm="4">
             <div class="itemNum">
-              <el-tag type="success">回答 {{item.clickCount}}</el-tag>
+              <el-tag type="success">回答 {{item.replyCount}}</el-tag>
             </div>
             <div class="itemNum">
               <el-tag type="warning">阅读 {{item.clickCount}}</el-tag>
             </div>
           </el-col>
 
-          <el-col :span="20">
+          <el-col :xs="18" :sm="20">
             <div class="blogtitle">
               <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
             </div>
@@ -124,6 +121,7 @@ export default {
       isEnd: false, //是否到底底部了
       loading: false, //是否正在加载
       activeName: "1", // 激活页
+      methodType: "newQuestion", // 激活方法
     };
   },
   mounted() {
@@ -132,7 +130,7 @@ export default {
   },
   created() {
     // 获取最新问答
-    this.newQuestionList();
+    this.questionList();
   },
   methods: {
     //跳转到问答详情
@@ -145,7 +143,7 @@ export default {
     },
 
     //最新博客列表
-    newQuestionList() {
+    questionList() {
       var that = this;
       that.loadingInstance = Loading.service({
         lock: true,
@@ -157,6 +155,7 @@ export default {
       params.currentPage = this.currentPage;
       params.pageSize = this.pageSize;
       params.orderByDescColumn = "createTime";
+      params.methodType = this.methodType
       getQuestionList(params).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
           let newQuestionData = response.data.records;
@@ -179,10 +178,10 @@ export default {
       this.loading = false;
       this.currentPage = this.currentPage + 1;
       var params = {};
+      params.methodType = this.methodType
       params.currentPage = this.currentPage;
       params.pageSize = this.pageSize;
       params.orderByDescColumn = "createTime";
-      console.log("全部加载")
       getQuestionList(params).then(response => {
         if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
           this.isEnd = false;
@@ -203,7 +202,18 @@ export default {
       });
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      switch (tab.index) {
+        case "0": {
+          this.methodType = "newQuestion"
+        } break;
+        case "1": {
+          this.methodType = "hotQuestion"
+        } break;
+        case "2": {
+          this.methodType = "waitQuestion"
+        } break;
+      }
+      this.questionList()
     }
   }
 };

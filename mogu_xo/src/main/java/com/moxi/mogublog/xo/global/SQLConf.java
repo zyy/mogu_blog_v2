@@ -43,6 +43,7 @@ public final class SQLConf extends BaseSQLConf {
     public final static String MOBILE = "mobile";
     public final static String SORT = "sort";
     public final static String CLICK_COUNT = "click_count";
+    public final static String REPLY_COUNT = "reply_count";
     public final static String IS_PUBLISH = "is_publish";
     public final static String IS_ORIGINAL = "is_original";
 

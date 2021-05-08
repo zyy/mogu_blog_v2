@@ -236,14 +236,23 @@ h1.t_nav { border-bottom: #bfbfbf 1px solid; font-size: 14px; font-weight: norma
 .abtext { padding: 20px 20px; color: #999; line-height: 26px; text-align: justify; }
 .weixin img { width: 100% }
 /*pagebg*/
-.pagebg { margin-top: 60px; padding: 100px 0; text-align: center; width: 100%; }
+.pagebg { margin-top: 60px; padding: 1px 0; text-align: center; width: 100%; }
 /*pagebg.pagebg p { font-size: 36px; color: #FFF; }*/
-.ab { background: url(../images/blank.jpg) no-repeat; background-size: cover; background-position: top center; }
-.sh { background: url(../images/page_bg.jpg) no-repeat; background-size: cover; background-position: top center; }
-.sorts { background: url(../images/page_bg.jpg) no-repeat; background-size: cover; background-position: top center; }
-.classify { background: url(../images/page_classify.jpg) no-repeat; background-size: cover; background-position: top center; }
- .tagPage { background: url(../images/page_time.jpg) no-repeat; background-size: cover; background-position: top center; }
-.timer { background: url(../images/page_time.jpg) no-repeat; background-size: cover; background-position: top center; }
+/*.ab { background: url(../images/blank.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+/*.sh { background: url(../images/page_bg.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+/*.sorts { background: url(../images/page_bg.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+/*.classify { background: url(../images/page_classify.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+/* .tagPage { background: url(../images/page_time.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+/*.timer { background: url(../images/page_time.jpg) no-repeat; background-size: cover; background-position: top center; }*/
+
+.ab {  background-size: cover; background-position: top center; }
+.sh { background-size: cover; background-position: top center; }
+.sorts { background-size: cover; background-position: top center; }
+.classify { background-size: cover; background-position: top center; }
+.tagPage { background-size: cover; background-position: top center; }
+.timer { background-size: cover; background-position: top center; }
+
+
 /*share*/
 .share {overflow: hidden; padding-top: 10px }
 .shareli { margin: 0 15px; padding-bottom: 10px }

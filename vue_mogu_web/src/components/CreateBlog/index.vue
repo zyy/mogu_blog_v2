@@ -172,8 +172,7 @@ export default {
       tagData: [], //标签数据
       tagValue: [], //保存选中标签id(编辑时)
       dialogFormVisible: this.visible,
-      title: "新增博客",
-
+      title: "写文章",
       imagecropperShow: false,
       imagecropperKey: 0,
       url: process.env.PICTURE_API + "/file/cropperPicture",
@@ -273,7 +272,6 @@ export default {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 this.dialogFormVisible = false;
-                // this.blogList();
               } else {
                 this.$commonUtil.message.error(response.message)
               }
@@ -284,7 +282,6 @@ export default {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 this.dialogFormVisible = false;
-                // this.blogList();
               } else {
                 this.$commonUtil.message.error(response.message)
               }
