@@ -123,4 +123,3 @@ public class SentinelHealthIndicator extends AbstractHealthIndicator {
     }
 
 }
-
