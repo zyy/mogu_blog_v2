@@ -139,11 +139,11 @@ import CKEditor from "../CKEditor";
 import AvatarCropper from '@/components/AvatarCropper'
 import {getListByDictTypeList} from "@/api/sysDictData"
 import {addBlog, editBlog, getBlogSortList, getBlogTagList} from "@/api/createBlog"
+import {formatData} from "@/utils/webUtils";
 
 export default {
   props: ["visible", "isEdit", "formData"],
   created() {
-    console.log("传递来的状态", this.visible)
     this.getDictList()
     this.blogSortList()
     this.tagList()
@@ -260,12 +260,12 @@ export default {
         this.$commonUtil.message.error("标签不能为空!")
         return;
       }
+      this.form.content = this.$refs.editor.getData();
+      this.form.tagUid = this.tagValue.join(",");
       this.$refs.form.validate((valid) => {
         if(!valid) {
           console.log("校验出错")
         } else {
-          this.form.content = this.$refs.editor.getData();
-          this.form.tagUid = this.tagValue.join(",");
           var params = this.form
           if (this.isEdit) {
             editBlog(this.form).then(response => {

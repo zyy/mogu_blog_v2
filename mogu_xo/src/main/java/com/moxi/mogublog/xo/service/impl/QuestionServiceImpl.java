@@ -19,6 +19,7 @@ import com.moxi.mogublog.xo.service.UserService;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
+import com.moxi.mougblog.base.exception.exceptionType.InsertException;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ECode;
@@ -148,8 +149,14 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
 
     @Override
     public String addQuestion(QuestionVO questionVO) {
+        HttpServletRequest request = RequestHolder.getRequest();
+        if(request.getAttribute(SysConf.USER_UID) == null) {
+            throw new InsertException("用户未登录");
+        }
         Question question = new Question();
+        String userUid = request.getAttribute(SysConf.USER_UID).toString();
         BeanUtils.copyProperties(questionVO, question, SysConf.STATUS);
+        question.setUserUid(userUid);
         question.insert();
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }

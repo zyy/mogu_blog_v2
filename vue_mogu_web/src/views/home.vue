@@ -583,7 +583,7 @@
           }
         },
         dialogFormVisible: false, // 控制创建博客的弹出
-        questionDialogFormVisible: true, // 控制创建问题的弹出
+        questionDialogFormVisible: false, // 控制创建问题的弹出
         activeNames: ['1', '2'], //激活的折叠面板
         activeName: "0", // 激活的标签
         yesNoDictList: [], // 是否 字典列表

@@ -40,10 +40,11 @@
             <div class="bloginfo">
               <ul>
                 <li style="margin-top: -6px; padding-right: 6px">
-                  <el-avatar size="small" :src="item.user.photoUrl"></el-avatar>
+                  <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
+                  <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 </li>
                 <li class="author" >
-                  <a href="javascript:void(0);">{{item.user.nickName}}</a>
+                  <a  href="javascript:void(0);">{{item.user.nickName}}</a>
                 </li>
 
                 <li class="lmname" v-if="item.blogSort">

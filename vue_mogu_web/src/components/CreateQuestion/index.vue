@@ -78,11 +78,11 @@
 import CKEditor from "../CKEditor";
 import {getListByDictTypeList} from "@/api/sysDictData"
 import { getQuestionTagList, addQuestion, editQuestion } from "@/api/question";
+import {formatData} from "@/utils/webUtils";
 
 export default {
   props: ["visible", "isEdit", "formData"],
   created() {
-    console.log("问答详情来啦", this.visible)
     this.getDictList()
     this.questionTagList()
   },
@@ -110,7 +110,6 @@ export default {
       title: "增加问答",
       dialogFormVisible: this.visible, //控制弹出框
       subjectVisible: false, // 是否显示专题
-      isFirstSubjectVisible: true, // 专题选择器是否首次显示【用于懒加载】
       formLabelWidth: "120px",
       lineLabelWidth: "120px", //一行的间隔数
       maxLineLabelWidth: "100px",
@@ -195,7 +194,15 @@ export default {
             this.questionStatusDefault = dictMap.sys_question_status.defaultValue;
           }
         }
+
+        if(this.isEdit) {
+
+        } else {
+          this.form = this.getFormObject()
+        }
+
       });
+
     },
     getFormObject: function() {
       var formObject = {
@@ -213,18 +220,13 @@ export default {
       return formObject;
     },
     submitForm: function() {
-      if(this.tagValue.length <= 0) {
-        this.$commonUtil.message.error("标签不能为空!")
-        return;
-      }
-
+      this.form.content = this.$refs.editor.getData(); //获取CKEditor中的内容
+      this.form.questionTagUid = this.tagValue.join(",");
       this.$refs.form.validate((valid) => {
         if(!valid) {
 
         } else {
-          this.form.content = this.$refs.editor.getData(); //获取CKEditor中的内容
-          this.form.questionTagUid = this.tagValue.join(",");
-          var params = formatData(this.form);
+          let params = formatData(this.form);
           if (this.isEditForm) {
             editQuestion(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {

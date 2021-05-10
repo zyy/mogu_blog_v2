@@ -107,7 +107,6 @@ import { getRoleList, addRole, editRole, deleteRole } from "@/api/role";
 
 import { getAllMenu } from "@/api/categoryMenu";
 
-import { formatData } from "@/utils/webUtils";
 export default {
   data() {
     return {
