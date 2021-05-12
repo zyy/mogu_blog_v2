@@ -6,20 +6,19 @@
         <span :class="activeName==1?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-collection-tag"></i> <span>最新</span></span>
       </el-tab-pane>
       <el-tab-pane name="2">
-        <span :class="activeName==3?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-tickets"></i> <span>最热</span></span>
+        <span :class="activeName==2?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-tickets"></i> <span>最热</span></span>
       </el-tab-pane>
       <el-tab-pane name="3">
-        <span :class="activeName==2?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>待回答</span></span>
+        <span :class="activeName==3?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>待回答</span></span>
       </el-tab-pane>
     </el-tabs>
-
-
 
     <div class="blogsbox">
       <div
         v-for="item in newQuestionData"
         :key="item.uid"
         class="blogs"
+        v-if="item.user"
         data-scroll-reveal="enter bottom over 1s"
       >
         <el-row  :span="24" class="questionLine">
@@ -35,7 +34,13 @@
           <el-col :xs="18" :sm="20">
             <div class="blogtitle">
               <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
+              <span v-for="(questionTag, index) in item.questionTagList" style="float: right">
+                  <el-tag v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
+                  <el-tag v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>
+                  <el-tag v-if="index%3==2" type="info">{{questionTag.name}}</el-tag>
+                </span>
             </div>
+
 
             <div class="bloginfo">
               <ul>
@@ -64,6 +69,7 @@
                   <span class="iconfont">&#xe606;</span>
                   {{item.createTime}}
                 </li>
+
               </ul>
             </div>
           </el-col>
@@ -88,7 +94,7 @@
     <div class="sidebar">
       <!--标签云-->
       <HotQuestion></HotQuestion>
-      <TagCloud></TagCloud>
+<!--      <TagCloud></TagCloud>-->
 
     </div>
 

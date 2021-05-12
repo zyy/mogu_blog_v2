@@ -354,6 +354,12 @@ ALTER TABLE t_blog ADD user_uid VARCHAR(32) DEFAULT NULL COMMENT '投稿用户UI
 ALTER TABLE t_blog ADD article_source TINYINT(1) NOT NULL DEFAULT 0 COMMENT '文章来源【0 后台添加，1 用户投稿】';
 
 
+/*
+   修改t_web_config 表，增加 open_create_blog 字段，是否开启用户创作(0:否， 1:是)
+   @date 2021年4月9日18:14:28
+*/
+ALTER TABLE  t_web_config ADD open_create_blog TINYINT(1) NOT NULL DEFAULT 0 COMMENT "是否开启用户创作(0:否， 1:是)";
+
 
 /*
    新增问答标签表
@@ -366,8 +372,8 @@ CREATE TABLE `t_question_tag` (
   `summary` varchar(1000) DEFAULT NULL COMMENT '标签简介',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
   `click_count` int(11) DEFAULT '0' COMMENT '点击数',
-  `create_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `create_time` timestamp NULL COMMENT '创建时间',
+  `update_time` timestamp NULL COMMENT '更新时间',
   `sort` int(11) DEFAULT '0' COMMENT '排序字段，越大越靠前',
   PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='问答标签表';
@@ -386,10 +392,11 @@ CREATE TABLE `t_question` (
   `question_tag_uid` varchar(255) DEFAULT NULL COMMENT '问答uid',
   `click_count` int(11) DEFAULT '0' COMMENT '问答点击数',
   `collect_count` int(11) DEFAULT '0' COMMENT '问答收藏数',
+  `reply_count` int(11) DEFAULT '0' COMMENT '回答次数',
   `file_uid` varchar(255) DEFAULT NULL COMMENT '标题图片uid',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
-  `create_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `create_time` timestamp NULL COMMENT '创建时间',
+  `update_time` timestamp NULL COMMENT '更新时间',
   `admin_uid` varchar(32) DEFAULT NULL COMMENT '管理员uid',
   `user_uid` varchar(32) DEFAULT NULL COMMENT '用户UID',           
   `is_publish` varchar(1) DEFAULT '1' COMMENT '是否发布：0：否，1：是',
@@ -399,3 +406,35 @@ CREATE TABLE `t_question` (
   PRIMARY KEY (`uid`,`oid`),
   KEY `oid` (`oid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';
+
+
+/*
+   菜单表新增数据
+   @date 2021年5月12日19:14:20
+*/
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('4e3bf287105637b86e27d8b4fd4e5f42','查询','3','问答管理 查询','3218dc3afad673f411baf774e22f3deb','/question/getList',NULL,'0','1','2021-04-28 19:16:45','2021-04-28 19:16:45','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('b0b7373219566e42618ee6269123bced','批量删除','3','问答管理 批量删除','3218dc3afad673f411baf774e22f3deb','/question/deleteBatch',NULL,'0','1','2021-04-28 19:06:59','2021-04-28 19:06:59','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('8f61d6c126c299016e8165629832ec05','编辑','3','问答管理 编辑','3218dc3afad673f411baf774e22f3deb','/question/edit',NULL,'0','1','2021-04-28 19:06:40','2021-04-28 19:06:40','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('f7913b2aae2b9c0dc3268a374036826e','新增','3','问答管理 新增','3218dc3afad673f411baf774e22f3deb','/question/add',NULL,'0','1','2021-04-28 19:06:24','2021-04-28 19:06:24','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('287ba89d9609e9f36ec60835a7dddfc7','删除','3','问答管理 删除','3218dc3afad673f411baf774e22f3deb','/question/delete',NULL,'0','1','2021-04-28 19:05:19','2021-04-28 19:05:19','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('3218dc3afad673f411baf774e22f3deb','问答管理','2','问答管理','0ef5e85a09b8987a2a723b40a9f77160','/question/question','el-icon-document','0','1','2021-04-28 18:41:20','2021-04-28 18:41:20','1','0','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('01704cae6dd21267e1a57089a53cf455','批量删除','3','问答标签 批量删除','94d5a5438d972e7661d3f6e262cf9773','/questionTag/deleteBatch',NULL,'0','1','2021-04-28 10:26:29','2021-04-28 10:31:29','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('f59f750fe16aac77e7435367bc95e2ba','删除','3','问答标签 删除','94d5a5438d972e7661d3f6e262cf9773','/questionTag/delete',NULL,'0','1','2021-04-27 23:35:19','2021-04-28 10:31:22','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('ba92c0532a96dfac964f91eec16c10e3','编辑','3','问答标签 编辑','94d5a5438d972e7661d3f6e262cf9773','/questionTag/edit',NULL,'0','1','2021-04-27 23:33:19','2021-04-27 23:33:19','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('da6f0cc43343ee9f8a741b700b67fcaf','查询','3','问答标签查询','94d5a5438d972e7661d3f6e262cf9773','/questionTag/getList',NULL,'0','1','2021-04-27 23:32:28','2021-04-27 23:32:28','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('758a05100a203f73ea6f1861ed155828','新增','3','问答标签新增','94d5a5438d972e7661d3f6e262cf9773','/questionTag/add',NULL,'0','1','2021-04-27 23:31:13','2021-04-27 23:31:13','1','1','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('94d5a5438d972e7661d3f6e262cf9773','问答标签','2','问答标签管理','0ef5e85a09b8987a2a723b40a9f77160','/question/questionTag','el-icon-collection-tag','0','1','2021-04-27 23:04:36','2021-04-27 23:04:36','1','0','0');
+insert into `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) values('0ef5e85a09b8987a2a723b40a9f77160','问答管理','1','问答管理',NULL,'/question','el-icon-headset','9','1','2021-04-27 23:03:55','2021-05-04 10:31:14','1','0','0');
+
+/*
+   导航栏表新增数据
+   @date 2021年5月12日19:14:20
+*/
+insert into `t_web_navbar` (`uid`, `name`, `navbar_level`, `summary`, `parent_uid`, `url`, `icon`, `is_show`, `is_jump_external_url`, `sort`, `status`, `create_time`, `update_time`) values('fcda0fc94ab6c8da6a970e1f654e9ffb','问答','1','问答',NULL,'/question','el-icon-table-lamp','1','0','3','1','2021-05-05 16:57:20','2021-05-05 16:59:11');
+
+
+
+insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('f775d45cb2ca89e0487654a60900bd31','75','d01f71985808c64372f18a653df34fb0','解决','2',NULL,'success','0','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','问答状态 解决','1','2021-05-05 12:53:34','2021-05-05 12:53:34','1','0');
+insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('827c3607cb4f028030bdf48a2528c694','74','d01f71985808c64372f18a653df34fb0','回答','1',NULL,'primary','0','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','问答状态 回答','1','2021-05-05 12:53:17','2021-05-05 12:53:17','1','0');
+insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('8232af8905226ca2567c61c6f15f3cb6','73','d01f71985808c64372f18a653df34fb0','创建','0',NULL,'info','1','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','问答状态 创建','1','2021-05-05 12:50:20','2021-05-05 12:50:20','1','0');
+
