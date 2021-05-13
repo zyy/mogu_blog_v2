@@ -20,12 +20,11 @@ import './permission' // permission control
 
 // 引入Vue懒加载
 import VueLazyload from 'vue-lazyload'
-Vue.use(VueLazyload)
 
 Vue.use(VueLazyload, {
   preLoad: 1.3,
-  error: '../static/images/loading.gif',
-  loading: '../static/images/loading.gif',
+  error: 'assets/img/loading.gif',
+  loading: 'assets/img/loading.gif',
   attempt: 1
 })
 

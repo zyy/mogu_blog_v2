@@ -233,7 +233,7 @@
             setTimeout(()=>{
               let blogContent = response.data.content
               // 标签替换
-              let newBlogContent = blogContent.replace("src=", "data-src=")
+              let newBlogContent = blogContent.replaceAll("src=", "data-src=")
               that.blogContent = newBlogContent
               that.loadingInstance.close();
             }, 200)
