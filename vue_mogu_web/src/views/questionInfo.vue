@@ -9,8 +9,8 @@
         <h3 class="news_title" v-if="questionData.title">{{questionData.title}}</h3>
         <div class="bloginfo" >
           <ul>
-            <li style="margin-top: -6px; padding-right: 6px">
-              <el-avatar size="small" :src="questionData.user.photoUrl"></el-avatar>
+            <li style="padding-right: 6px; text-align: center;">
+              <el-avatar fit="fill" size="small" :src="questionData.user.photoUrl"></el-avatar>
             </li>
             <li class="author">
               <a href="javascript:void(0);" v-if="questionData.user" @click="goToAuthor(questionData.user.nickName)">{{questionData.user.nickName}}</a>

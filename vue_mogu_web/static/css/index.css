@@ -224,7 +224,7 @@ _margin-top: 100px; }
 .news_infos { float: left; margin-bottom: 20px; width: 66%; background: #fff; -webkit-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, .1); -moz-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, .1); box-shadow: 0 2px 5px 0 rgba(146, 146, 146, .1); }
 
 h1.t_nav span { float: right; color: #000; }
-h1.t_nav { border-bottom: #bfbfbf 1px solid; font-size: 14px; font-weight: normal; line-height: 40px; width: 100%; overflow: hidden; margin-bottom: 20px }
+h1.t_nav { display: none; border-bottom: #bfbfbf 1px solid; font-size: 14px; font-weight: normal; line-height: 40px; width: 100%; overflow: hidden; margin-bottom: 20px }
 .n1, .n2 { width: 100px; display: block; text-align: center; float: left; color: #fff; }
 .n1 { background: #000; }
 .n2 { background: #3a6ab5; }

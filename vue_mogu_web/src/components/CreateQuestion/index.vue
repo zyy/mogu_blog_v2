@@ -44,7 +44,7 @@
           </el-col>
 
           <el-col :span="6.5">
-            <el-form-item label="文章评论" :label-width="formLabelWidth" prop="openComment">
+            <el-form-item label="问答回复" :label-width="formLabelWidth" prop="openComment">
               <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue" border size="small">{{item.dictLabel}}</el-radio>
             </el-form-item>
           </el-col>

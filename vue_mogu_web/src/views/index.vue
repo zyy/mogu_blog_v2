@@ -10,7 +10,7 @@
         <li v-for="item in secondData" :key="item.uid" @click="goToInfo(item)">
           <a href="javascript:void(0);">
             <i>
-              <img v-if="item.photoList" :src="item.photoList[0]">
+              <img v-if="item.photoList" v-lazy="item.photoList[0]">
             </i>
             <h2>{{item.title}}</h2>
             <span>{{item.blogSort.sortName}}</span>

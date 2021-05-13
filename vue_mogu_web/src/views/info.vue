@@ -61,6 +61,7 @@
         <div
           class="news_con ck-content"
           v-html="blogContent"
+          v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           v-highlight
           @click="imageChange"
         >{{blogContent}}</div>
@@ -230,7 +231,10 @@
               this.getCommentDataList();
             }
             setTimeout(()=>{
-              that.blogContent = response.data.content
+              let blogContent = response.data.content
+              // 标签替换
+              let newBlogContent = blogContent.replace("src=", "data-src=")
+              that.blogContent = newBlogContent
               that.loadingInstance.close();
             }, 200)
           });

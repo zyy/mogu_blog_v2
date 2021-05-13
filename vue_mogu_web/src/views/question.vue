@@ -35,16 +35,16 @@
             <div class="blogtitle">
               <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
               <span v-for="(questionTag, index) in item.questionTagList" style="float: right">
-                  <el-tag v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
-                  <el-tag v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>
-                  <el-tag v-if="index%3==2" type="info">{{questionTag.name}}</el-tag>
+                  <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
+                  <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>
+                  <el-tag style="margin-right: 3px" v-if="index%3==2" type="info">{{questionTag.name}}</el-tag>
                 </span>
             </div>
 
 
             <div class="bloginfo">
               <ul>
-                <li style="margin-top: -6px; padding-right: 6px">
+                <li style=" padding-right: 6px">
                   <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
                   <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 </li>

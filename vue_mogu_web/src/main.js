@@ -18,6 +18,18 @@ import '../static/css/index.css';
 Vue.config.productionTip = false
 import './permission' // permission control
 
+// 引入Vue懒加载
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: '../static/images/loading.gif',
+  loading: '../static/images/loading.gif',
+  attempt: 1
+})
+
+
 import xss from 'xss'
 // 定义全局XSS解决方法
 Object.defineProperty(Vue.prototype, '$xss', {
