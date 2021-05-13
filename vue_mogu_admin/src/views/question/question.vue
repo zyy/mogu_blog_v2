@@ -81,9 +81,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="作者" width="100" align="center">
+      <el-table-column label="作者" width="60" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <el-tooltip class="item" effect="dark" :content="scope.row.user.nickName" placement="top-start">
+            <el-avatar @click.native="goUser(scope.row.user)" size="small" v-if="scope.row.user.photoUrl" :src="scope.row.user.photoUrl"></el-avatar>
+          </el-tooltip>
         </template>
       </el-table-column>
 
@@ -107,6 +109,11 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="回答数" width="90" align="center" prop="clickCount" sortable="custom" :sort-by="['clickCount']">
+        <template slot-scope="scope">
+          <span>{{ scope.row.replyCount }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column label="问答状态" width="100" align="center" prop="questionStatus" sortable="custom" :sort-by="['questionStatus']">
         <template slot-scope="scope">
@@ -454,13 +461,18 @@ export default {
       };
       return formObject;
     },
+    // 跳转到用户中心
+    goUser: function(user) {
+      console.log("go user", user)
+      this.$router.push({ path: "/user/user", query: { nickName: user.nickName } });
+    },
     // 跳转到该问答详情
     onClick: function(row) {
       if(row.isPublish == 0) {
         this.$message.error("问答暂未发布，无法进行浏览")
         return
       }
-      window.open( this.BLOG_WEB_URL + "/#/info?blogOid=" + row.oid);
+      window.open( this.BLOG_WEB_URL + "/#/qInfo?oid=" + row.oid);
     },
     //标签远程搜索函数
     tagRemoteMethod: function(query) {

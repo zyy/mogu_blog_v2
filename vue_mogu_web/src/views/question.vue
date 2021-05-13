@@ -13,7 +13,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div class="blogsbox">
+    <div class="blogsbox" style="min-height: 773px">
       <div
         v-for="item in newQuestionData"
         :key="item.uid"
