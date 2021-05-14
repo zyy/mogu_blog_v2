@@ -15,10 +15,11 @@
       <div class="news_infos">
         <div
           class="news_con fixck newsview ck-content"
-          v-html="info.personResume"
+          v-html="personResume"
+          v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           @click="imageChange"
           v-highlight
-        >{{info.personResume}}</div>
+        >{{personResume}}</div>
 
         <el-divider></el-divider>
 
@@ -69,6 +70,7 @@
                 showCancel: false,
                 submitting: false,
                 comments: [],
+                personResume: "", // 个人简介
                 commentInfo: {
                     // 评论来源： MESSAGE_BOARD，ABOUT，BLOG_INFO 等 代表来自某些页面的评论
                     source: "ABOUT"
@@ -123,7 +125,9 @@
             var that = this;
             getMe().then(response => {
                 if (response.code == this.$ECode.SUCCESS) {
-                    this.info = response.data;
+                  this.info = response.data;
+                  let personResume = this.info.personResume
+                  this.personResume = personResume.replaceAll("src=", "data-src=")
                 }
             });
             this.getCommentDataList();

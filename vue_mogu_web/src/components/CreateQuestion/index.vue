@@ -232,6 +232,7 @@ export default {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 this.dialogFormVisible = false;
+                location.reload();
               } else {
                 this.$commonUtil.message.error(response.message)
               }
@@ -242,6 +243,7 @@ export default {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 this.dialogFormVisible = false;
+                location.reload();
               } else {
                 this.$commonUtil.message.error(response.message)
               }

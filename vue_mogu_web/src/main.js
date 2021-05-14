@@ -23,11 +23,10 @@ import VueLazyload from 'vue-lazyload'
 
 Vue.use(VueLazyload, {
   preLoad: 1.3,
-  error: 'assets/img/loading.gif',
-  loading: 'assets/img/loading.gif',
+  error: require('./assets/img/loading.gif'),
+  loading: require('./assets/img/loading.gif'),
   attempt: 1
 })
-
 
 import xss from 'xss'
 // 定义全局XSS解决方法

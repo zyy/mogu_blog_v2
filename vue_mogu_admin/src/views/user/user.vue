@@ -239,11 +239,10 @@
 
         </el-row>
 
-
         <el-row :gutter="24">
-          <el-col :span="9">
+          <el-col :span="6">
             <el-form-item label="评论状态" :label-width="formLabelWidth" prop="commentStatus">
-              <el-select placeholder="请选择" style="width:205px" v-model="form.commentStatus">
+              <el-select placeholder="请选择" style="width:100px" v-model="form.commentStatus">
                 <el-option
                   :key="item.uid"
                   :label="item.dictLabel"
@@ -254,14 +253,27 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="9">
+          <el-col :span="6">
             <el-form-item label="用户标签" :label-width="formLabelWidth" prop="userTag">
-              <el-select placeholder="请选择"  style="width:205px" v-model="form.userTag">
+              <el-select placeholder="请选择"  style="width:110px" v-model="form.userTag">
                 <el-option
                   :key="item.uid"
                   :label="item.dictLabel"
                   :value="parseInt(item.dictValue)"
                   v-for="item in userTagDictList"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="6">
+            <el-form-item label="用户状态" :label-width="formLabelWidth" prop="userTag">
+              <el-select placeholder="请选择"  style="width:110px" v-model="form.status">
+                <el-option
+                  :key="item.uid"
+                  :label="item.dictLabel"
+                  :value="parseInt(item.dictValue)"
+                  v-for="item in dataStatusDictList"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -331,6 +343,7 @@
         commentStatusDictList: [], //评论状态字典
         genderDictList: [], //评论状态字典
         userTagDictList: [], // 用户标签列表
+        dataStatusDictList: [], // 数据状态列表
         defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
         orderByDescColumn: "", // 降序字段
         orderByAscColumn: "", // 升序字段
@@ -435,7 +448,7 @@
        * 字典查询
        */
       getDictList: function () {
-        var dictTypeList = ['sys_account_source', 'sys_comment_status', 'sys_user_sex', 'sys_user_tag']
+        var dictTypeList = ['sys_account_source', 'sys_comment_status', 'sys_user_sex', 'sys_user_tag', 'sys_data_status']
         getListByDictTypeList(dictTypeList).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
             var dictMap = response.data;
@@ -443,6 +456,7 @@
             this.commentStatusDictList = dictMap.sys_comment_status.list
             this.genderDictList = dictMap.sys_user_sex.list
             this.userTagDictList = dictMap.sys_user_tag.list
+            this.dataStatusDictList = dictMap.sys_data_status.list
           }
         });
       },

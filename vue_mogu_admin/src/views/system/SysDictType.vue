@@ -293,7 +293,7 @@ export default {
     handleList: function(row) {
       var uid = row.uid;
       this.$router.push({
-        path: "sysDictData",
+        path: "SysDictData",
         query: { dictTypeUid: uid }
       });
     },

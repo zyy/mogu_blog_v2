@@ -237,6 +237,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
         user.setUserTag(userVO.getUserTag());
         user.setCommentStatus(userVO.getCommentStatus());
         user.setUpdateTime(new Date());
+        user.setStatus(userVO.getStatus());
         user.updateById();
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
     }

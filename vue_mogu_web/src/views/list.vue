@@ -25,7 +25,7 @@
           </h3>
           <span class="blogpic">
             <a href="javascript:void(0);" @click="goToInfo(item)" title>
-              <img v-if="item.photoUrl" :src="item.photoUrl" alt="">
+              <img v-if="item.photoUrl" v-lazy="item.photoUrl" :key="item.photoUrl" alt="">
             </a>
           </span>
           <p class="blogtext" v-html="item.summary">{{item.summary}}</p>
