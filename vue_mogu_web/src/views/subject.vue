@@ -14,7 +14,7 @@
             <div class="shareli" @click="showSubjectItemList(item.uid)">
               <a href="javascript:void(0);">
                 <i>
-                  <img v-if="item.photoList" class="resImg" :src="item.photoList[0]" lazy>
+                  <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]" class="resImg">
                   <el-image class="resImg" v-else>
                     <div slot="error" class="image-slot">
                       <i class="el-icon-picture-outline"></i>

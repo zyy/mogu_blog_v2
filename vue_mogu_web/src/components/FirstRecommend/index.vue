@@ -5,7 +5,8 @@
             <img
               style="width:100%; height:100%; display:block;cursor:pointer;"
               v-if="list.photoList"
-              :src="list.photoList[0]"
+              v-lazy="list.photoList[0]"
+              :key="list.photoList[0]"
               :alt="list.title"
               @click="goToInfo(list)">
             <div class="carousel-title" @click="goToInfo(list)">

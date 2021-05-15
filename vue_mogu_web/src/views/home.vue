@@ -195,7 +195,7 @@
                       <el-col :span="12">
                           <span class="blogpic" @click="goToInfo(item)">
                             <a href="javascript:void(0);" title>
-                              <img v-if="item.photoList && item.photoList.length > 0 " :src="item.photoList[0]" alt>
+                              <img v-if="item.photoList && item.photoList.length > 0 " v-lazy="item.photoList[0]" :key="item.photoList[0]"  alt>
                             </a>
                           </span>
                       </el-col>

@@ -2,7 +2,10 @@
   <div class="zhuanti" v-if="thirdData.length > 0">
     <h2 class="hometitle">特别推荐</h2>
     <ul>
-      <li  v-for="item in thirdData" :key="item.uid" style="cursor: pointer" @click="goToInfo(item)"> <i><img v-if="item.photoList" :src="item.photoList[0]"></i>
+      <li  v-for="item in thirdData" :key="item.uid" style="cursor: pointer" @click="goToInfo(item)">
+          <i>
+            <img  v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
+          </i>
         <p @click="goToInfo(item)" style="cursor: pointer">{{splitStr(item.title, 30)}}<span><a href="javascript:void(0);">阅读</a></span> </p>
       </li>
     </ul>

@@ -43,6 +43,7 @@
           class="news_con ck-content"
           v-html="blogContent"
           v-highlight
+          v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           @click="imageChange"
           style="min-height: 210px"
         >{{blogContent}}</div>

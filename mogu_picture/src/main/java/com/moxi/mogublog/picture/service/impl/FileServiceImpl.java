@@ -336,8 +336,7 @@ public class FileServiceImpl extends SuperServiceImpl<FileMapper, File> implemen
     public Object ckeditorUploadFile(HttpServletRequest request) {
         String token = request.getParameter(SysConf.TOKEN);
         // 从Redis中获取七牛云配置文件
-        Map<String, String> qiNiuResultMap = feignUtil.getSystemConfigMap(token);
-        SystemConfig systemConfig = feignUtil.getSystemConfigByMap(qiNiuResultMap);
+        SystemConfig systemConfig = feignUtil.getSystemConfig();
 
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> errorMap = new HashMap<>();
