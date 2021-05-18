@@ -63,6 +63,11 @@ public class WebConfigVO extends BaseVO<WebConfigVO> {
     private String weixinPay;
 
     /**
+     * 友链申请模板
+     */
+    private String linkApplyTemplate;
+
+    /**
      * 是否开启评论(0:否， 1:是)
      */
     private String openComment;
@@ -121,11 +126,6 @@ public class WebConfigVO extends BaseVO<WebConfigVO> {
      * 登录方式列表（用于控制前端登录方式，如账号密码,码云,Github,QQ,微信）
      */
     private String loginTypeList;
-
-    /**
-     * 是否开启用户创作【0 关闭，1 开启】
-     */
-    private String openCreateBlog;
 
 
     // 以下字段不存入数据库，封装为了方便使用

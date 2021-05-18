@@ -7,7 +7,7 @@
         <el-form style="margin-left: 20px;" label-position="left" :model="form" label-width="100px" ref="changeAdminForm">
           <el-form-item label="用户头像">
             <div class="imgBody" v-if="form.photoList">
-                <i class="el-icon-error inputClass" v-show="icon" @click="deletePhoto()" @mouseover="icon = true"></i>
+              <i class="el-icon-error inputClass" v-show="icon" @click="deletePhoto()" @mouseover="icon = true"></i>
               <img @mouseover="icon = true" @mouseout="icon = false" v-bind:src="form.photoList[0]" />
             </div>
 
@@ -20,9 +20,9 @@
             <el-input v-model="form.nickName" style="width: 400px"></el-input>
           </el-form-item>
 
-            <el-form-item label="性别">
-              <el-radio v-for="gender in genderDictList" :key="gender.uid" v-model="form.gender" :label="gender.dictValue" border size="medium">{{gender.dictLabel}}</el-radio>
-            </el-form-item>
+          <el-form-item label="性别">
+            <el-radio v-for="gender in genderDictList" :key="gender.uid" v-model="form.gender" :label="gender.dictValue" border size="medium">{{gender.dictLabel}}</el-radio>
+          </el-form-item>
 
           <!-- <el-form-item label="手机号">
             <el-input v-model="form.mobile" style="width: 400px"></el-input>
@@ -105,7 +105,7 @@
         <span slot="label"><i class="el-icon-edit"></i> 个人履历</span>
         <div class="editor-container">
           <CKEditor ref="editor" v-if="systemConfig.editorModel == '0'" :content="form.personResume" :height="500"></CKEditor>
-          <MarkdownEditor ref="editor" v-if="systemConfig.editorModel == '1'" :height="660"></MarkdownEditor>
+          <MarkdownEditor ref="editor" v-if="systemConfig.editorModel == '1'" :height="660" style="margin-top: 12px"></MarkdownEditor>
         </div>
         <div style="margin-top: 5px; margin-left: 10px;" >
           <el-button type="primary" @click="submitForm('personResume')" v-permission="'/system/editMe'">保 存</el-button>
@@ -269,16 +269,16 @@ export default {
       switch (type) {
         // 1、改变用户信息
         case "changeAdminForm":
-          {
-            editMe(this.form).then(response => {
-              console.log(response);
-              this.$notify({
-                title: "成功",
-                message: response.message,
-                type: "success"
-              });
+        {
+          editMe(this.form).then(response => {
+            console.log(response);
+            this.$notify({
+              title: "成功",
+              message: response.message,
+              type: "success"
             });
-          }
+          });
+        }
           break;
 
         // 2、改变个人履历
@@ -295,52 +295,52 @@ export default {
             });
           });
         }
-        break;
+          break;
 
         //3、改变密码
         case "changePwdForm":
-          {
-            this.$refs[type].validate(valid => {
-              if (valid) {
-                if (this.changePwdForm.newPwd1 != this.changePwdForm.newPwd2) {
-                  this.$notify.error({
-                    title: "警告",
-                    message: "两次输入密码不一致"
-                  });
-                  return false;
-                }
-                if (this.changePwdForm.oldPwd == this.changePwdForm.newPwd2) {
-                  this.$notify.error({
-                    title: "警告",
-                    message: "新密码不能和旧密码一致"
-                  });
-                  return false;
-                }
-                var params = new URLSearchParams();
-                params.append("oldPwd", this.changePwdForm.oldPwd);
-                params.append("newPwd", this.changePwdForm.newPwd1);
-                changePwd(params).then(response => {
-                  console.log(response);
-                  if (response.code == this.$ECode.SUCCESS) {
-                    this.$notify({
-                      title: "成功",
-                      message: response.message,
-                      type: "success"
-                    });
-                    this.cancel(type);
-                  } else {
-                    this.$notify.error({
-                      title: "警告",
-                      message: response.message
-                    });
-                  }
+        {
+          this.$refs[type].validate(valid => {
+            if (valid) {
+              if (this.changePwdForm.newPwd1 != this.changePwdForm.newPwd2) {
+                this.$notify.error({
+                  title: "警告",
+                  message: "两次输入密码不一致"
                 });
-              } else {
-                console.log("error submit!!");
                 return false;
               }
-            });
-          }
+              if (this.changePwdForm.oldPwd == this.changePwdForm.newPwd2) {
+                this.$notify.error({
+                  title: "警告",
+                  message: "新密码不能和旧密码一致"
+                });
+                return false;
+              }
+              var params = new URLSearchParams();
+              params.append("oldPwd", this.changePwdForm.oldPwd);
+              params.append("newPwd", this.changePwdForm.newPwd1);
+              changePwd(params).then(response => {
+                console.log(response);
+                if (response.code == this.$ECode.SUCCESS) {
+                  this.$notify({
+                    title: "成功",
+                    message: response.message,
+                    type: "success"
+                  });
+                  this.cancel(type);
+                } else {
+                  this.$notify.error({
+                    title: "警告",
+                    message: response.message
+                  });
+                }
+              });
+            } else {
+              console.log("error submit!!");
+              return false;
+            }
+          });
+        }
           break;
       }
     },

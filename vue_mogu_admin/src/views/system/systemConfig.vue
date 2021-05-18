@@ -31,7 +31,7 @@
             <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openDashboardNotification" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
           </el-form-item>
 
-          <!-- 用户前端用户注册后，邮件通知 -->
+          <!-- 仪表盘弹框通知，在用户登录后台的时候会出现，可以手动关闭 -->
           <el-form-item label="注册用户邮件激活">
             <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openEmailActivate" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
           </el-form-item>
@@ -300,7 +300,7 @@
         <span slot="label"><i class="el-icon-edit"></i> 仪表盘通知</span>
         <div class="editor-container">
           <CKEditor ref="editor" v-if="form.editorModel == '0'" :content="form.dashboardNotification" :height="500"></CKEditor>
-          <MarkdownEditor ref="editor" v-if="form.editorModel == '1'" :height="660"></MarkdownEditor>
+          <MarkdownEditor ref="editor" v-if="form.editorModel == '1'" :height="660" style="margin-top: 12px"></MarkdownEditor>
         </div>
         <div style="margin-top: 5px; margin-left: 10px;" >
           <el-button type="primary" @click="submitForm()" v-permission="'/system/editMe'">保 存</el-button>
@@ -431,27 +431,27 @@ export default {
 </script>
 
 <style lang="scss">
-  aside {
-    background: #eef1f6;
-    padding: 8px 24px;
-    margin-bottom: 20px;
-    border-radius: 2px;
-    display: block;
-    line-height: 32px;
-    font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-    color: #2c3e50;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+aside {
+  background: #eef1f6;
+  padding: 8px 24px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  color: #2c3e50;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   a {
     color: #337ab7;
     cursor: pointer;
 
-  &:hover {
-     color: rgb(32, 160, 255);
-   }
+    &:hover {
+      color: rgb(32, 160, 255);
+    }
   }
-  }
+}
 </style>
 

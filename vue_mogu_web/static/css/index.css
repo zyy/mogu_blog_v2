@@ -355,7 +355,7 @@ h1.t_nav { display: none; border-bottom: #bfbfbf 1px solid; font-size: 14px; fon
 .sortBox .time {
     float: left;
     width: 17%;
-    height: 800px;
+    height: 825px;
     overflow: scroll;
     overflow-x: hidden;
     overflow-y: auto;
@@ -470,7 +470,7 @@ h1.t_nav span { display: none }
 .sortBox .time {
     float: left;
     width: 20%;
-    height: 800px;
+    height: 825px;
     overflow: scroll;
     overflow-x: hidden;
     overflow-y: auto;
@@ -557,7 +557,7 @@ footer p { padding: 0 30px }
 .sortBox .time {
     float: left;
     width: 34%;
-    height: 800px;
+    height: 825px;
     overflow: scroll;
     overflow-x: hidden;
     overflow-y: auto;

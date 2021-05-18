@@ -446,3 +446,9 @@ insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dic
 insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('c182c5e1895a31daa078e1aa919632c1','77','12708eed0b5a266dfad751e1e816ad48','正常','1',NULL,'success','1','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','数据状态  正常','1','2021-05-13 22:37:45','2021-05-13 22:50:37','1','3');
 insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('fb907e22b25c96e1a0da7bc5dada8670','76','12708eed0b5a266dfad751e1e816ad48','删除','0',NULL,'danger','0','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','数据状态 删除','1','2021-05-13 22:36:43','2021-05-13 22:39:52','1','1');
 
+
+/*
+ 在t_web_config表，增加友链申请模板字段
+ @date 2021年5月17日11:05:59
+*/
+ALTER TABLE  t_web_config ADD link_apply_template VARCHAR(2018) COMMENT "友链申请模板,添加友链申请模板格式";

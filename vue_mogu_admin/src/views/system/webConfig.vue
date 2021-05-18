@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
 
-    <el-tabs type="border-card">
+    <el-tabs type="border-card" @tab-click="handleClick">
       <el-tab-pane v-permission="'/webConfig/getWebConfig'">
         <span slot="label">
           <i class="el-icon-date"></i> 网站信息
@@ -80,13 +80,6 @@
                 </el-checkbox-group>
               </el-form-item>
             </el-col>
-          </el-row>
-
-          <el-row>
-            <!-- 是否开启注册用户投稿创作 -->
-            <el-form-item label="用户投稿">
-              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openCreateBlog" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
-            </el-form-item>
           </el-row>
 
           <el-form-item>
@@ -200,35 +193,35 @@
         >
           <el-checkbox-group v-model="form.showList">
 
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="form.email" style="width: 400px"></el-input>
-            <el-checkbox label="1" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" style="width: 400px"></el-input>
+              <el-checkbox label="1" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
-          <el-form-item label="QQ号" prop="qqNumber">
-            <el-input v-model="form.qqNumber" style="width: 400px"></el-input>
-            <el-checkbox label="2" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="QQ号" prop="qqNumber">
+              <el-input v-model="form.qqNumber" style="width: 400px"></el-input>
+              <el-checkbox label="2" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
-          <el-form-item label="QQ群" prop="qqGroup">
-            <el-input v-model="form.qqGroup" style="width: 400px"></el-input>
-            <el-checkbox label="3" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="QQ群" prop="qqGroup">
+              <el-input v-model="form.qqGroup" style="width: 400px"></el-input>
+              <el-checkbox label="3" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
-          <el-form-item label="github" prop="github">
-            <el-input v-model="form.github" style="width: 400px"></el-input>
-            <el-checkbox label="4" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="github" prop="github">
+              <el-input v-model="form.github" style="width: 400px"></el-input>
+              <el-checkbox label="4" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
-          <el-form-item label="Gitee" prop="gitee">
-            <el-input v-model="form.gitee" style="width: 400px"></el-input>
-            <el-checkbox label="5" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="Gitee" prop="gitee">
+              <el-input v-model="form.gitee" style="width: 400px"></el-input>
+              <el-checkbox label="5" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
-          <el-form-item label="微信" prop="weChat">
-            <el-input v-model="form.weChat" style="width: 400px"></el-input>
-            <el-checkbox label="6" style="margin-left: 10px">在首页显示</el-checkbox>
-          </el-form-item>
+            <el-form-item label="微信" prop="weChat">
+              <el-input v-model="form.weChat" style="width: 400px"></el-input>
+              <el-checkbox label="6" style="margin-left: 10px">在首页显示</el-checkbox>
+            </el-form-item>
 
           </el-checkbox-group>
 
@@ -237,6 +230,17 @@
           </el-form-item>
 
         </el-form>
+      </el-tab-pane>
+
+      <el-tab-pane label="友链申请模板" v-permission="'/webConfig/getWebConfig'">
+        <span slot="label"><i class="el-icon-edit"></i> 友链申请模板</span>
+        <div class="editor-container">
+          <CKEditor ref="editor" v-if="systemConfig.editorModel == '0'" :content="form.dashboardNotification" :height="500"></CKEditor>
+          <MarkdownEditor ref="editor" v-if="systemConfig.editorModel == '1'" :height="660" style="margin-top: 12px"></MarkdownEditor>
+        </div>
+        <div style="margin-top: 5px; margin-left: 10px;" >
+          <el-button type="primary" @click="submitForm()" v-permission="'/system/editMe'">保 存</el-button>
+        </div>
       </el-tab-pane>
 
     </el-tabs>
@@ -259,6 +263,9 @@ import { getToken } from '@/utils/auth'
 import { getWebConfig, editWebConfig } from "@/api/webConfig";
 import { Loading } from 'element-ui';
 import {getListByDictType} from "@/api/sysDictData"
+import { getSystemConfig} from "@/api/systemConfig";
+import CKEditor from "@/components/CKEditor";
+import MarkdownEditor from "@/components/MarkdownEditor";
 
 export default {
   data() {
@@ -279,6 +286,7 @@ export default {
         showList: [],
         loginTypeList: []
       },
+      systemConfig: {},
       loadingInstance: null, // loading对象
       fileList: [],
       photoVisible: false, //控制图片选择器的显示
@@ -322,11 +330,14 @@ export default {
     }
   },
   components: {
-    CheckPhoto
+    CheckPhoto,
+    CKEditor,
+    MarkdownEditor
   },
   created() {
     // 获取配置
     this.getWebConfigFun();
+
     //图片上传地址
     this.uploadPictureHost = process.env.PICTURE_API + "/file/cropperPicture";
     // 查询字典
@@ -340,6 +351,9 @@ export default {
       sortName: "admin",
       token: getToken()
     };
+
+    // 获取系统配置
+    this.getSystemConfigList();
   },
   methods: {
     /**
@@ -354,6 +368,12 @@ export default {
           this.openDictList = response.data.list;
         }
       });
+    },
+    handleClick(tab, event) {
+      //设置富文本内容
+      if (this.form.linkApplyTemplate) {
+        this.$refs.editor.setData(this.form.linkApplyTemplate);
+      }
     },
     getWebConfigFun: function() {
       getWebConfig().then(response => {
@@ -371,6 +391,14 @@ export default {
           }
           this.fileIds = this.form.logo;
           this.photoList = this.form.photoList;
+        }
+      });
+    },
+    // 获取系统配置
+    getSystemConfigList: function() {
+      getSystemConfig().then(response => {
+        if (response.code == this.$ECode.SUCCESS) {
+          this.systemConfig = response.data;
         }
       });
     },
@@ -402,8 +430,8 @@ export default {
       this.isFirstPhotoVisible = false
     },
     submitForm: function() {
-
       let form = this.form;
+      form.linkApplyTemplate = this.$refs.editor.getData();
       form.logo = this.fileIds;
       form.showList = JSON.stringify(this.form.showList)
       form.loginTypeList = JSON.stringify(this.form.loginTypeList)

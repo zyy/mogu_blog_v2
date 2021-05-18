@@ -12,7 +12,7 @@
         <a href="/" class="n1">网站首页</a>
         <a href="/" class="n2">关于我</a>
       </h1>
-      <div class="news_infos">
+      <div class="news_infos" style="min-height: 805px;">
         <div
           class="news_con fixck newsview ck-content"
           v-html="personResume"
