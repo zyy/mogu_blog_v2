@@ -60,11 +60,11 @@
         </div>
         <div
           class="news_con ck-content"
-          v-html="blogContent"
+          v-html="blogReplace(blogData.content)"
           v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           v-highlight
           @click="imageChange"
-        >{{blogContent}}</div>
+        >{{blogReplace(blogData.content)}}</div>
       </div>
 
       <!--付款码和点赞-->
@@ -229,14 +229,15 @@
               this.commentInfo.blogUid = response.data.uid;
               this.getSameBlog()
               this.getCommentDataList();
+              this.loadingInstance.close();
             }
-            setTimeout(()=>{
-              let blogContent = response.data.content
-              // 标签替换
-              let newBlogContent = blogContent.replaceAll("src=", "data-src=")
-              that.blogContent = newBlogContent
-              that.loadingInstance.close();
-            }, 200)
+            // setTimeout(()=>{
+            //   let blogContent = response.data.content
+            //   // 标签替换
+            //   let newBlogContent = blogContent.replaceAll("src=", "data-src=")
+            //   that.blogContent = newBlogContent
+            //   that.loadingInstance.close();
+            // }, 200)
           });
 
           var after = 0;
@@ -296,8 +297,8 @@
                 fullscreen: true,
                 text: "正在努力加载中~"
             });
-            this.blogUid = this.$route.query.blogUid;
-            this.blogOid = this.$route.query.blogOid;
+            this.blogUid = this.$route.params.blogUid;
+            this.blogOid = this.$route.params.blogOid;
             this.setCommentAndAdmiration()
             // 屏幕大于950px的时候，显示侧边栏
             this.showSidebar = document.body.clientWidth > 950
@@ -308,6 +309,9 @@
             handleCurrentChange: function(val) {
                 this.currentPage = val;
                 this.getCommentDataList();
+            },
+            blogReplace(blogContent) {
+              return blogContent.replaceAll("src=", "data-src=")
             },
             getSameBlog() {
               var blogParams = new URLSearchParams();

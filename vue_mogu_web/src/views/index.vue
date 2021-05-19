@@ -29,13 +29,14 @@
         data-scroll-reveal="enter bottom over 1s"
       >
         <h3 class="blogtitle">
-          <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
+          <router-link :to="'/info/'+item.oid">{{item.title}}</router-link>
+<!--          <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>-->
         </h3>
 
         <span class="blogpic">
-          <a href="javascript:void(0);" @click="goToInfo(item)" title>
+          <router-link :to="'/info/'+item.oid" title>
             <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]" alt>
-          </a>
+          </router-link>
         </span>
 
         <p class="blogtext">{{item.summary}}</p>
