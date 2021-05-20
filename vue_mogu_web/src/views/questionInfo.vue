@@ -41,12 +41,12 @@
 
         <div
           class="news_con ck-content"
-          v-html="blogContent"
+          v-html="questionReplace(questionData.content)"
           v-highlight
           v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           @click="imageChange"
           style="min-height: 210px"
-        >{{blogContent}}</div>
+        >{{questionData.content}}</div>
       </div>
 
 
@@ -202,13 +202,13 @@
               this.questionOid = response.data.oid
               this.commentInfo.questionUid = response.data.uid;
               this.commentInfo.questionOid = response.data.oid;
-
+              that.loadingInstance.close();
               this.getCommentDataList()
             }
-            setTimeout(()=>{
-              that.blogContent = response.data.content
-              that.loadingInstance.close();
-            }, 200)
+            // setTimeout(()=>{
+            //   that.blogContent = response.data.content
+            //   that.loadingInstance.close();
+            // }, 200)
           });
 
           var after = 0;
@@ -278,6 +278,9 @@
             handleCurrentChange: function(val) {
                 this.currentPage = val;
                 this.getCommentDataList();
+            },
+            questionReplace(questionContent) {
+              return questionContent.replaceAll("src=", "data-src=")
             },
             getSameBlog() {
               var blogParams = new URLSearchParams();

@@ -1192,15 +1192,17 @@
         var test = window.location.href;
         var start = 0;
         var end = test.length;
+
+        console.log("当前URL", test)
         for (var i = 0; i < test.length; i++) {
-          if (test[i] == "#") {
+          if (test[i] == "/") {
             start = i;
           }
           if (test[i] == "?" && i > start) {
             end = i;
           }
         }
-        var result = test.substring(start + 1, end);
+        let result = test.substring(start, end);
         this.saveTitle = result;
       },
       /**
