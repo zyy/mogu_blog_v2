@@ -10,11 +10,11 @@ import com.moxi.mogublog.utils.JsonUtils;
 import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
+import com.moxi.mogublog.web.annotion.log.BussinessLog;
 import com.moxi.mogublog.web.global.MessageConf;
 import com.moxi.mogublog.web.global.RedisConf;
 import com.moxi.mogublog.web.global.SQLConf;
 import com.moxi.mogublog.web.global.SysConf;
-import com.moxi.mogublog.web.log.BussinessLog;
 import com.moxi.mogublog.web.utils.SensitiveUtils;
 import com.moxi.mogublog.xo.service.*;
 import com.moxi.mogublog.xo.utils.RabbitMqUtil;
@@ -505,7 +505,7 @@ public class CommentRestApi {
         }
 
         // 判断是否来自问答详情的评论
-        if(ECommentSource.QUESTION_INFO.getCode().equals(commentVO.getSource())) {
+        if (ECommentSource.QUESTION_INFO.getCode().equals(commentVO.getSource())) {
             if (StringUtils.isNotEmpty(commentVO.getBlogUid())) {
                 // 判断该问答是否开启评论功能
                 Question question = questionService.getById(commentVO.getBlogUid());
@@ -514,7 +514,7 @@ public class CommentRestApi {
                 }
 
                 // 判断该评论是否是问答的一级回复
-                if(StringUtils.isEmpty(commentVO.getToUid())) {
+                if (StringUtils.isEmpty(commentVO.getToUid())) {
                     // 更新问答的回复数
                     Integer replyCount = question.getReplyCount() + 1;
                     question.setReplyCount(replyCount);
@@ -651,10 +651,10 @@ public class CommentRestApi {
         comment.setUser(user);
 
         // 如果是回复某人的评论，那么需要向该用户Redis收件箱中中写入一条记录
-        if(StringUtils.isNotEmpty(comment.getToUserUid())) {
+        if (StringUtils.isNotEmpty(comment.getToUserUid())) {
             String redisKey = RedisConf.USER_RECEIVE_COMMENT_COUNT + Constants.SYMBOL_COLON + comment.getToUserUid();
             String count = redisUtil.get(redisKey);
-            if(StringUtils.isNotEmpty(count)) {
+            if (StringUtils.isNotEmpty(count)) {
                 redisUtil.incrBy(redisKey, Constants.NUM_ONE);
             } else {
                 redisUtil.setEx(redisKey, Constants.STR_ONE, 7, TimeUnit.DAYS);
@@ -739,12 +739,12 @@ public class CommentRestApi {
             firstCommentUid = comment.getUid();
 
             // 判断要删除的一级评论是否是问答回复【需要将该问答下的回复-1】
-            if(ECommentSource.QUESTION_INFO.getCode().equals(comment.getSource())) {
+            if (ECommentSource.QUESTION_INFO.getCode().equals(comment.getSource())) {
                 // 通过ID获取对应的问答
-                if(StringUtils.isNotEmpty(comment.getBlogUid())) {
+                if (StringUtils.isNotEmpty(comment.getBlogUid())) {
                     Question question = questionService.getById(comment.getBlogUid());
-                    Integer replyCount = question.getReplyCount() - 1 ;
-                    if(replyCount < 0) {
+                    Integer replyCount = question.getReplyCount() - 1;
+                    if (replyCount < 0) {
                         question.setReplyCount(0);
                     } else {
                         question.setReplyCount(replyCount);
@@ -843,6 +843,7 @@ public class CommentRestApi {
 
     /**
      * 通过评论类型跳转到对应的页面
+     *
      * @param commentVO
      * @return
      */
@@ -876,11 +877,11 @@ public class CommentRestApi {
         log.info("获取用户收到的评论回复数");
         // 判断用户是否登录
         Integer commentCount = 0;
-        if(request.getAttribute(SysConf.USER_UID) != null) {
+        if (request.getAttribute(SysConf.USER_UID) != null) {
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
             String redisKey = RedisConf.USER_RECEIVE_COMMENT_COUNT + Constants.SYMBOL_COLON + userUid;
             String count = redisUtil.get(redisKey);
-            if(StringUtils.isNotEmpty(count)) {
+            if (StringUtils.isNotEmpty(count)) {
                 commentCount = Integer.valueOf(count);
             }
         }
@@ -892,7 +893,7 @@ public class CommentRestApi {
     public String readUserReceiveCommentCount(HttpServletRequest request) {
         log.info("阅读用户接收的评论数");
         // 判断用户是否登录
-        if(request.getAttribute(SysConf.USER_UID) != null) {
+        if (request.getAttribute(SysConf.USER_UID) != null) {
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
             String redisKey = RedisConf.USER_RECEIVE_COMMENT_COUNT + Constants.SYMBOL_COLON + userUid;
             redisUtil.delete(redisKey);

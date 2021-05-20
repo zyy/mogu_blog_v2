@@ -1,4 +1,4 @@
-package com.moxi.mogublog.web.log;
+package com.moxi.mogublog.web.annotion.log;
 
 import com.moxi.mogublog.commons.entity.WebVisit;
 import com.moxi.mogublog.utils.IpUtils;
@@ -8,12 +8,7 @@ import com.moxi.mogublog.web.global.RedisConf;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.holder.AbstractRequestAwareRunnable;
-import com.moxi.mougblog.base.holder.RequestHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,11 +17,9 @@ import java.util.concurrent.TimeUnit;
  * @author: 陌溪
  * @create: 2020-03-05-8:59
  */
-@Component("WebSysLogHandle")
+
 public class SysLogHandle extends AbstractRequestAwareRunnable {
 
-    @Autowired
-    RedisUtil redisUtil;
     /**
      * 模块UID
      */
@@ -35,6 +28,10 @@ public class SysLogHandle extends AbstractRequestAwareRunnable {
      * 其它数据
      */
     String otherData;
+    /**
+     * Redis工具类对象
+     */
+    private RedisUtil redisUtil;
     /**
      * 用户UID
      */
@@ -45,25 +42,54 @@ public class SysLogHandle extends AbstractRequestAwareRunnable {
     private String behavior;
 
     /**
-     * 构造方法，用于初始化成员变量
+     * ip地址
      */
-    public void setSysLogHandle(String userUid, String behavior, String moduleUid, String otherData) {
+    private String ip;
+
+    /**
+     * 操作系统
+     */
+    private String os;
+
+    /**
+     * 浏览器
+     */
+    private String browser;
+
+    /**
+     * 构造函数
+     *
+     * @param userUid
+     * @param ip
+     * @param os
+     * @param browser
+     * @param behavior
+     * @param moduleUid
+     * @param otherData
+     * @param redisUtil
+     */
+    public SysLogHandle(String userUid, String ip, String os, String browser, String behavior, String moduleUid, String otherData, RedisUtil redisUtil) {
         this.userUid = userUid;
+        this.ip = ip;
+        this.os = os;
+        this.browser = browser;
         this.behavior = behavior;
         this.moduleUid = moduleUid;
         this.otherData = otherData;
+        this.redisUtil = redisUtil;
     }
 
+
+    /**
+     * 遇见语录：Request请求结束后，异步线程拿主进程里数据会出现空指针异常【因此不能在子线程里操作Request对象】
+     * 这个问题不一定每一次都出现，可能100次中有4~5次出现空指针异常，也就是说当 异步线程执行比主线程快 是没问题的
+     * 这里为了避免这种情况，将避免在异步线程中操作Request对象
+     */
     @Override
     protected void onRun() {
-        HttpServletRequest request = RequestHolder.getRequest();
-        Map<String, String> map = IpUtils.getOsAndBrowserInfo(request);
-        String os = map.get(SysConf.OS);
-        String browser = map.get(SysConf.BROWSER);
+        System.out.println("============" + Thread.currentThread().getName());
         WebVisit webVisit = new WebVisit();
-        String ip = IpUtils.getIpAddr(request);
         webVisit.setIp(ip);
-
         //从Redis中获取IP来源
         String jsonResult = redisUtil.get(RedisConf.IP_SOURCE + Constants.SYMBOL_COLON + ip);
         if (StringUtils.isEmpty(jsonResult)) {

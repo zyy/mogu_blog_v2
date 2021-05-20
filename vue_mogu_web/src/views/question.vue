@@ -33,7 +33,9 @@
 
           <el-col :xs="18" :sm="20">
             <div class="blogtitle">
-              <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
+
+              <a :href="'/qInfo/'+item.oid" target="_blank">{{item.title}}</a>
+
               <span v-for="(questionTag, index) in item.questionTagList" style="float: right">
                   <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
                   <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>

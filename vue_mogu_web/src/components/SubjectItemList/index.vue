@@ -27,12 +27,16 @@
           >
             <el-timeline-item :timestamp="item.blog.createTime" placement="top">
               <el-card>
-                <span class="blogpic" @click="goToInfo(item.blog.uid)">
-                  <a href="javascript:void(0);" title>
-                    <img v-if="item.blog && item.blog.photoList" :src="item.blog.photoList[0]" alt>
-                  </a>
-                </span>
-                <p class="blogtext" style="font-weight: bold; cursor: pointer;" @click="goToInfo(item.blog.uid)">{{item.blog.title}}</p>
+
+                <a :href="item.blog.type == 0 ? '/info/'+item.blog.oid : item.blog.outsideLink" target="_blank">
+                  <span class="blogpic">
+                    <a href="javascript:void(0);" title>
+                      <img v-if="item.blog && item.blog.photoList" :src="item.blog.photoList[0]" alt>
+                    </a>
+                  </span>
+                  <p class="blogtext" style="font-weight: bold; cursor: pointer;">{{item.blog.title}}</p>
+                </a>
+
                 <div class="bloginfo">
                   <ul>
                     <li class="author">

@@ -15,7 +15,9 @@ import com.moxi.mougblog.base.enums.ELevel;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.global.Constants;
-import com.moxi.mougblog.base.validator.group.*;
+import com.moxi.mougblog.base.validator.group.Default;
+import com.moxi.mougblog.base.validator.group.Delete;
+import com.moxi.mougblog.base.validator.group.GetList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +29,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * 博客创作相关
+ *
  * @author: 陌溪
  * @create: 2021-04-11-9:58
  */
@@ -59,7 +59,7 @@ public class CreateBlogRestApi {
     public String getUserBlogList(HttpServletRequest request, @Validated({GetList.class}) @RequestBody BlogVO blogVO, BindingResult result) {
 
         // 前端没有传递用户UID时，将查询在线用户的博客列表
-        if(StringUtils.isEmpty(blogVO.getUserUid()) && request.getAttribute(SysConf.USER_UID) != null) {
+        if (StringUtils.isEmpty(blogVO.getUserUid()) && request.getAttribute(SysConf.USER_UID) != null) {
             blogVO.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         }
 
@@ -71,12 +71,12 @@ public class CreateBlogRestApi {
     @PostMapping("/add")
     public String add(HttpServletRequest request, @Validated({Default.class}) @RequestBody BlogVO blogVO, BindingResult result) {
 
-        if(request.getAttribute(SysConf.USER_UID) == null) {
+        if (request.getAttribute(SysConf.USER_UID) == null) {
             return ResultUtil.errorWithMessage("登录后才可以创建博客！");
         }
         // 判断是否开启投稿功能
         WebConfig webConfig = webConfigService.getWebConfig();
-        if(Constants.STR_ZERO.equals(webConfig.getOpenCreateBlog())) {
+        if (Constants.STR_ZERO.equals(webConfig.getOpenCreateBlog())) {
             return ResultUtil.errorWithMessage("后台暂未开启投稿功能");
         }
         // 参数校验
@@ -93,7 +93,7 @@ public class CreateBlogRestApi {
     @ApiOperation(value = "编辑博客", notes = "编辑博客", response = String.class)
     @PostMapping("/edit")
     public String edit(HttpServletRequest request, @Validated({Default.class}) @RequestBody BlogVO blogVO, BindingResult result) {
-        if(request.getAttribute(SysConf.USER_UID) == null) {
+        if (request.getAttribute(SysConf.USER_UID) == null) {
             return ResultUtil.errorWithMessage("登录后才可以编辑博客！");
         }
         // 参数校验
@@ -105,7 +105,7 @@ public class CreateBlogRestApi {
     @ApiOperation(value = "删除博客", notes = "删除博客", response = String.class)
     @PostMapping("/delete")
     public String delete(HttpServletRequest request, @Validated({Delete.class}) @RequestBody BlogVO blogVO, BindingResult result) {
-        if(request.getAttribute(SysConf.USER_UID) == null) {
+        if (request.getAttribute(SysConf.USER_UID) == null) {
             return ResultUtil.errorWithMessage("登录后才可以编辑博客！");
         }
         // 参数校验

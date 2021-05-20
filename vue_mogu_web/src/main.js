@@ -45,6 +45,7 @@ Vue.directive('highlight', function (el) {
   })
 })
 
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -2,18 +2,23 @@
     <div class="tuijian" v-if="fourthData.length > 0">
       <h2 class="hometitle">推荐文章</h2>
       <ul class="tjpic" v-if="fourthData[0]">
-        <i>
-          <img v-if="fourthData[0].photoList" v-lazy="fourthData[0].photoList[0]" :key="fourthData[0].photoList[0]" style="cursor:pointer"  @click="goToInfo(fourthData[0])">
-        </i>
-        <p><a href="javascript:void(0);" @click="goToInfo(fourthData[0])">{{fourthData[0].title}}</a></p>
+        <a :href="fourthData[0].type == 0 ? '/info/'+fourthData[0].oid : fourthData[0].outsideLink" target="_blank">
+          <i>
+            <img v-if="fourthData[0].photoList" v-lazy="fourthData[0].photoList[0]" :key="fourthData[0].photoList[0]" style="cursor:pointer" >
+          </i>
+          <p>{{fourthData[0].title}}</p>
+        </a>
       </ul>
 
       <ul class="sidenews">
         <li v-for="item in sideNews" :key="item.uid">
-          <i>
-            <img style="cursor:pointer" v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]" @click="goToInfo(fourthData[0])">
-          </i>
-          <p><a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a></p>
+          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
+            <i>
+              <img style="cursor:pointer" v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
+            </i>
+            <p><a href="javascript:void(0);">{{item.title}}</a></p>
+          </a>
+
           <span>{{item.createTime}}</span>
         </li>
       </ul>
@@ -51,26 +56,8 @@ export default {
       }
     },
     methods: {
-      //跳转到文章详情【或推广链接】
-      goToInfo(blog) {
-        if(blog.type == "0") {
-          let routeData = this.$router.resolve({
-            path: "/info",
-            query: {blogOid: blog.oid}
-          });
-          window.open(routeData.href, '_blank');
-        } else if(blog.type == "1") {
-          var params = new URLSearchParams();
-          params.append("uid", blog.uid);
-          getBlogByUid(params).then(response => {
-            // 记录一下用户点击日志
-          });
-          window.open(blog.outsideLink, '_blank');
-        }
-      },
+
     },
-
-
 }
 </script>
 

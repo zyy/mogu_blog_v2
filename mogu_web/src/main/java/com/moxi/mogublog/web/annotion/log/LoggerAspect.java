@@ -1,8 +1,9 @@
-package com.moxi.mogublog.web.log;
+package com.moxi.mogublog.web.annotion.log;
 
 import com.moxi.mogublog.utils.AopUtils;
 import com.moxi.mogublog.utils.AspectUtil;
 import com.moxi.mogublog.utils.IpUtils;
+import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mougblog.base.enums.EBehavior;
 import com.moxi.mougblog.base.holder.RequestHolder;
@@ -13,6 +14,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +30,10 @@ import java.util.Map;
 public class LoggerAspect {
 
     @Autowired
-    SysLogHandle sysLogHandle;
+    ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @Pointcut(value = "@annotation(bussinessLog)")
     public void pointcut(BussinessLog bussinessLog) {
@@ -83,9 +88,17 @@ public class LoggerAspect {
             if (request.getAttribute(SysConf.USER_UID) != null) {
                 userUid = request.getAttribute(SysConf.USER_UID).toString();
             }
+
+            Map<String, String> map = IpUtils.getOsAndBrowserInfo(request);
+            String os = map.get(SysConf.OS);
+            String browser = map.get(SysConf.BROWSER);
+            String ip = IpUtils.getIpAddr(request);
             // 异步存储日志
-            sysLogHandle.setSysLogHandle(userUid, behavior.getBehavior(), result.get(SysConf.MODULE_UID), result.get(SysConf.OTHER_DATA));
-            sysLogHandle.onRun();
+            threadPoolTaskExecutor.execute(
+                    new SysLogHandle(userUid, ip, os, browser,
+                            behavior.getBehavior(),
+                            result.get(SysConf.MODULE_UID),
+                            result.get(SysConf.OTHER_DATA), redisUtil));
         }
     }
 }

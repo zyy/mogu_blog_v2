@@ -16,14 +16,11 @@
           data-scroll-reveal="enter bottom over 1s"
         >
           <h3 class="blogtitle">
-            <a
-              href="javascript:void(0);"
-              @click="goToInfo(item)"
-              v-html="item.title"
-            >{{item.title}}</a>
+            <a v-html="item.title" :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
           </h3>
+
           <span class="blogpic">
-            <a href="javascript:void(0);" @click="goToInfo(item)" title>
+            <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
               <img v-if="item.photoUrl" v-lazy="item.photoUrl" :key="item.photoUrl" alt="">
             </a>
           </span>

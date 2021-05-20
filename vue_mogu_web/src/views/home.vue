@@ -71,8 +71,6 @@
         </div>
       </div>
 
-
-
       <el-dropdown @command="handleCommand" class="create">
         <span class="el-dropdown-link" >
           <el-button v-if="showCreateBlog" type="primary" size="small" icon="el-icon-edit" class="createBlog" >创作</el-button>

@@ -88,6 +88,11 @@ public class WebConfigVO extends BaseVO<WebConfigVO> {
     private String openMobileAdmiration;
 
     /**
+     * 是否开启用户创作【0 关闭，1 开启】
+     */
+    private String openCreateBlog;
+
+    /**
      * github地址
      */
     private String github;

@@ -267,11 +267,10 @@
                 fullscreen: true,
                 text: "正在努力加载中~"
             });
-            this.questionOid = this.$route.query.oid;
+            this.questionOid = this.$route.params.questionOid;
             this.setCommentAndAdmiration()
             // 屏幕大于950px的时候，显示侧边栏
             this.showSidebar = document.body.clientWidth > 950
-
         },
         methods: {
             //拿到vuex中的写的两个方法

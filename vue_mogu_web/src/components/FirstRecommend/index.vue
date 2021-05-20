@@ -2,16 +2,20 @@
   <div class="banner">
     <el-carousel class="bannerBox" indicator-position="outside" >
       <el-carousel-item  v-for="(list,index) in slideList" :key="index">
-            <img
-              style="width:100%; height:100%; display:block;cursor:pointer;"
-              v-if="list.photoList"
-              v-lazy="list.photoList[0]"
-              :key="list.photoList[0]"
-              :alt="list.title"
-              @click="goToInfo(list)">
-            <div class="carousel-title" @click="goToInfo(list)">
-              <span>{{list.title}}</span>
-            </div>
+            <a :href="list.type == 0 ? '/info/'+list.oid : list.outsideLink" target="_blank">
+              <img
+                style="width:100%; height:100%; display:block;cursor:pointer;"
+                v-if="list.photoList"
+                v-lazy="list.photoList[0]"
+                :key="list.photoList[0]"
+                :alt="list.title"
+                @click="goToInfo(list)">
+
+              <div class="carousel-title">
+                <span>{{list.title}}</span>
+              </div>
+            </a>
+
       </el-carousel-item>
     </el-carousel>
   </div>
@@ -42,23 +46,7 @@ export default {
     });
   },
   methods: {
-    //跳转到文章详情【或推广链接】
-    goToInfo(blog) {
-      if(blog.type == "0") {
-        let routeData = this.$router.resolve({
-          path: "/info",
-          query: {blogOid: blog.oid}
-        });
-        window.open(routeData.href, '_blank');
-      } else if(blog.type == "1") {
-        var params = new URLSearchParams();
-        params.append("uid", blog.uid);
-        getBlogByUid(params).then(response => {
-          // 记录一下用户点击日志
-        });
-        window.open(blog.outsideLink, '_blank');
-      }
-    },
+
   }
 };
 </script>

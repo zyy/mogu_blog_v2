@@ -55,11 +55,12 @@ public class SensitiveUtils {
 
     /**
      * 将一个敏感词添加进前缀树中
+     *
      * @param keyword
      */
     private void addKeyword(String keyword) {
         TrieNode tempNode = rootNode;
-        for (int i = 0; i < keyword.length(); i ++) {
+        for (int i = 0; i < keyword.length(); i++) {
             char c = keyword.charAt(i);
             // 首先判断是否存在相同子节点
             TrieNode subNode = tempNode.getSubNode(c);
@@ -81,6 +82,7 @@ public class SensitiveUtils {
 
     /**
      * 过滤敏感词
+     *
      * @param text 待过滤的文本
      * @return 过滤后的文本（即用 *** 替代敏感词） 和敏感词出现次数
      */
@@ -107,10 +109,10 @@ public class SensitiveUtils {
                 // 若指针 1 处于根节点，则将此符号计入结果（直接忽略），让指针 2 向下走一步
                 if (tempNode == rootNode) {
                     sb.append(c);
-                    begin ++;
+                    begin++;
                 }
                 // 无论符号在开头还是在中间，指针 3 都会向下走一步
-                end ++;
+                end++;
                 continue;
             }
 
@@ -120,25 +122,23 @@ public class SensitiveUtils {
                 // 以指针 begin 开头的字符串不是敏感词
                 sb.append(text.charAt(begin));
                 // 进入下一位的判断
-                begin ++;
+                begin++;
                 end = begin;
                 // 指针 1 重新指向根节点
                 tempNode = rootNode;
-            }
-            else if (tempNode.isKeywordEnd()) {
+            } else if (tempNode.isKeywordEnd()) {
                 // 发现敏感词，将 begin~end 的字符串替换掉
                 sb.append(REPLACEMENT);
                 // 计算加1
-                count ++;
+                count++;
                 // 进入下一位的判断
-                end ++;
+                end++;
                 begin = end;
                 // 指针 1 重新指向根节点
                 tempNode = rootNode;
-            }
-            else {
+            } else {
                 // 检查下一个字符
-                end ++;
+                end++;
             }
         }
 
@@ -152,6 +152,7 @@ public class SensitiveUtils {
 
     /**
      * 判断某个字符是否是符号
+     *
      * @param c
      * @return
      */

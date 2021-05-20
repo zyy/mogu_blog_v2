@@ -7,15 +7,17 @@
 
       <!-- 二级推荐 -->
       <div class="toppic">
-        <li v-for="item in secondData" :key="item.uid" @click="goToInfo(item)">
-          <a href="javascript:void(0);">
+        <li v-for="item in secondData" :key="item.uid">
+          <a  :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink">
             <i>
               <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
             </i>
             <h2>{{item.title}}</h2>
             <span>{{item.blogSort.sortName}}</span>
           </a>
+
         </li>
+
       </div>
     </div>
     <div class="blank"></div>
@@ -29,20 +31,18 @@
         data-scroll-reveal="enter bottom over 1s"
       >
         <h3 class="blogtitle">
-          <router-link :to="'/info/'+item.oid">{{item.title}}</router-link>
-<!--          <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>-->
+          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
         </h3>
 
         <span class="blogpic">
-          <router-link :to="'/info/'+item.oid" title>
+          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
             <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]" alt>
-          </router-link>
+          </a>
         </span>
 
         <p class="blogtext">{{item.summary}}</p>
         <div class="bloginfo">
           <ul>
-
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
               <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
@@ -72,9 +72,7 @@
 
       <div class="isEnd">
         <!-- <span v-if="!isEnd">正在加载中~</span> -->
-
         <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">点击加载更多</div>
-
         <div class="lds-css ng-scope" v-if="!isEnd&&loading">
           <div style="width:100%;height:100%" class="lds-facebook">
             <div></div>
@@ -82,7 +80,6 @@
             <div></div>
           </div>
         </div>
-
         <span v-if="isEnd">我也是有底线的~</span>
       </div>
     </div>
