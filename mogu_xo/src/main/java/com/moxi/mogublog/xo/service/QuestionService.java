@@ -1,11 +1,13 @@
 package com.moxi.mogublog.xo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.moxi.mogublog.commons.entity.Blog;
 import com.moxi.mogublog.commons.entity.Question;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.service.SuperService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 问答表 服务类
@@ -21,6 +23,26 @@ public interface QuestionService extends SuperService<Question> {
      * @return
      */
     IPage<Question> getPageList(QuestionVO questionVO);
+
+    /**
+     * 通过关键字搜索问答列表
+     *
+     * @param keywords
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public Map<String, Object> getQuestionByKeyword(String keywords, Long currentPage, Long pageSize);
+
+    /**
+     * 通过作者搜索问答
+     *
+     * @param author
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public IPage<Question> getQuestionListByAuthor(String author, Long currentPage, Long pageSize);
 
     /**
      * 获取问答详情

@@ -21,6 +21,7 @@ import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
+import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ECode;
 import com.moxi.mougblog.base.global.ErrorCode;
@@ -113,6 +114,73 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         List<Question> questionList = pageList.getRecords();
         this.setQuestionTagAndUser(questionList);
         pageList.setRecords(questionList);
+        return pageList;
+    }
+
+    @Override
+    public Map<String, Object> getQuestionByKeyword(String keywords, Long currentPage, Long pageSize) {
+        final String keyword = keywords.trim();
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        queryWrapper.and(wrapper -> wrapper.like(SQLConf.TITLE, keyword).or().like(SQLConf.SUMMARY, keyword));
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        queryWrapper.select(Question.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
+        queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
+        Page<Question> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(pageSize);
+
+        IPage<Question> iPage = questionService.page(page, queryWrapper);
+        List<Question> questionList = iPage.getRecords();
+        questionList.forEach(item -> {
+            // 给标题和简介设置高亮
+            item.setTitle(StringUtils.getHitCode(item.getTitle(), keyword));
+            item.setSummary(StringUtils.getHitCode(item.getSummary(), keyword));
+        });
+        this.setQuestionTagAndUser(questionList);
+
+        Map<String, Object> map = new HashMap<>();
+        // 返回总记录数
+        map.put(SysConf.TOTAL, iPage.getTotal());
+        // 返回总页数
+        map.put(SysConf.TOTAL_PAGE, iPage.getPages());
+        // 返回当前页大小
+        map.put(SysConf.PAGE_SIZE, pageSize);
+        // 返回当前页
+        map.put(SysConf.CURRENT_PAGE, iPage.getCurrent());
+        // 返回数据
+        map.put(SysConf.QUESTION_LIST, questionList);
+        return map;
+    }
+
+    @Override
+    public IPage<Question> getQuestionListByAuthor(String author, Long currentPage, Long pageSize) {
+
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq(SQLConf.NICK_NAME, author);
+        List<User> userList = userService.list(userQueryWrapper);
+        List<String> userUidList = new ArrayList<>();
+        userList.forEach(item -> {
+            userUidList.add(item.getUid());
+        });
+        IPage<Question> pageList = new Page<>();
+        if(userUidList.size() == 0) {
+            return pageList;
+        }
+
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        Page<Question> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(pageSize);
+        queryWrapper.in(SQLConf.USER_UID, userUidList);
+        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        queryWrapper.eq(BaseSQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
+        queryWrapper.select(Question.class, i -> !i.getProperty().equals(SysConf.CONTENT));
+        pageList = questionService.page(page, queryWrapper);
+        List<Question> list = pageList.getRecords();
+        this.setQuestionTagAndUser(list);
+        pageList.setRecords(list);
         return pageList;
     }
 

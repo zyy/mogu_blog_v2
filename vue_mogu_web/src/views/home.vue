@@ -1357,7 +1357,7 @@
     margin-left: 6px;
   }
   #starlist li .title {
-    color: #00a7eb;
+    color: #007fff;
   }
 
   .create {

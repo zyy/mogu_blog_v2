@@ -1,6 +1,6 @@
 <template>
     <div class="guanzhu" id="follow-us" ref="follow" v-if="isShow">
-      <h2 class="hometitle">关注我们 么么哒！</h2>
+      <h2 class="hometitle">关注我们</h2>
       <ul>
         <!-- <li class="sina"><a href="/" target="_blank"><span>新浪微博</span>蘑菇博客</a></li>         -->
         <li class="qqGroup" v-if="contact.qqGroup"><a href="javascript:void(0);"><span>QQ群</span>{{contact.qqGroup}}</a></li>

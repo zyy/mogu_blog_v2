@@ -7,38 +7,109 @@
         <a href="/" class="n2">搜索</a>
       </h1>
 
+      <el-tabs v-if="showSearchType && showCreateBlog" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane name="0">
+          <span :class="activeName==0?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-collection-tag"></i> <span>博客</span></span>
+        </el-tab-pane>
+        <el-tab-pane name="1">
+          <span :class="activeName==1?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-tickets"></i> <span>问答</span></span>
+        </el-tab-pane>
+      </el-tabs>
+
       <!--blogsbox begin-->
       <div class="blogsbox">
         <div
-          v-for="item in blogData"
+          v-for="item in listData"
           :key="item.uid"
           class="blogs"
           data-scroll-reveal="enter bottom over 1s"
         >
-          <h3 class="blogtitle">
-            <a v-html="item.title" :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
-          </h3>
+          <!--判断返回的结果是否是博客-->
+          <el-row v-if="activeName=='0'">
+            <h3 class="blogtitle">
+              <a v-html="item.title" :href="item.type == 0 ? '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
+            </h3>
 
-          <span class="blogpic">
-            <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
+            <span class="blogpic">
+            <a :href="item.type == 0 ? '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">
               <img v-if="item.photoUrl" v-lazy="item.photoUrl" :key="item.photoUrl" alt="">
             </a>
           </span>
-          <p class="blogtext" v-html="item.summary">{{item.summary}}</p>
-          <div class="bloginfo">
-            <ul>
-              <li class="author">
-                <span class="iconfont">&#xe60f;</span>
-                <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
-              </li>
-              <li class="lmname" v-if="item.blogSortName">
-                <span class="iconfont">&#xe603;</span>
-                <a href="javascript:void(0);" @click="goToList(item.blogSortUid)">{{item.blogSortName}}</a>
-              </li>
-              <li class="createTime"><span class="iconfont">&#xe606;</span>{{item.createTime}}</li>
-            </ul>
-          </div>
+            <p class="blogtext" v-html="item.summary">{{item.summary}}</p>
+            <div class="bloginfo">
+              <ul>
+                <li class="author">
+                  <span class="iconfont">&#xe60f;</span>
+                  <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+                </li>
+                <li class="lmname" v-if="item.blogSortName">
+                  <span class="iconfont">&#xe603;</span>
+                  <a href="javascript:void(0);" @click="goToList(item.blogSortUid)">{{item.blogSortName}}</a>
+                </li>
+                <li class="createTime"><span class="iconfont">&#xe606;</span>{{item.createTime}}</li>
+              </ul>
+            </div>
+          </el-row>
+
+          <!--判断返回的结果是否是问答-->
+          <el-row v-else-if="activeName=='1'"  :span="24" class="questionLine">
+            <el-col  :xs="6" :sm="4">
+              <div class="itemNum">
+                <el-tag type="success">回答 {{item.replyCount}}</el-tag>
+              </div>
+              <div class="itemNum">
+                <el-tag type="warning">阅读 {{item.clickCount}}</el-tag>
+              </div>
+            </el-col>
+
+            <el-col :xs="18" :sm="20">
+              <div class="blogtitle">
+                <a :href=" VUE_MOGU_WEB + '/#/qInfo?questionOid='+item.oid" target="_blank" v-html="item.title">{{item.title}}</a>
+                <span v-for="(questionTag, index) in item.questionTagList" style="float: right">
+                  <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
+                  <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>
+                  <el-tag style="margin-right: 3px" v-if="index%3==2" type="info">{{questionTag.name}}</el-tag>
+                </span>
+              </div>
+
+
+              <div class="bloginfo">
+                <ul>
+                  <li style=" padding-right: 6px">
+                    <el-avatar size="small" v-if="item.user" :src="item.user.photoUrl"></el-avatar>
+                    <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  </li>
+                  <li class="author" v-if="item.user">
+                    <a  href="javascript:void(0);">{{item.user.nickName}}</a>
+                  </li>
+
+                  <li class="lmname" v-if="item.blogSort">
+                    <span class="iconfont">&#xe603;</span>
+                    <a
+                      href="javascript:void(0);"
+                      @click="goToList(item.blogSort.uid)"
+                    >{{item.blogSort.sortName}}</a>
+                  </li>
+
+                  <li class="view">
+                    <span class="iconfont">&#xe8c7;</span>
+                    <span>{{item.clickCount}}</span>
+                  </li>
+
+                  <li class="createTime">
+                    <span class="iconfont">&#xe606;</span>
+                    {{item.createTime}}
+                  </li>
+
+                </ul>
+              </div>
+            </el-col>
+          </el-row>
+
+
+
         </div>
+
 
         <div class="isEnd">
           <div
@@ -55,7 +126,7 @@
             </div>
           </div>
 
-          <span v-if="blogData.length >= 0 && isEnd &&!loading && totalPages>0">我也是有底线的~</span>
+          <span v-if="listData.length >= 0 && isEnd &&!loading && totalPages>0">我也是有底线的~</span>
 
           <span v-if="totalPages == 0 && !loading">空空如也~</span>
         </div>
@@ -98,21 +169,27 @@ import {
   searchBlogByAuthor
 } from "../api/search";
 import {getBlogByUid} from "../api/blogContent";
+import {getWebConfig} from "../api";
+import {mapMutations} from "vuex";
 
 export default {
   name: "list",
   data() {
     return {
-      blogData: [],
+      VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
+      listData: [], // 查询出的文章
       keywords: "",
       currentPage: 1,
       totalPages: 0,
       pageSize: 10,
       total: 0, //总数量
       tagUid: "",
-      searchBlogData: [], //搜索出来的文章
+      searchlistData: [], //搜索出来的文章
       sortUid: "",
+      showCreateBlog: false, // 是否开启创作
+      showSearchType: false, // 是否显示按钮
       isEnd: false, //是否到底底部了
+      activeName: "0", // 激活页
       loading: false //内容是否正在加载
     };
   },
@@ -137,7 +214,7 @@ export default {
     ) {
       return;
     }
-
+    this.getWebConfigInfo();
     this.search();
   },
   mounted() {
@@ -158,11 +235,12 @@ export default {
       this.keywords = this.$route.query.keyword;
       this.tagUid = this.$route.query.tagUid;
       this.sortUid = this.$route.query.sortUid;
-      this.searchBlogData = [] // 清空查询出来的博客
+      this.searchlistData = [] // 清空查询出来的博客
       this.search();
     }
   },
   methods: {
+    ...mapMutations(['setWebConfigData']),
     //跳转到文章详情
     goToInfo(blog) {
       if(blog.type == "0") {
@@ -178,6 +256,29 @@ export default {
           // 记录一下用户点击日志
         });
         window.open(blog.outsideLink, '_blank');
+      }
+    },
+    /**
+     * 获取网站配置
+     */
+    getWebConfigInfo: function() {
+      let webConfigData = this.$store.state.app.webConfigData
+      if(webConfigData.createTime) {
+        this.contact = webConfigData;
+        this.mailto = "mailto:" + this.contact.email;
+        this.openComment = webConfigData.openComment
+        console.log("是否开启投稿", webConfigData)
+        this.showCreateBlog = webConfigData.openCreateBlog == "1" ? true:false
+      } else {
+        getWebConfig().then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.info = response.data;
+            // 存储在Vuex中
+            this.setWebConfigData(response.data)
+            this.openComment = this.info.openComment
+            this.showCreateBlog = this.info.openCreateBlog == "1" ? true:false
+          }
+        });
       }
     },
     //点击了分类
@@ -201,162 +302,163 @@ export default {
       that.currentPage = that.currentPage + 1;
       that.search();
     },
+    handleClick(tab, event) {
+      this.searchlistData = []
+      this.listData = []
+      this.search()
+    },
     search: function() {
       var that = this;
-
       that.loading = true;
-
       if (this.keywords != undefined) {
+        this.showSearchType = true
         var params = new URLSearchParams();
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         params.append("keywords", that.keywords);
+        params.append("searchType", that.activeName);
         searchBlog(params).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
             that.isEnd = false;
             //获取总页数
-            that.totalPages = response.data.blogList.length;
             that.total = response.data.total;
             that.pageSize = response.data.pageSize;
             that.currentPage = response.data.currentPage;
-            var blogData = response.data.blogList;
+            let listData = [];
+            if(that.activeName == "1") {
+              listData = response.data.questionList
+              that.totalPages = response.data.questionList.length;
+            } else {
+              listData = response.data.blogList
+              that.totalPages = response.data.blogList.length;
+            }
 
             // 判断搜索的博客是否有内容
             if(response.data.total <= 0) {
               that.isEnd = true;
               that.loading = false;
-              this.blogData = []
+              this.listData = []
               return;
             }
 
             //全部加载完毕
-            if (blogData.length < that.pageSize) {
+            if (listData.length < that.pageSize) {
               that.isEnd = true;
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
+            listData = that.searchlistData.concat(listData);
+            that.searchlistData = listData;
+            this.listData = listData;
           } else {
             that.isEnd = true;
           }
           that.loading = false;
         });
       } else if (this.tagUid != undefined) {
+        this.showSearchType = false
         var params = new URLSearchParams();
-
         params.append("tagUid", that.tagUid);
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
-
         searchBlogByTag(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;
             //获取总页数
             that.totalPages = response.data.total;
-
-            var blogData = response.data.records;
+            var listData = response.data.records;
             that.total = response.data.total;
             that.pageSize = response.data.size;
             that.currentPage = response.data.current;
 
             //全部加载完毕
-            if (blogData.length < that.pageSize) {
+            if (listData.length < that.pageSize) {
               that.isEnd = true;
             }
-
             // 设置分类名
-            for (var i = 0; i < blogData.length; i++) {
-              blogData[i].blogSort = blogData[i].blogSort.sortName;
+            for (var i = 0; i < listData.length; i++) {
+              listData[i].blogSort = listData[i].blogSort.sortName;
             }
-
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
+            listData = that.searchlistData.concat(listData);
+            that.searchlistData = listData;
+            this.listData = listData;
             that.loading = false;
-
           } else {
-
             that.isEnd = true;
             that.loading = false;
           }
         });
       } else if (this.sortUid != undefined) {
+        this.showSearchType = false
         var params = new URLSearchParams();
-
         params.append("blogSortUid", that.sortUid);
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
-
         searchBlogBySort(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;
             //获取总页数
             that.totalPages = response.data.total;
-
-            var blogData = response.data.records;
+            var listData = response.data.records;
             that.total = response.data.total;
             that.pageSize = response.data.size;
             that.currentPage = response.data.current;
-
             //全部加载完毕
-            if (blogData.length < that.pageSize) {
+            if (listData.length < that.pageSize) {
               that.isEnd = true;
             }
-
-            for (var i = 0; i < blogData.length; i++) {
-              blogData[i].blogSort = blogData[i].blogSort.sortName;
+            for (var i = 0; i < listData.length; i++) {
+              listData[i].blogSort = listData[i].blogSort.sortName;
             }
-
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
+            listData = that.searchlistData.concat(listData);
+            that.searchlistData = listData;
+            this.listData = listData;
             that.loading = false;
           } else {
-
-
             that.isEnd = true;
             that.loading = false;
           }
         });
       } else if (this.author != undefined) {
+        console.log("以作者查询")
+
+        this.showSearchType = true
         var params = new URLSearchParams();
         params.append("author", that.author);
+        params.append("searchType", that.activeName);
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         searchBlogByAuthor(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.loading = false;
-
             that.isEnd = false;
-
             //获取总页数
             that.totalPages = response.data.total;
-
-            var blogData = response.data.records;
+            var listData = response.data.records;
             that.total = response.data.total;
             that.pageSize = response.data.size;
             that.currentPage = response.data.current;
 
             //全部加载完毕
-            if (blogData.length < that.pageSize) {
+            if (listData.length < that.pageSize) {
               that.isEnd = true;
             }
 
-            for (var i = 0; i < blogData.length; i++) {
-              if (blogData[i].blogSort == undefined) {
-                blogData[i].blogSort = "未分类";
-              } else {
-                blogData[i].blogSort = blogData[i].blogSort.sortName;
+            // 遍历博客分类信息
+            if(that.activeName == "0") {
+              for (var i = 0; i < listData.length; i++) {
+                if (listData[i].blogSort == undefined) {
+                  listData[i].blogSort = "未分类";
+                } else {
+                  listData[i].blogSort = listData[i].blogSort.sortName;
+                }
               }
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
+            listData = that.searchlistData.concat(listData);
+            that.searchlistData = listData;
+            this.listData = listData;
             that.loading = false;
           } else {
-
             that.isEnd = true;
             that.loading = false;
           }
@@ -514,6 +616,27 @@ export default {
   height: 90px !important;
   -webkit-transform: translate(-45px, -45px) scale(0.45) translate(45px, 45px);
   transform: translate(-45px, -45px) scale(0.45) translate(45px, 45px);
+}
+
+.tab-pane {
+  font-size: 16px;
+  font-weight: bold;
+  color: #282828;
+}
+
+.tab-pane-active {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00a7eb;
+}
+
+.questionLine .itemNum {
+  height: 50px;
+  width: 100%;
+  line-height: 50px;
+  justify-content: center;
+  margin: 0 auto;
+  font-weight: bold;
 }
 </style>
 

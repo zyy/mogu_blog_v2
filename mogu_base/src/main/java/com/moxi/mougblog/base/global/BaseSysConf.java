@@ -78,6 +78,7 @@ public class BaseSysConf {
     public final static String TOTAL_PAGE = "totalPage";
     public final static String CURRENT_PAGE = "currentPage";
     public final static String BLOG_LIST = "blogList";
+    public final static String QUESTION_LIST = "questionList";
     public final static String PAGE_SIZE = "pageSize";
 
     /**
