@@ -28,11 +28,9 @@
             <el-timeline-item :timestamp="item.blog.createTime" placement="top">
               <el-card>
 
-                <a :href="item.blog.type == 0 ? '/info/'+item.blog.oid : item.blog.outsideLink" target="_blank">
+                <a :href="item.blog.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.blog.oid : item.blog.outsideLink" target="_blank">
                   <span class="blogpic">
-                    <a href="javascript:void(0);" title>
-                      <img v-if="item.blog && item.blog.photoList" :src="item.blog.photoList[0]" alt>
-                    </a>
+                    <img v-if="item.blog && item.blog.photoList" :src="item.blog.photoList[0]" alt>
                   </span>
                   <p class="blogtext" style="font-weight: bold; cursor: pointer;">{{item.blog.title}}</p>
                 </a>
@@ -87,6 +85,7 @@
       },
       data() {
         return {
+          VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
           drawer: this.visiable,
           subjectItemlist: [],
           pageSize: 50,

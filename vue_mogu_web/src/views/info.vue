@@ -297,8 +297,8 @@
                 fullscreen: true,
                 text: "正在努力加载中~"
             });
-            this.blogUid = this.$route.params.blogUid;
-            this.blogOid = this.$route.params.blogOid;
+            this.blogUid = this.$route.query.blogUid;
+            this.blogOid = this.$route.query.blogOid;
             this.setCommentAndAdmiration()
             // 屏幕大于950px的时候，显示侧边栏
             this.showSidebar = document.body.clientWidth > 950

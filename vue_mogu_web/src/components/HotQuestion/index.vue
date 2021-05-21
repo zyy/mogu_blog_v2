@@ -7,7 +7,7 @@
           <span class="index" v-else-if="index==1"> <el-tag type="success">{{index + 1}}</el-tag></span>
           <span class="index" v-else-if="index==2"> <el-tag type="primary">{{index + 1}}</el-tag></span>
           <span class="index" v-else> <el-tag type="info">{{index + 1}}</el-tag></span>
-          &nbsp;<a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
+          <a :href=" VUE_MOGU_WEB + '/#/qInfo?questionOid='+item.oid" target="_blank">{{item.title}}</a>
         </li>
       </ul>
     </div>
@@ -19,6 +19,7 @@ export default {
   name: "HotQuestion",
   data() {
     return {
+      VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       hotQuestionData: [] //热门博客列表
     };
   },

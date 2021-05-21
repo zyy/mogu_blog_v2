@@ -8,7 +8,7 @@
       <!-- 二级推荐 -->
       <div class="toppic">
         <li v-for="item in secondData" :key="item.uid">
-          <a  :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink">
+          <a :href="item.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.oid : item.outsideLink">
             <i>
               <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
             </i>
@@ -31,11 +31,11 @@
         data-scroll-reveal="enter bottom over 1s"
       >
         <h3 class="blogtitle">
-          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
+          <a :href="item.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">{{item.title}}</a>
         </h3>
 
         <span class="blogpic">
-          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
+          <a :href="item.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">
             <img v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]" alt>
           </a>
         </span>

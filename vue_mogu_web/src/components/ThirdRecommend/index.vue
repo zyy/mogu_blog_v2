@@ -3,7 +3,7 @@
     <h2 class="hometitle">特别推荐</h2>
     <ul>
       <li  v-for="item in thirdData" :key="item.uid" style="cursor: pointer">
-        <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
+        <a :href="item.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">
           <i>
             <img  v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
           </i>
@@ -22,6 +22,7 @@ export default {
   name: 'ThirdRecommend',
     data() {
     	return {
+        VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
         slideList: [],
 	      thirdData: [], //；一级推荐数据
     	}

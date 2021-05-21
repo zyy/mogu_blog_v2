@@ -19,10 +19,10 @@ export const constantRouterMap = [
       { path: '/classify', component: () => import('@/views/classify') },
       { path: '/tag', component: () => import('@/views/tag') },
       { path: '/time', component: () => import('@/views/time') },
-      { path: '/info/:blogOid', component: () => import('@/views/info') },
+      { path: '/info', component: () => import('@/views/info') },
       { path: '/messageBoard', component: () => import('@/views/messageBoard') },
       { path: '/question', component: () => import('@/views/question') },
-      { path: '/qInfo/:questionOid', component: () => import('@/views/questionInfo') },
+      { path: '/qInfo', component: () => import('@/views/questionInfo') },
     ]
   },
   { path: '/404', component: () => import('@/views/404') },
@@ -33,7 +33,7 @@ export const constantRouterMap = [
 ]
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: constantRouterMap
 })
 

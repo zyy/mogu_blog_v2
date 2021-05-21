@@ -2,7 +2,7 @@
   <div class="banner">
     <el-carousel class="bannerBox" indicator-position="outside" >
       <el-carousel-item  v-for="(list,index) in slideList" :key="index">
-            <a :href="list.type == 0 ? '/info/'+list.oid : list.outsideLink" target="_blank">
+            <a :href="list.type == 0 ?  VUE_MOGU_WEB + '/#/info?blogOid='+list.oid : list.outsideLink" target="_blank">
               <img
                 style="width:100%; height:100%; display:block;cursor:pointer;"
                 v-if="list.photoList"
@@ -28,6 +28,7 @@ export default {
   name: "FirstRecommend",
   data() {
     return {
+      VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       isShow: false, //控制左右滑动按钮是否显示
       slideList: [],
       currentIndex: 0,

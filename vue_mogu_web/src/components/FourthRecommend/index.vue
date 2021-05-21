@@ -2,7 +2,7 @@
     <div class="tuijian" v-if="fourthData.length > 0">
       <h2 class="hometitle">推荐文章</h2>
       <ul class="tjpic" v-if="fourthData[0]">
-        <a :href="fourthData[0].type == 0 ? '/info/'+fourthData[0].oid : fourthData[0].outsideLink" target="_blank">
+        <a :href="fourthData[0].type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+fourthData[0].oid : fourthData[0].outsideLink" target="_blank">
           <i>
             <img v-if="fourthData[0].photoList" v-lazy="fourthData[0].photoList[0]" :key="fourthData[0].photoList[0]" style="cursor:pointer" >
           </i>
@@ -12,7 +12,7 @@
 
       <ul class="sidenews">
         <li v-for="item in sideNews" :key="item.uid">
-          <a :href="item.type == 0 ? '/info/'+item.oid : item.outsideLink" target="_blank">
+          <a :href="item.type == 0 ? VUE_MOGU_WEB + '/#/info?blogOid='+item.oid : item.outsideLink" target="_blank">
             <i>
               <img style="cursor:pointer" v-if="item.photoList" v-lazy="item.photoList[0]" :key="item.photoList[0]">
             </i>
@@ -32,6 +32,7 @@ export default {
   name: 'FourthRecommend',
     data() {
     	return {
+        VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
 	      fourthData: [], //；四级推荐数据
     	}
     },
