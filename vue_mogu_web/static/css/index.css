@@ -33,10 +33,10 @@ header { position: fixed; top: 0; z-index: 99999 }
 .logo { float: left; font-size: 22px; font-weight: bold }
 .logo a { color: #006cff }
 nav { width: 1480px; margin: auto; position: relative }
-#mnavh { display: none; width: 30px; height: 40px; text-align: center; padding: 0 5px }
-#starlist { float: left; margin-left: 50px; overflow:hidden; max-width: 1000px;}
+#mnavh { display: none; width: 30px; height: 40px; text-align: center; padding: 0 5px; background-color: #555; }
+#starlist { float: left; margin-left: 50px; overflow:hidden; max-width: 1500px;}
 #starlist li { float: left;  display: block; font-size: 16px ; padding: 0 25px}
-.navicon { display: block; position: relative; width: 30px; height: 5px; background-color: #fff; margin-top: 20px }
+.navicon { display: block; position: relative; width: 30px; height: 5px; background-color: #FFF; margin-top: 20px }
 .navicon:before, .navicon:after { content: ''; display: block; width: 30px; height: 5px; position: absolute; background: #fff; -webkit-transition-property: margin, -webkit-transform; transition-property: margin, -webkit-transform; transition-property: margin, transform; transition-property: margin, transform, -webkit-transform; -webkit-transition-duration: 300ms; transition-duration: 300ms; }
 .navicon:before { margin-top: -10px; }
 .navicon:after { margin-top: 10px; }
@@ -369,21 +369,13 @@ h1.t_nav { display: none; border-bottom: #bfbfbf 1px solid; font-size: 14px; fon
     overflow-y: auto;
 }
 
-
-
-@media screen and (min-width: 1023px){
-  #starlist { height: 60px;}
-}
-
-
-
 @media screen and (min-width: 768px) and (max-width: 1119px) {
 .createBlog {
   display: none;
 }
 header, .blogsbox { width: 100%; margin: auto; }
 nav { width: 100%; position: relative }
-#starlist { height:0px; display: none; background: rgba(0,0,0,.5); width: 100%; margin-left: 0; }
+#starlist {  display: none; background: rgba(0,0,0,.5); width: 100%; margin-left: 0; }
 #starlist li { display: block; padding: 0 0 0 0; width: 60%; background: #fff; border-bottom: #f5f5f5 1px solid; }
 .sub { display: block; padding-left: 0; width: 100%; position: static; }
 #starlist .sub li { border-bottom: none; }
@@ -398,7 +390,7 @@ nav { width: 100%; position: relative }
 article { width: 96%; }
 .imginfo { bottom: 17% }
 .fader { padding-top: 0; height: 279px }
-.toppic li i img { height: 130px; }
+.toppic li i img { height: 170px; }
 .sidebar { display: none }
 .imginfo { font-size: 22px }
 .news_infos { width: 100% }
@@ -415,6 +407,13 @@ h1.t_nav span { display: none }
 .infosbox { width: 100% }
 .pagebg { margin-top: 50px; }
 }
+
+ @media screen and (min-width: 770px) and (max-width: 995px) {
+   .toppic li i img { height: 135px; }
+ }
+
+
+
  @media only screen and (min-width: 480px) and (max-width: 767px) {
 .createBlog {
  display: none;
@@ -514,9 +513,8 @@ nav { width: 100%; position: relative }
 #starlist li:last-child { padding-bottom: 100% }
 #starlist .sub li:last-child { padding-bottom: 0 }
 .logo { float: none }
-article { width: 96%; }
 .toppic { display: none }
-article { width: 90%; margin: 70px auto 0 }
+article { width: 96%; margin: 70px auto 0 }
 .imginfo { font-size: 18px; bottom: 22%; }
 .bloginfo { width: 100%; clear: both; }
 .blogs .blogpic { width: 100%; height: auto; margin-bottom: 10px }

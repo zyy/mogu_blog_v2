@@ -10,8 +10,10 @@ import com.moxi.mogublog.search.service.ElasticSearchService;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.utils.WebUtils;
+import com.moxi.mougblog.base.enums.ESearchType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,7 @@ public class ElasticSearchRestApi {
     @GetMapping("/elasticSearchBlog")
     public String searchBlog(HttpServletRequest request,
                              @RequestParam(required = false) String keywords,
+                             @RequestParam(name = "searchType", required = false, defaultValue = "1") String searchType,
                              @RequestParam(name = "currentPage", required = false, defaultValue = "1") Integer
                                      currentPage,
                              @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer
@@ -55,7 +58,12 @@ public class ElasticSearchRestApi {
         if (StringUtils.isEmpty(keywords)) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.KEYWORD_IS_NOT_EMPTY);
         }
-        return ResultUtil.result(SysConf.SUCCESS, searchService.search(keywords, currentPage, pageSize));
+        if(ESearchType.BLOG.equals(searchType)) {
+            return ResultUtil.result(SysConf.SUCCESS, searchService.search(keywords, currentPage, pageSize));
+        }  else if (ESearchType.QUESTION.equals(searchType)) {
+            return ResultUtil.result(SysConf.ERROR, "问答搜索暂时没有启用");
+        }
+        return ResultUtil.result(SysConf.ERROR, MessageConf.PARAM_INCORRECT);
     }
 
     @ApiOperation(value = "通过uids删除ElasticSearch博客索引", notes = "通过uids删除ElasticSearch博客索引", response = String.class)

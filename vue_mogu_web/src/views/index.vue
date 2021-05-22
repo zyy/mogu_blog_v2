@@ -1,8 +1,8 @@
 <template>
   <article>
     <!--banner begin-->
-    <div class="picsbox">
-      <FirstRecommend></FirstRecommend>
+    <div class="picsbox"  v-if="isFirstRecommendShow || isSecondRecommendShow">
+      <FirstRecommend @isFirstRecommendShow="getFirstRecommendShow"></FirstRecommend>
       <!--banner end-->
 
       <!-- 二级推荐 -->
@@ -135,7 +135,8 @@
       return {
         loadingInstance: null, // loading对象
         VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
-        firstData: [], //；一级推荐数据
+        isFirstRecommendShow: true, //是否显示一级推荐
+        isSecondRecommendShow: true, //是否显示二级推荐
         secondData: [], //；二级级推荐数据
         thirdData: [], //三级推荐
         fourthData: [], //四级推荐
@@ -162,6 +163,13 @@
       getBlogByLevel(secondParams).then(response => {
         if(response.code == this.$ECode.SUCCESS) {
           this.secondData = response.data.records;
+          // 当没有数据时，进行触发回调函数
+          if(this.secondData.length > 0) {
+            this.isSecondRecommendShow = true
+          } else {
+            this.isSecondRecommendShow = false
+          }
+          console.log("二级推荐", this.isSecondRecommendShow)
         }
       });
       // 获取最新博客
@@ -188,6 +196,10 @@
           });
           window.open(blog.outsideLink, '_blank');
         }
+      },
+      getFirstRecommendShow(isFirstRecommendShow) {
+        this.isFirstRecommendShow = isFirstRecommendShow
+        console.log("一级推荐", isFirstRecommendShow)
       },
       //跳转到搜索详情页
       goToList(uid) {

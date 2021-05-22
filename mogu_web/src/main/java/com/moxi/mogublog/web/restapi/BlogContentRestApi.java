@@ -68,6 +68,7 @@ public class BlogContentRestApi {
     @ApiOperation(value = "通过Uid获取博客内容", notes = "通过Uid获取博客内容")
     @GetMapping("/getBlogByUid")
     public String getBlogByUid(@ApiParam(name = "uid", value = "博客UID", required = false) @RequestParam(name = "uid", required = false) String uid,
+                               @ApiParam(name = "isLazy", value = "是否开启图片懒加载", required = false) @RequestParam(name = "isLazy", required = false, defaultValue = "0") String isLazy,
                                @ApiParam(name = "oid", value = "博客OID", required = false) @RequestParam(name = "oid", required = false, defaultValue = "0") Integer oid) {
 
         HttpServletRequest request = RequestHolder.getRequest();
@@ -100,6 +101,14 @@ public class BlogContentRestApi {
 
         //设置博客标题图
         setPhotoListByBlog(blog);
+
+        // 判断是否开启图片懒加载
+        if(Constants.STR_ONE.equals(isLazy)) {
+            String blogContent = blog.getContent();
+            if(StringUtils.isNotEmpty(blogContent)) {
+                blog.setContent(blogContent.replaceAll("src=", "data-src="));
+            }
+        }
 
         //从Redis取出数据，判断该用户是否点击过
         String jsonResult = stringRedisTemplate.opsForValue().get("BLOG_CLICK:" + ip + "#" + blog.getUid());

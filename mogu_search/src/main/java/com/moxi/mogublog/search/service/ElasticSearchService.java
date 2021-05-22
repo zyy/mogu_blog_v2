@@ -99,7 +99,6 @@ public class ElasticSearchService {
         //创建查询构造器
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 
-
         queryBuilder.withPageable(PageRequest.of(currentPage, pageSize));
 
         //过滤

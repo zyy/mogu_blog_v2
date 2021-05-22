@@ -177,7 +177,80 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane v-if="showCreateBlog" label="我的文章" name="1">
+      <el-tab-pane label="我的评论" name="1">
+        <span slot="label"><i class="el-icon-message-solid"></i> 我的评论</span>
+        <div style="width: 100%; height: 840px;overflow:auto;">
+          <el-timeline>
+            <el-timeline-item v-for="comment in commentList" :key="comment.uid" :timestamp="timeAgo(comment.createTime)" placement="top">
+              <el-card>
+                <div class="commentList">
+                <span class="left p1">
+                  <img v-if="comment.user" :src="comment.user.photoUrl ? comment.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
+                  <img v-else :src="defaultAvatar" />
+                </span>
+
+                  <span class="right p1">
+                  <div class="rightTop">
+                    <el-link class="userName" :underline="false">{{comment.user.nickName}}</el-link>
+                    <el-tag style="cursor: pointer;"  @click.native="goSource(comment)">{{comment.sourceName}}</el-tag>
+                  </div>
+
+                  <div class="rightCenter" v-html="$xss(comment.content, options)"></div>
+                </span>
+                </div>
+              </el-card>
+            </el-timeline-item>
+
+            <el-timeline-item v-if="commentList.length == 0" placement="top">
+              <el-card>
+                <span style="font-size: 16px">空空如也~</span>
+              </el-card>
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="我的回复" name="2">
+        <span slot="label">
+          <el-badge  :value="userReceiveCommentCount"  class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
+            <i class="el-icon-s-promotion"></i> 我的回复
+          </el-badge>
+        </span>
+        <div style="width: 100%; height: 840px;overflow:auto">
+          <el-timeline>
+            <el-timeline-item v-for="reply in replyList" :key="reply.uid" :timestamp="timeAgo(reply.createTime)" placement="top">
+              <el-card>
+                <div class="commentList">
+                  <span class="left p1">
+                    <img v-if="reply.user" :src="reply.user.photoUrl ? reply.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
+                    <img v-else :src="defaultAvatar" />
+                  </span>
+
+                  <span class="right p1">
+
+                      <div class="rightTop">
+                        <el-link class="userName" :underline="false">{{reply.user.nickName}}</el-link>
+                        <el-tag style="cursor: pointer;"  @click.native="goSource(reply)">{{reply.sourceName}}</el-tag>
+                      </div>
+
+                      <div class="rightCenter" v-html="$xss(reply.content, options)">
+                      </div>
+                  </span>
+                </div>
+              </el-card>
+            </el-timeline-item>
+
+            <el-timeline-item v-if="replyList.length == 0" placement="top">
+              <el-card>
+                <span style="font-size: 16px">空空如也~</span>
+              </el-card>
+            </el-timeline-item>
+
+          </el-timeline>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane v-if="showCreateBlog" label="我的文章" name="3">
           <span slot="label"><i class="el-icon-message-solid"></i> 我的文章</span>
           <div style="width: 100%; height: 840px;overflow:auto;">
             <el-timeline>
@@ -238,7 +311,7 @@
                     <div class="operation">
                       <el-row :gutter="24">
                         <el-button circle type="primary" size="small" icon="el-icon-edit" @click="createBlog(true, item)"></el-button>
-<!--                        <el-button circle type="warning" size="small" icon="el-icon-folder-opened"></el-button>-->
+                        <!--                        <el-button circle type="warning" size="small" icon="el-icon-folder-opened"></el-button>-->
                         <el-button circle type="danger" size="small" icon="el-icon-delete" @click="handleDelete(item)"></el-button>
                       </el-row>
                     </div>
@@ -250,78 +323,6 @@
           </div>
         </el-tab-pane>
 
-      <el-tab-pane label="我的评论" name="2">
-        <span slot="label"><i class="el-icon-message-solid"></i> 我的评论</span>
-        <div style="width: 100%; height: 840px;overflow:auto;">
-          <el-timeline>
-            <el-timeline-item v-for="comment in commentList" :key="comment.uid" :timestamp="timeAgo(comment.createTime)" placement="top">
-              <el-card>
-                <div class="commentList">
-                <span class="left p1">
-                  <img v-if="comment.user" :src="comment.user.photoUrl ? comment.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
-                  <img v-else :src="defaultAvatar" />
-                </span>
-
-                  <span class="right p1">
-                  <div class="rightTop">
-                    <el-link class="userName" :underline="false">{{comment.user.nickName}}</el-link>
-                    <el-tag style="cursor: pointer;"  @click.native="goSource(comment)">{{comment.sourceName}}</el-tag>
-                  </div>
-
-                  <div class="rightCenter" v-html="$xss(comment.content, options)"></div>
-                </span>
-                </div>
-              </el-card>
-            </el-timeline-item>
-
-            <el-timeline-item v-if="commentList.length == 0" placement="top">
-              <el-card>
-                <span style="font-size: 16px">空空如也~</span>
-              </el-card>
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-      </el-tab-pane>
-
-      <el-tab-pane label="我的回复" name="3">
-        <span slot="label">
-          <el-badge  :value="userReceiveCommentCount"  class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
-            <i class="el-icon-s-promotion"></i> 我的回复
-          </el-badge>
-        </span>
-        <div style="width: 100%; height: 840px;overflow:auto">
-          <el-timeline>
-            <el-timeline-item v-for="reply in replyList" :key="reply.uid" :timestamp="timeAgo(reply.createTime)" placement="top">
-              <el-card>
-                <div class="commentList">
-                  <span class="left p1">
-                    <img v-if="reply.user" :src="reply.user.photoUrl ? reply.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
-                    <img v-else :src="defaultAvatar" />
-                  </span>
-
-                  <span class="right p1">
-
-                      <div class="rightTop">
-                        <el-link class="userName" :underline="false">{{reply.user.nickName}}</el-link>
-                        <el-tag style="cursor: pointer;"  @click.native="goSource(reply)">{{reply.sourceName}}</el-tag>
-                      </div>
-
-                      <div class="rightCenter" v-html="$xss(reply.content, options)">
-                      </div>
-                  </span>
-                </div>
-              </el-card>
-            </el-timeline-item>
-
-            <el-timeline-item v-if="replyList.length == 0" placement="top">
-              <el-card>
-                <span style="font-size: 16px">空空如也~</span>
-              </el-card>
-            </el-timeline-item>
-
-          </el-timeline>
-        </div>
-      </el-tab-pane>
       <el-tab-pane label="我的点赞" name="4">
         <span slot="label"><i class="el-icon-star-on"></i> 我的点赞</span>
         <div style="width: 100%; height: 840px;overflow:auto">
@@ -869,23 +870,22 @@
 
       // 标签选择
       handleClick(tab, event) {
-        console.log("tableIndex", tab.index)
-        switch(tab.index) {
-          case "0": {
+        switch(tab.label) {
+          case "个人中心": {
             console.log("点击个人中心")
           }; break;
-          case "1": {
+          case "我的文章": {
             console.log("点击我的文章")
             // 获取用户文章
             this.getBlogList()
 
           }; break;
-          case "2": {
+          case "我的评论": {
             // 获取评论列表
             this.getCommentList();
             console.log("点击我的评论")
           }; break;
-          case "3": {
+          case "我的回复": {
             // 获取回复列表
             this.getCommentList();
             console.log("点击我的回复")
@@ -902,22 +902,22 @@
             }
 
           }; break;
-          case "4": {
+          case "我的点赞": {
 
             // 获取点赞列表
             this.getPraiseList()
             console.log("点击我的点赞")
 
           }; break;
-          case "5": {
+          case "我的反馈": {
             // 获取反馈列表
             this.getFeedback()
             console.log("点击我的反馈")
           }; break;
-          case "6": {
+          case "申请友链": {
             console.log("点击申请友链")
           }; break;
-          case "7": {
+          case "修改密码": {
             console.log("点击修改密码")
           }; break;
         }

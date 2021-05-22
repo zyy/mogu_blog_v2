@@ -1191,58 +1191,59 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         IPage<Blog> pageList = blogService.getBlogPageByLevel(page, level, useSort);
         List<Blog> list = pageList.getRecords();
 
-        // 一级推荐或者二级推荐没有内容时，自动把top5填充至一级推荐和二级推荐中
-        if ((level == SysConf.ONE || level == SysConf.TWO) && list.size() == 0) {
-            QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
-            Page<Blog> hotPage = new Page<>();
-            hotPage.setCurrent(1);
-            String blogHotCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_HOT_COUNT);
-            String blogSecondCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_SECOND_COUNT);
-            if (StringUtils.isEmpty(blogHotCount) || StringUtils.isEmpty(blogSecondCount)) {
-                log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
-            } else {
-                hotPage.setSize(Long.valueOf(blogHotCount));
-            }
-            queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-            queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
-            queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
-            queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
-            IPage<Blog> hotPageList = blogService.page(hotPage, queryWrapper);
-            List<Blog> hotBlogList = hotPageList.getRecords();
-            List<Blog> secondBlogList = new ArrayList<>();
-            List<Blog> firstBlogList = new ArrayList<>();
-            for (int a = 0; a < hotBlogList.size(); a++) {
-                // 当推荐大于两个的时候
-                if ((hotBlogList.size() - firstBlogList.size()) > Long.valueOf(blogSecondCount)) {
-                    firstBlogList.add(hotBlogList.get(a));
-                } else {
-                    secondBlogList.add(hotBlogList.get(a));
-                }
-            }
+        // 一级推荐或者二级推荐没有内容时，自动把top5填充至一级推荐和二级推荐中 【暂时关闭自动填充】
+//        if ((level == SysConf.ONE || level == SysConf.TWO) && list.size() == 0) {
+//            QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
+//            Page<Blog> hotPage = new Page<>();
+//            hotPage.setCurrent(1);
+//            String blogHotCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_HOT_COUNT);
+//            String blogSecondCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_SECOND_COUNT);
+//            if (StringUtils.isEmpty(blogHotCount) || StringUtils.isEmpty(blogSecondCount)) {
+//                log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
+//            } else {
+//                hotPage.setSize(Long.valueOf(blogHotCount));
+//            }
+//            queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+//            queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+//            queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
+//            queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
+//            IPage<Blog> hotPageList = blogService.page(hotPage, queryWrapper);
+//            List<Blog> hotBlogList = hotPageList.getRecords();
+//            List<Blog> secondBlogList = new ArrayList<>();
+//            List<Blog> firstBlogList = new ArrayList<>();
+//            for (int a = 0; a < hotBlogList.size(); a++) {
+//                // 当推荐大于两个的时候
+//                if ((hotBlogList.size() - firstBlogList.size()) > Long.valueOf(blogSecondCount)) {
+//                    firstBlogList.add(hotBlogList.get(a));
+//                } else {
+//                    secondBlogList.add(hotBlogList.get(a));
+//                }
+//            }
+//
+//            firstBlogList = setBlog(firstBlogList);
+//            secondBlogList = setBlog(secondBlogList);
+//
+//            // 将从数据库查询的数据缓存到redis中，设置1小时后过期 [避免 list 中没有数据而保存至 redis 的情况]
+//            if (firstBlogList.size() > 0) {
+//                redisUtil.setEx(RedisConf.BLOG_LEVEL + Constants.SYMBOL_COLON + Constants.NUM_ONE, JsonUtils.objectToJson(firstBlogList), 1, TimeUnit.HOURS);
+//            }
+//            if (secondBlogList.size() > 0) {
+//                redisUtil.setEx(RedisConf.BLOG_LEVEL + Constants.SYMBOL_COLON + Constants.NUM_TWO, JsonUtils.objectToJson(secondBlogList), 1, TimeUnit.HOURS);
+//            }
+//
+//            switch (level) {
+//                case SysConf.ONE: {
+//                    pageList.setRecords(firstBlogList);
+//                }
+//                break;
+//                case SysConf.TWO: {
+//                    pageList.setRecords(secondBlogList);
+//                }
+//                break;
+//            }
+//            return pageList;
+//        }
 
-            firstBlogList = setBlog(firstBlogList);
-            secondBlogList = setBlog(secondBlogList);
-
-            // 将从数据库查询的数据缓存到redis中，设置1小时后过期 [避免 list 中没有数据而保存至 redis 的情况]
-            if (firstBlogList.size() > 0) {
-                redisUtil.setEx(RedisConf.BLOG_LEVEL + Constants.SYMBOL_COLON + Constants.NUM_ONE, JsonUtils.objectToJson(firstBlogList), 1, TimeUnit.HOURS);
-            }
-            if (secondBlogList.size() > 0) {
-                redisUtil.setEx(RedisConf.BLOG_LEVEL + Constants.SYMBOL_COLON + Constants.NUM_TWO, JsonUtils.objectToJson(secondBlogList), 1, TimeUnit.HOURS);
-            }
-
-            switch (level) {
-                case SysConf.ONE: {
-                    pageList.setRecords(firstBlogList);
-                }
-                break;
-                case SysConf.TWO: {
-                    pageList.setRecords(secondBlogList);
-                }
-                break;
-            }
-            return pageList;
-        }
 
         list = setBlog(list);
         pageList.setRecords(list);

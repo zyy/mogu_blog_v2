@@ -58,13 +58,15 @@
             {{blogData.copyright}}
           </span>
         </div>
+
         <div
           class="news_con ck-content"
-          v-html="blogReplace(blogData.content)"
+          v-html="blogData.content"
           v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           v-highlight
           @click="imageChange"
-        >{{blogReplace(blogData.content)}}</div>
+        >{{blogData.content}}</div>
+
       </div>
 
       <!--付款码和点赞-->
@@ -161,7 +163,8 @@
                 blogUid: null, //传递过来的博客uid
                 blogOid: 0, // 传递过来的博客oid
                 blogData: {
-                  blogSort: {}
+                  blogSort: {},
+                  content: ""
                 },
                 sameBlogData: [], //相关文章
                 dialogPictureVisible: false,
@@ -185,6 +188,10 @@
               return 'catalog2'
             }
           },
+          // blogReplace: function () {
+          //   console.log("计算属性", this.blogData)
+          //   return this.blogData.content.replaceAll("src=", "data-src=")
+          // },
           opemCommentCss: function () {
             if(this.openComment == 0) {
               return {
@@ -210,7 +217,7 @@
       watch: {
         $route(to, from) {
           location.reload()
-        }
+        },
       },
         mounted () {
           var that = this;
@@ -221,6 +228,8 @@
           if(this.blogOid) {
             params.append("oid", this.blogOid)
           }
+          // 开启图片懒加载
+          params.append("isLazy", "1")
           getBlogByUid(params).then(response => {
             if (response.code == this.$ECode.SUCCESS) {
               this.blogData = response.data;
@@ -234,10 +243,11 @@
             // setTimeout(()=>{
             //   let blogContent = response.data.content
             //   // 标签替换
+            //   console.log("setTimeOut")
             //   let newBlogContent = blogContent.replaceAll("src=", "data-src=")
             //   that.blogContent = newBlogContent
             //   that.loadingInstance.close();
-            // }, 200)
+            // }, 100)
           });
 
           var after = 0;
@@ -309,9 +319,6 @@
             handleCurrentChange: function(val) {
                 this.currentPage = val;
                 this.getCommentDataList();
-            },
-            blogReplace(blogContent) {
-              return blogContent.replaceAll("src=", "data-src=")
             },
             getSameBlog() {
               var blogParams = new URLSearchParams();

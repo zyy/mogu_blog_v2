@@ -43,6 +43,13 @@ export default {
     getBlogByLevel(params).then(response => {
       if(response.code == this.$ECode.SUCCESS) {
         this.slideList = response.data.records;
+        // 当没有数据时，进行触发回调函数
+        console.log("获取推荐1")
+        if(this.slideList.length > 0) {
+          this.$emit("isFirstRecommendShow", true);
+        } else {
+          this.$emit("isFirstRecommendShow", false);
+        }
       }
     });
   },
