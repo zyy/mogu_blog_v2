@@ -102,14 +102,6 @@ public class BlogContentRestApi {
         //设置博客标题图
         setPhotoListByBlog(blog);
 
-        // 判断是否开启图片懒加载
-        if(Constants.STR_ONE.equals(isLazy)) {
-            String blogContent = blog.getContent();
-            if(StringUtils.isNotEmpty(blogContent)) {
-                blog.setContent(blogContent.replaceAll("src=", "data-src="));
-            }
-        }
-
         //从Redis取出数据，判断该用户是否点击过
         String jsonResult = stringRedisTemplate.opsForValue().get("BLOG_CLICK:" + ip + "#" + blog.getUid());
 
@@ -124,6 +116,15 @@ public class BlogContentRestApi {
             stringRedisTemplate.opsForValue().set(RedisConf.BLOG_CLICK + Constants.SYMBOL_COLON + ip + Constants.SYMBOL_WELL + blog.getUid(), blog.getClickCount().toString(),
                     24, TimeUnit.HOURS);
         }
+
+        // 判断是否开启图片懒加载
+        if(Constants.STR_ONE.equals(isLazy)) {
+            String blogContent = blog.getContent();
+            if(StringUtils.isNotEmpty(blogContent)) {
+                blog.setContent(blogContent.replaceAll(" src=", " data-src="));
+            }
+        }
+
         return ResultUtil.result(SysConf.SUCCESS, blog);
     }
 
