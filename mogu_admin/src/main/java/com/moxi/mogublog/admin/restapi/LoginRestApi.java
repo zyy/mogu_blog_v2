@@ -69,6 +69,8 @@ public class LoginRestApi {
     private String tokenHead;
     @Value(value = "${isRememberMeExpiresSecond}")
     private int isRememberMeExpiresSecond;
+    @Value(value = "${data.web.logo}")
+    private String defaultAvatar;
     @Autowired
     private RedisUtil redisUtil;
     @Resource
@@ -160,15 +162,13 @@ public class LoginRestApi {
 
     @ApiOperation(value = "用户信息", notes = "用户信息", response = String.class)
     @GetMapping(value = "/info")
-    public String info(HttpServletRequest request,
-                       @ApiParam(name = "token", value = "token令牌", required = false) @RequestParam(name = "token", required = false) String token) {
+    public String info(HttpServletRequest request) {
 
         Map<String, Object> map = new HashMap<>(Constants.NUM_THREE);
         if (request.getAttribute(SysConf.ADMIN_UID) == null) {
             return ResultUtil.result(SysConf.ERROR, "token用户过期");
         }
         Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
-        map.put(SysConf.TOKEN, token);
         //获取图片
         if (StringUtils.isNotEmpty(admin.getAvatar())) {
             String pictureList = this.pictureFeignClient.getPicture(admin.getAvatar(), SysConf.FILE_SEGMENTATION);
@@ -176,7 +176,7 @@ public class LoginRestApi {
             if (list.size() > 0) {
                 map.put(SysConf.AVATAR, list.get(0));
             } else {
-                map.put(SysConf.AVATAR, "https://gitee.com/moxi159753/wx_picture/raw/master/picture/favicon.png");
+                map.put(SysConf.AVATAR, defaultAvatar);
             }
         }
 
