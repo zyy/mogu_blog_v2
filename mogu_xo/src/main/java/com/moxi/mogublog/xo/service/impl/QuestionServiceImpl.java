@@ -212,6 +212,15 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             redisUtil.setEx(RedisConf.QUESTION_CLICK + Constants.SYMBOL_COLON + ip + Constants.SYMBOL_WELL + question.getOid(), question.getClickCount().toString(),
                     24, TimeUnit.HOURS);
         }
+
+        // 判断是否开启图片懒加载
+        if(Constants.STR_ONE.equals(questionVO.getIsLazy())) {
+            String blogContent = question.getContent();
+            if(StringUtils.isNotEmpty(blogContent)) {
+                question.setContent(blogContent.replaceAll(" src=", " data-src="));
+            }
+        }
+
         return ResultUtil.successWithData(questionList.get(0));
     }
 

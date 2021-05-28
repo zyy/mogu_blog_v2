@@ -103,10 +103,16 @@ public class QuestionVO extends BaseVO<QuestionVO> {
     private String methodType;
 
     /**
+     * 是否开启懒加载
+     */
+    private String isLazy;
+
+    /**
      * 无参构造方法，初始化默认值
      */
     QuestionVO() {
-
+        // 默认不开启懒加载
+        this.isLazy = "0";
     }
 
 }

@@ -14,11 +14,11 @@
       <div class="news_infos" style="min-height: 805px;">
         <div
           class="news_con fixck newsview ck-content"
-          v-html="personResume"
+          v-html="info.personResume"
           v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           @click="imageChange"
           v-highlight
-        >{{personResume}}</div>
+        >{{info.personResume}}</div>
 
         <el-divider></el-divider>
 
@@ -125,8 +125,6 @@
             getMe().then(response => {
                 if (response.code == this.$ECode.SUCCESS) {
                   this.info = response.data;
-                  let personResume = this.info.personResume
-                  this.personResume = personResume.replaceAll("src=", "data-src=")
                 }
             });
             this.getCommentDataList();
