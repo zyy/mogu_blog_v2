@@ -33,25 +33,25 @@
 
 
         <el-row class="elRow">
-          <el-tooltip content="码云" placement="bottom">
+          <el-tooltip content="码云" placement="bottom" v-if="!loginType.gitee">
             <el-button type="danger" circle @click="goAuth('gitee')" :disabled="loginType.gitee">
               <span class="iconfont">&#xe602;</span>
             </el-button>
           </el-tooltip>
 
-          <el-tooltip content="Github" placement="bottom">
+          <el-tooltip content="Github" placement="bottom" v-if="!loginType.github">
             <el-button type="info" circle @click="goAuth('github')" :disabled="loginType.github">
               <span class="iconfont">&#xe64a;</span>
             </el-button>
           </el-tooltip>
 
-          <el-tooltip content="QQ" placement="bottom">
+          <el-tooltip content="QQ" placement="bottom" v-if="!loginType.qq">
             <el-button type="primary" circle @click="goAuth('qq')" :disabled="loginType.qq">
               <span class="iconfont">&#xe601;</span>
             </el-button>
           </el-tooltip>
 
-          <el-tooltip content="微信" placement="bottom">
+          <el-tooltip content="微信" placement="bottom" v-if="!loginType.wechat">
             <el-button type="success" circle @click="goAuth('wechat')" :disabled="loginType.wechat">
               <span class="iconfont">&#xe66f;</span>
             </el-button>
