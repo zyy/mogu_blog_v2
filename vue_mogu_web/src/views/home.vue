@@ -1210,7 +1210,7 @@
           this.contact = webConfigData;
           this.mailto = "mailto:" + this.contact.email;
           this.openComment = webConfigData.openComment
-          console.log("是否开启投稿", webConfigData)
+          document.title = this.info.title
           this.showCreateBlog = webConfigData.openCreateBlog == "1" ? true:false
         } else {
           getWebConfig().then(response => {
@@ -1219,12 +1219,11 @@
               // 存储在Vuex中
               this.setWebConfigData(response.data)
               this.openComment = this.info.openComment
-              console.log("是否开启投稿", this.info)
+              document.title = this.info.title
               this.showCreateBlog = this.info.openCreateBlog == "1" ? true:false
             }
           });
         }
-
       },
       /**
        * 截取URL中的参数

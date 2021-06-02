@@ -136,6 +136,7 @@ export default {
       getWebSiteName().then(response => {
         if(response.code == this.$ECode.SUCCESS) {
           this.webSiteName = response.data
+          document.title = response.data + "后台管理系统"
         }
       });
     },

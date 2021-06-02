@@ -239,6 +239,7 @@
               this.getSameBlog()
               this.getCommentDataList();
               this.loadingInstance.close();
+              document.title = response.data.title
             }
             setTimeout(()=>{
               let blogContent = response.data.content

@@ -203,6 +203,7 @@
               this.questionOid = response.data.oid
               this.commentInfo.questionUid = response.data.uid;
               this.commentInfo.questionOid = response.data.oid;
+              document.title = response.data.title
               that.loadingInstance.close();
               this.getCommentDataList()
             }
