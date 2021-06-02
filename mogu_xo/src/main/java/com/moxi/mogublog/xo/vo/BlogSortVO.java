@@ -1,5 +1,6 @@
 package com.moxi.mogublog.xo.vo;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.moxi.mougblog.base.validator.annotion.NotBlank;
 import com.moxi.mougblog.base.validator.group.Insert;
 import com.moxi.mougblog.base.validator.group.Update;
@@ -31,6 +32,10 @@ public class BlogSortVO extends BaseVO<BlogSortVO> {
      */
     private Integer sort;
 
+    /**
+     * 分类icon图标
+     */
+    private String icon;
 
     /**
      * OrderBy排序字段（desc: 降序）

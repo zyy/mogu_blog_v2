@@ -172,6 +172,8 @@ public class BaseRedisConf {
 
     public final static String BLOG_TAG = "BLOG_TAG";
 
+    public final static String BLOG_SORT = "BLOG_SORT";
+
     /**
      * 用户收到评论数
      */

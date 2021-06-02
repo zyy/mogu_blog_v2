@@ -61,11 +61,11 @@
 
         <div
           class="news_con ck-content"
-          v-html="blogData.content"
+          v-html="blogContent"
           v-lazy-container="{ selector: 'img', error: '../../static/images/loading.gif', loading: '../../static/images/loading.gif' }"
           v-highlight
           @click="imageChange"
-        >{{blogData.content}}</div>
+        >{{blogContent}}</div>
 
       </div>
 
@@ -240,14 +240,13 @@
               this.getCommentDataList();
               this.loadingInstance.close();
             }
-            // setTimeout(()=>{
-            //   let blogContent = response.data.content
-            //   // 标签替换
-            //   console.log("setTimeOut")
-            //   let newBlogContent = blogContent.replaceAll("src=", "data-src=")
-            //   that.blogContent = newBlogContent
-            //   that.loadingInstance.close();
-            // }, 100)
+            setTimeout(()=>{
+              let blogContent = response.data.content
+              // 标签替换
+              // let newBlogContent = blogContent.replaceAll(" src=", " data-src=")
+              that.blogContent = blogContent
+              that.loadingInstance.close();
+            }, 200)
           });
 
           var after = 0;

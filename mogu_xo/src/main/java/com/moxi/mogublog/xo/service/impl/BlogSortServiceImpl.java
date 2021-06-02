@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moxi.mogublog.commons.entity.Blog;
 import com.moxi.mogublog.commons.entity.BlogSort;
+import com.moxi.mogublog.commons.entity.Tag;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.xo.global.MessageConf;
@@ -17,6 +18,7 @@ import com.moxi.mogublog.xo.vo.BlogSortVO;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,12 +83,9 @@ public class BlogSortServiceImpl extends SuperServiceImpl<BlogSortMapper, BlogSo
         if (tempSort != null) {
             return ResultUtil.errorWithMessage(MessageConf.ENTITY_EXIST);
         }
-
         BlogSort blogSort = new BlogSort();
-        blogSort.setContent(blogSortVO.getContent());
-        blogSort.setSortName(blogSortVO.getSortName());
-        blogSort.setSort(blogSortVO.getSort());
-        blogSort.setStatus(EStatus.ENABLE);
+        // 使用Spring工具类提供的深拷贝进行实体类赋值
+        BeanUtils.copyProperties(blogSortVO, blogSort, SysConf.STATUS);
         blogSort.insert();
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }
@@ -106,10 +105,8 @@ public class BlogSortServiceImpl extends SuperServiceImpl<BlogSortMapper, BlogSo
                 return ResultUtil.errorWithMessage(MessageConf.ENTITY_EXIST);
             }
         }
-        blogSort.setContent(blogSortVO.getContent());
-        blogSort.setSortName(blogSortVO.getSortName());
-        blogSort.setSort(blogSortVO.getSort());
-        blogSort.setStatus(EStatus.ENABLE);
+        // 使用Spring工具类提供的深拷贝进行实体类赋值
+        BeanUtils.copyProperties(blogSortVO, blogSort, SysConf.STATUS);
         blogSort.setUpdateTime(new Date());
         blogSort.updateById();
         // 删除和博客相关的Redis缓存
@@ -239,5 +236,18 @@ public class BlogSortServiceImpl extends SuperServiceImpl<BlogSortMapper, BlogSo
         blogSortQueryWrapper.orderByDesc(SQLConf.SORT);
         BlogSort blogSort = blogSortService.getOne(blogSortQueryWrapper);
         return blogSort;
+    }
+
+    @Override
+    public List<BlogSort> getHotBlogSort(Integer hotSortCount) {
+        QueryWrapper<BlogSort> queryWrapper = new QueryWrapper<>();
+        Page<BlogSort> page = new Page<>();
+        page.setCurrent(1);
+        page.setSize(hotSortCount);
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.orderByDesc(SQLConf.SORT);
+        queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
+        IPage<BlogSort> pageList = blogSortService.page(page, queryWrapper);
+        return pageList.getRecords();
     }
 }

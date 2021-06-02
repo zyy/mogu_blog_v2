@@ -248,7 +248,6 @@ export default {
   data() {
     return {
       iconsVisible: false, // 是否显示icon选择器
-      activeData: '', // 激活的图标
       showHeader: false, //是否显示表头
       tableData: [],
       keyword: "",

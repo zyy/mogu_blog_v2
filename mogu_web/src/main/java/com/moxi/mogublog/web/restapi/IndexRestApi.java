@@ -1,6 +1,7 @@
 package com.moxi.mogublog.web.restapi;
 
 
+import com.moxi.mogublog.commons.entity.BlogSort;
 import com.moxi.mogublog.commons.entity.Link;
 import com.moxi.mogublog.commons.entity.Tag;
 import com.moxi.mogublog.utils.JsonUtils;
@@ -13,17 +14,19 @@ import com.moxi.mogublog.web.global.MessageConf;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.service.*;
+import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mougblog.base.enums.EBehavior;
+import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.global.Constants;
+import com.moxi.mougblog.base.validator.group.GetList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -45,6 +48,8 @@ public class IndexRestApi {
     private TagService tagService;
     @Autowired
     private LinkService linkService;
+    @Autowired
+    private BlogSortService blogSortService;
     @Autowired
     private WebConfigService webConfigService;
     @Autowired
@@ -76,13 +81,11 @@ public class IndexRestApi {
     }
 
     @ApiOperation(value = "获取首页最新的博客", notes = "获取首页最新的博客")
-    @GetMapping("/getNewBlog")
-    public String getNewBlog(HttpServletRequest request,
-                             @ApiParam(name = "currentPage", value = "当前页数", required = false) @RequestParam(name = "currentPage", required = false, defaultValue = "1") Long currentPage,
-                             @ApiParam(name = "pageSize", value = "每页显示数目", required = false) @RequestParam(name = "pageSize", required = false, defaultValue = "10") Long pageSize) {
-
+    @PostMapping("/getNewBlog")
+    public String getNewBlog(@Validated({GetList.class}) @RequestBody BlogVO blogVO, BindingResult result) {
+        ThrowableUtils.checkParamArgument(result);
         log.info("获取首页最新的博客");
-        return ResultUtil.result(SysConf.SUCCESS, blogService.getNewBlog(currentPage, null));
+        return ResultUtil.result(SysConf.SUCCESS, blogService.getNewBlog(blogVO));
     }
 
     @ApiOperation(value = "mogu-search调用获取博客的接口[包含内容]", notes = "mogu-search调用获取博客的接口")
@@ -94,7 +97,6 @@ public class IndexRestApi {
         log.info("获取首页最新的博客");
         return ResultUtil.result(SysConf.SUCCESS, blogService.getBlogBySearch(currentPage, null));
     }
-
 
     @ApiOperation(value = "按时间戳获取博客", notes = "按时间戳获取博客")
     @GetMapping("/getBlogByTime")
@@ -110,7 +112,7 @@ public class IndexRestApi {
     @GetMapping("/getHotTag")
     public String getHotTag() {
         String hotTagCount = sysParamsService.getSysParamsValueByKey(SysConf.HOT_TAG_COUNT);
-        // 从Redis中获取友情链接
+        // 从Redis中获取最热标签
         String jsonResult = redisUtil.get(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + hotTagCount);
         if (StringUtils.isNotEmpty(jsonResult)) {
             List jsonResult2List = JsonUtils.jsonArrayToArrayList(jsonResult);
@@ -121,6 +123,23 @@ public class IndexRestApi {
             redisUtil.setEx(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + hotTagCount, JsonUtils.objectToJson(tagList), 1, TimeUnit.HOURS);
         }
         return ResultUtil.result(SysConf.SUCCESS, tagList);
+    }
+
+    @ApiOperation(value = "获取最热分类", notes = "获取最热分类")
+    @GetMapping("/getHotBlogSort")
+    public String getHotBlogSort() {
+        String hotBlogSortCount = sysParamsService.getSysParamsValueByKey(SysConf.HOT_BLOG_SORT_COUNT);
+        // 从Redis中获取最热分类
+        String jsonResult = redisUtil.get(RedisConf.BLOG_SORT + Constants.SYMBOL_COLON + hotBlogSortCount);
+        if (StringUtils.isNotEmpty(jsonResult)) {
+            List jsonResult2List = JsonUtils.jsonArrayToArrayList(jsonResult);
+            return ResultUtil.result(SysConf.SUCCESS, jsonResult2List);
+        }
+        List<BlogSort> blogSortList = blogSortService.getHotBlogSort(Integer.valueOf(hotBlogSortCount));
+        if (blogSortList.size() > 0) {
+            redisUtil.setEx(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + hotBlogSortCount, JsonUtils.objectToJson(blogSortList), 1, TimeUnit.HOURS);
+        }
+        return ResultUtil.result(SysConf.SUCCESS, blogSortList);
     }
 
     @ApiOperation(value = "获取友情链接", notes = "获取友情链接")

@@ -204,6 +204,7 @@ public class BaseSysConf {
     public static final String BLOG_FOURTH_COUNT = "BLOG_FOURTH_COUNT";
     public static final String BLOG_HOT_COUNT = "BLOG_HOT_COUNT";
     public static final String HOT_TAG_COUNT = "HOT_TAG_COUNT";
+    public static final String HOT_BLOG_SORT_COUNT = "HOT_BLOG_SORT_COUNT";
     public static final String FRIENDLY_LINK_COUNT = "FRIENDLY_LINK_COUNT";
     public final static String PROJECT_NAME_ = "PROJECT_NAME";
     public final static String MAX_STORAGE_SIZE = "MAX_STORAGE_SIZE";

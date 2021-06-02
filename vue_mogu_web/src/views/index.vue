@@ -1,4 +1,5 @@
 <template>
+
   <article>
     <!--banner begin-->
     <div class="picsbox"  v-if="isFirstRecommendShow || isSecondRecommendShow">
@@ -20,7 +21,37 @@
 
       </div>
     </div>
-    <div class="blank"></div>
+
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane name="0">
+        <span :class="activeName== 1?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-collection-tag"></i> <span>最新</span></span>
+      </el-tab-pane>
+
+      <el-tab-pane name="1">
+        <span :class="activeName== 2?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-star-off"></i> <span>最热</span></span>
+      </el-tab-pane>
+
+      <el-tab-pane v-for="(item, index) in hotBlogSortData" :name="(index+2)+''" :key="item.uid">
+        <span :class="activeName== item.sortName?'tab-pane-active':'tab-pane'" slot="label" ><i :class="item.icon"></i> <span>{{item.sortName}}</span></span>
+      </el-tab-pane>
+    </el-tabs>
+
+<!--    <el-menu :default-active="activeName" class="el-menu-demo" mode="horizontal" @select="handleClick">-->
+<!--      <el-menu-item index="0">-->
+<!--        <i class="el-icon-menu"></i>-->
+<!--        <span slot="title">最新</span>-->
+<!--      </el-menu-item>-->
+
+<!--      <el-menu-item index="1">-->
+<!--        <i class="el-icon-menu"></i>-->
+<!--        <span slot="title">最热</span>-->
+<!--      </el-menu-item>-->
+
+<!--      <el-menu-item v-for="(item, index) in hotBlogSortData" :name="(index+2)+''" :key="item.uid">-->
+<!--        <i class="el-icon-menu"></i>-->
+<!--        <span slot="title">{{item.sortName}}</span>-->
+<!--      </el-menu-item>-->
+<!--    </el-menu>-->
 
     <!--blogsbox begin-->
     <div class="blogsbox">
@@ -85,6 +116,7 @@
     </div>
     <!--blogsbox end-->
 
+
     <div class="sidebar">
       <!--标签云-->
       <TagCloud></TagCloud>
@@ -116,7 +148,7 @@
   import HotBlog from "../components/HotBlog";
   import FollowUs from "../components/FollowUs";
   import Link from "../components/Link";
-  import {getBlogByLevel, getNewBlog, recorderVisitPage} from "../api/index";
+  import {getBlogByLevel, getHotBlogSort, getNewBlog, recorderVisitPage} from "../api/index";
   import { Loading } from 'element-ui';
   import {getBlogByUid} from "../api/blogContent";
   export default {
@@ -138,12 +170,12 @@
         isFirstRecommendShow: true, //是否显示一级推荐
         isSecondRecommendShow: true, //是否显示二级推荐
         secondData: [], //；二级级推荐数据
-        thirdData: [], //三级推荐
-        fourthData: [], //四级推荐
         newBlogData: [], //最新文章
-        hotBlogData: [], //最热文章
-        hotTagData: [], //最新标签
+        hotBlogSortData: [], // 最热博客分类
         keyword: "",
+        activeName: "0",
+        orderByDescColumn: "", // 降序字段
+        blogSortUid: "", // 当前选中的博客分类UID
         currentPage: 1,
         pageSize: 15,
         total: 0, //总数量
@@ -174,6 +206,9 @@
       });
       // 获取最新博客
       this.newBlogList();
+      // 获取最热博客分类列表
+      this.hotBlogSortList()
+
       var params = new URLSearchParams();
       params.append("pageName", "INDEX");
         recorderVisitPage(params).then(response => {
@@ -209,7 +244,37 @@
         });
 
       },
-
+      // 获取最热博客分类列表
+      hotBlogSortList: function () {
+        getHotBlogSort().then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.hotBlogSortData = response.data;
+            console.log("获取最热博客分类", this.hotBlogSortData)
+          }
+        });
+      },
+      handleClick: function (tab, event) {
+        console.log("点击", tab)
+        this.activeName = tab.index
+        switch (tab.index) {
+          case "0": {
+            this.orderByDescColumn = "create_time";
+            this.blogSortUid = ""
+            this.newBlogList()
+          };break;
+          case "1": {
+            this.orderByDescColumn = "click_count";
+            this.blogSortUid = ""
+            this.newBlogList()
+          };break;
+          default: {
+            this.orderByDescColumn = "create_time";
+            let blogSort = this.hotBlogSortData[tab.index - 2]
+            this.blogSortUid = blogSort.uid
+            this.newBlogList()
+          }
+        }
+      },
       //跳转到搜索详情页
       goToAuthor(author) {
         let routeData = this.$router.push({
@@ -226,10 +291,11 @@
           text: '正在努力加载中……',
           background: 'rgba(0, 0, 0, 0.7)'
         })
-
-        var params = new URLSearchParams();
-        params.append("currentPage", this.currentPage);
-        params.append("pageSize", this.pageSize);
+        let params = {};
+        params.currentPage = 0;
+        params.pageSize = 5;
+        params.orderByDescColumn = this.orderByDescColumn
+        params.blogSortUid = this.blogSortUid
         getNewBlog(params).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
             let newBlogData = response.data.records;
@@ -250,11 +316,13 @@
 
       loadContent: function () {
         let that = this;
-        that.loading = false;
-        that.currentPage = that.currentPage + 1;
-        let params = new URLSearchParams();
-        params.append("currentPage", that.currentPage);
-        params.append("pageSize", that.pageSize);
+        this.loading = false;
+        this.currentPage = this.currentPage + 1;
+        let params = {};
+        params.currentPage = this.currentPage;
+        params.pageSize = this.pageSize;
+        params.orderByDescColumn = this.orderByDescColumn
+        params.blogSortUid = this.blogSortUid
         getNewBlog(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;

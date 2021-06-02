@@ -54,6 +54,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="图标" width="50" align="center">
+        <template slot-scope="scope">
+          <i :class="scope.row.icon" />
+        </template>
+      </el-table-column>
+
       <el-table-column label="点击数" width="100" align="center" prop="clickCount" sortable="custom" :sort-by="['clickCount']">
         <template slot-scope="scope">
           <span>{{ scope.row.clickCount }}</span>
@@ -117,6 +123,14 @@
           <el-input v-model="form.content" auto-complete="off"></el-input>
         </el-form-item>
 
+        <el-form-item label="图标" :label-width="formLabelWidth" prop="icon">
+          <el-input v-model="form.icon" placeholder="请输入前图标名称">
+            <el-button slot="append" icon="el-icon-setting" @click="openIconsDialog('prefix-icon')">
+              选择
+            </el-button>
+          </el-input>
+        </el-form-item>
+
         <el-form-item label="排序" :label-width="formLabelWidth" prop="sort">
           <el-input v-model="form.sort" auto-complete="off"></el-input>
         </el-form-item>
@@ -127,6 +141,9 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
       </div>
     </el-dialog>
+
+    <icons-dialog :visible.sync="iconsVisible" :current="form.icon" @select="setIcon" />
+
   </div>
 </template>
 
@@ -140,10 +157,11 @@ import {
   blogSortByClickCount,
   blogSortByCite
 } from "@/api/blogSort";
-import { formatData } from "@/utils/webUtils";
+import IconsDialog from "../../components/IconsDialog";
 export default {
   data() {
     return {
+      iconsVisible: false, // 是否显示icon选择器
       multipleSelection: [], //多选，用于批量删除
       tableData: [],
       keyword: "",
@@ -173,6 +191,9 @@ export default {
       }
     };
   },
+  components: {
+    IconsDialog
+  },
   created() {
     this.blogSortList();
   },
@@ -188,6 +209,14 @@ export default {
         this.orderByDescColumn = val.prop
       }
       this.blogSortList()
+    },
+    // 选择图标
+    setIcon(val) {
+      this.form.icon = val
+    },
+    openIconsDialog(model) {
+      this.iconsVisible = true
+      this.currentIconModel = model
     },
     blogSortList: function() {
       var params = {};

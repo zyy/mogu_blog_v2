@@ -11,8 +11,8 @@ export function getBlogByLevel (params) {
 export function getNewBlog (params) {
   return request({
     url: process.env.WEB_API + '/index/getNewBlog',
-    method: 'get',
-    params
+    method: 'post',
+    data: params
   })
 }
 
@@ -35,6 +35,14 @@ export function getHotBlog (params) {
 export function getHotTag (params) {
   return request({
     url: process.env.WEB_API + '/index/getHotTag',
+    method: 'get',
+    params
+  })
+}
+
+export function getHotBlogSort (params) {
+  return request({
+    url: process.env.WEB_API + '/index/getHotBlogSort',
     method: 'get',
     params
   })

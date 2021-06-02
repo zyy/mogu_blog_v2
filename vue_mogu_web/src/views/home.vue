@@ -25,9 +25,7 @@
       </h2>
 
       <ul id="starlist" :style="showHead?'display: block':''">
-
         <li v-for="webNavbar in webNavbarList" :key="webNavbar.uid">
-
           <!--判断是否有下拉菜单-->
           <span  v-if="webNavbar.childWebNavbar && webNavbar.childWebNavbar.length > 0">
             <el-dropdown  trigger="click">
@@ -755,12 +753,10 @@
 
       // 获取导航栏列表
       getWebNavbarList() {
-        console.log("获取导航栏")
         var params = {};
         params.isShow = 1
         getWebNavbar(params).then(response => {
           if(response.code == this.$ECode.SUCCESS) {
-            console.log("获取到的导航栏列表", response)
             let webNavbarList = response.data
             let newWebNavbarList = []
             for(let a=0; a<webNavbarList.length; a++) {
@@ -1188,11 +1184,12 @@
        * @returns {{}}
        */
       getCurrentPageTitle: function() {
-        var test = window.location.href;
-        var start = 0;
-        var end = test.length;
+        let test = window.location.href;
+        let start = 0;
+        let end = test.length;
 
         console.log("当前URL", test)
+
         for (var i = 0; i < test.length; i++) {
           if (test[i] == "/") {
             start = i;
@@ -1300,8 +1297,6 @@
             console.log("提问题")
             this.createQuestion(false, null)
           } break;
-
-
         }
       },
       closeLoginBox: function () {

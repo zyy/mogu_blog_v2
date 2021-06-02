@@ -1292,7 +1292,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
     }
 
     @Override
-    public IPage<Blog> getNewBlog(Long currentPage, Long pageSize) {
+    public IPage<Blog> getNewBlog(BlogVO blogVO) {
 
         String blogNewCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_NEW_COUNT);
         if (StringUtils.isEmpty(blogNewCount)) {
@@ -1312,8 +1312,24 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         Page<Blog> page = new Page<>();
-        page.setCurrent(currentPage);
+        page.setCurrent(blogVO.getCurrentPage());
         page.setSize(Long.valueOf(blogNewCount));
+
+        // 判断是否按分类查找
+        if (StringUtils.isNotEmpty(blogVO.getBlogSortUid())) {
+            queryWrapper.eq(SQLConf.BLOG_SORT_UID, blogVO.getBlogSortUid());
+        }
+        // 判断是否需要排序
+        if (StringUtils.isNotEmpty(blogVO.getOrderByAscColumn())) {
+            // 将驼峰转换成下划线
+            String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByAscColumn())).toString();
+            queryWrapper.orderByAsc(column);
+        } else if (StringUtils.isNotEmpty(blogVO.getOrderByDescColumn())) {
+            // 将驼峰转换成下划线
+            String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByDescColumn())).toString();
+            queryWrapper.orderByDesc(column);
+        }
+
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);

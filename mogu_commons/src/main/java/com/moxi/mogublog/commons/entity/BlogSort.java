@@ -41,4 +41,10 @@ public class BlogSort extends SuperEntity<BlogSort> {
      * 排序字段，数值越大，越靠前
      */
     private Integer sort;
+
+    /**
+     * 分类icon图标
+     */
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    private String icon;
 }

@@ -77,4 +77,11 @@ public interface BlogSortService extends SuperService<BlogSort> {
      * @return
      */
     public BlogSort getTopOne();
+
+    /**
+     * 获取热门标签
+     *
+     * @return
+     */
+    public List<BlogSort> getHotBlogSort(Integer hotBlogSortCount);
 }
