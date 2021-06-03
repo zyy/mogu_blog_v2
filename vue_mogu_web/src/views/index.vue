@@ -292,8 +292,9 @@
           background: 'rgba(0, 0, 0, 0.7)'
         })
         let params = {};
-        params.currentPage = 0;
-        params.pageSize = 5;
+        this.currentPage = 1
+        params.currentPage = this.currentPage;
+        params.pageSize = 15;
         params.orderByDescColumn = this.orderByDescColumn
         params.blogSortUid = this.blogSortUid
         getNewBlog(params).then(response => {
