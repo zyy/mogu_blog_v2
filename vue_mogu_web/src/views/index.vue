@@ -24,15 +24,15 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane name="0">
-        <span :class="activeName== 1?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-collection-tag"></i> <span>最新</span></span>
+        <span slot="label" ><i class="el-icon-collection-tag"></i> <span>最新</span></span>
       </el-tab-pane>
 
       <el-tab-pane name="1">
-        <span :class="activeName== 2?'tab-pane-active':'tab-pane'" slot="label" ><i class="el-icon-star-off"></i> <span>最热</span></span>
+        <span slot="label" ><i class="el-icon-star-off"></i> <span>最热</span></span>
       </el-tab-pane>
 
       <el-tab-pane v-for="(item, index) in hotBlogSortData" :name="(index+2)+''" :key="item.uid">
-        <span :class="activeName== item.sortName?'tab-pane-active':'tab-pane'" slot="label" ><i :class="item.icon"></i> <span>{{item.sortName}}</span></span>
+        <span slot="label" ><i :class="item.icon"></i> <span>{{item.sortName}}</span></span>
       </el-tab-pane>
     </el-tabs>
 
