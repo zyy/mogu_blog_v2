@@ -1,5 +1,7 @@
 package com.moxi.mogublog.picture.util;
 
+import cn.hutool.core.img.ImgUtil;
+import cn.hutool.core.io.FileUtil;
 import com.moxi.mogublog.commons.entity.SystemConfig;
 import com.moxi.mogublog.picture.global.MessageConf;
 import com.moxi.mogublog.utils.FileUtils;
@@ -10,6 +12,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +32,9 @@ public class MinioUtil {
 
     @Autowired
     FeignUtil feignUtil;
+
+    @Value(value = "${file.upload.scaleSize}")
+    private Long scaleSize;
 
     /**
      * 文件上传
@@ -125,6 +131,7 @@ public class MinioUtil {
                             inputStram, multipartFile.getSize(), -1)
                             .contentType(multipartFile.getContentType())
                             .build());
+
             url = Constants.SYMBOL_LEFT_OBLIQUE_LINE + systemConfig.getMinioBucket() + Constants.SYMBOL_LEFT_OBLIQUE_LINE + newFileName;
         } catch (Exception e) {
             e.getStackTrace();

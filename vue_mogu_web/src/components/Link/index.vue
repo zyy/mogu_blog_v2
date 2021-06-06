@@ -1,5 +1,5 @@
 <template>
-    <div class="links" v-if="linkData.length > 0">
+    <div class="sidebarDiv links" v-if="linkData.length > 0">
       <h2 class="hometitle">友情链接</h2>
       <ul>
           <li v-for="item in linkData" :key="item.uid"><a  href="javascript:void(0);" @click="goLink(item)">{{item.title}}</a></li>

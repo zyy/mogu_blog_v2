@@ -1,6 +1,9 @@
 package com.moxi.mogublog.picture.service.impl;
 
 
+import cn.hutool.core.img.Img;
+import cn.hutool.core.img.ImgUtil;
+import cn.hutool.core.io.FileUtil;
 import com.moxi.mogublog.commons.entity.SystemConfig;
 import com.moxi.mogublog.picture.global.MessageConf;
 import com.moxi.mogublog.picture.service.FileService;
@@ -50,6 +53,10 @@ public class QiniuServiceImpl implements QiniuService {
     //获取上传路径
     @Value(value = "${file.upload.path}")
     private String path;
+
+    @Value(value = "${file.upload.scaleSize}")
+    private Long scaleSize;
+
 
     @Override
     public List<String> batchUploadFile(List<MultipartFile> multipartFileList) throws IOException {
@@ -150,6 +157,19 @@ public class QiniuServiceImpl implements QiniuService {
             out.write(multipartFile.getBytes());
             out.flush();
             out.close();
+
+            long size = multipartFile.getSize();
+            // 判断文件大小是否大于给定的阈值
+            if(size > scaleSize) {
+                // 如果大于，需要对图片进行压缩
+                ImgUtil.scale(
+                        FileUtil.file(tempFiles),
+                        FileUtil.file(tempFiles),
+                        0.5f
+                );
+                dest = new java.io.File(tempFiles);
+            }
+
             url = qiniuUtil.uploadQiniu(dest, systemConfig);
         } catch (Exception e) {
             e.getStackTrace();
@@ -160,5 +180,14 @@ public class QiniuServiceImpl implements QiniuService {
             }
         }
         return url;
+    }
+
+    public static void main(String[] args) {
+        ImgUtil.scale(
+                FileUtil.file("d:/2.jpg"),
+                FileUtil.file("d:/2.jpg"),
+                0.5f//缩放比例
+        );
+
     }
 }

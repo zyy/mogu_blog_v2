@@ -1,5 +1,5 @@
 <template>
-  <div class="zhuanti" v-if="thirdData.length > 0">
+  <div class="sidebarDiv zhuanti" v-if="thirdData.length > 0">
     <h2 class="hometitle">特别推荐</h2>
     <ul>
       <li  v-for="item in thirdData" :key="item.uid" style="cursor: pointer">

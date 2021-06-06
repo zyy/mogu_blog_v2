@@ -1,5 +1,5 @@
 <template>
-  <div class="cloud" v-if="hotTagData.length > 0">
+  <div class="sidebarDiv cloud" v-if="hotTagData.length > 0">
     <h2 class="hometitle">热门标签</h2>
     <ul>
       <a v-for="item in hotTagData" :key="item.uid" href="javascript:void(0);" @click="goToList(item.uid)">{{item.content}}</a>

@@ -516,11 +516,9 @@
   </div>
 
   <footer>
-    <p>
-      <a href="javasrcipt:void(0);" @click="goIndex()">Copyright &nbsp;{{info.name}}&nbsp;</a>
-      <a href="http://www.beian.gov.cn/portal/index.do">{{info.recordNum}}</a>
-    </p>
+    <p v-html="info.recordNum"></p>
   </footer>
+
 
   <!--创建博客-->
   <CreateBlog v-if="dialogFormVisible" :visible="dialogFormVisible" :isEdit="isEdit" :formData="formData" @beforeClose="beforeClose"></CreateBlog>

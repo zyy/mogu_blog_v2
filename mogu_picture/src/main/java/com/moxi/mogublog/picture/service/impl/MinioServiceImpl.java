@@ -1,6 +1,8 @@
 package com.moxi.mogublog.picture.service.impl;
 
 
+import cn.hutool.core.img.ImgUtil;
+import cn.hutool.core.io.FileUtil;
 import com.moxi.mogublog.picture.global.MessageConf;
 import com.moxi.mogublog.picture.service.MinioService;
 import com.moxi.mogublog.picture.util.MinioUtil;
@@ -10,6 +12,7 @@ import com.moxi.mougblog.base.global.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +97,11 @@ public class MinioServiceImpl implements MinioService {
             // TODO 不关闭流，小图片就无法显示？
             out.flush();
             out.close();
+
+
+
             MultipartFile multipartFile = MoGuFileUtil.fileToMultipartFile(dest);
+
             return minioUtil.uploadFile(multipartFile);
         } catch (Exception e) {
             log.error(e.getMessage());

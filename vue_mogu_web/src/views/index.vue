@@ -16,9 +16,7 @@
             <h2>{{item.title}}</h2>
             <span>{{item.blogSort.sortName}}</span>
           </a>
-
         </li>
-
       </div>
     </div>
 
@@ -121,9 +119,6 @@
       <!--标签云-->
       <TagCloud></TagCloud>
 
-      <!--关注我们-->
-      <FollowUs></FollowUs>
-
       <!-- 三级推荐 -->
       <ThirdRecommend></ThirdRecommend>
 
@@ -133,8 +128,17 @@
       <!--点击排行-->
       <HotBlog></HotBlog>
 
-      <!-- 友情链接-->
-      <Link></Link>
+      <Sticky :sticky-top="20" style="min-height: 1000px">
+
+        <!--关注我们-->
+        <FollowUs></FollowUs>
+
+        <!-- 友情链接-->
+        <Link></Link>
+
+      </Sticky>
+
+
     </div>
 
   </article>
@@ -147,7 +151,9 @@
   import TagCloud from "../components/TagCloud";
   import HotBlog from "../components/HotBlog";
   import FollowUs from "../components/FollowUs";
+  import Copyright from "../components/Copyright"
   import Link from "../components/Link";
+  import Sticky from "@/components/Sticky";
   import {getBlogByLevel, getHotBlogSort, getNewBlog, recorderVisitPage} from "../api/index";
   import { Loading } from 'element-ui';
   import {getBlogByUid} from "../api/blogContent";
@@ -162,6 +168,8 @@
       HotBlog,
       FollowUs,
       Link,
+      Copyright,
+      Sticky,
     },
     data() {
       return {

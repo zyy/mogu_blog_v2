@@ -151,6 +151,7 @@ public class FeignUtil {
             systemConfig.setUploadQiNiu(uploadQiNiu);
             systemConfig.setUploadLocal(uploadLocal);
             systemConfig.setPicturePriority(systemConfigMap.get(SysConf.PICTURE_PRIORITY));
+            systemConfig.setContentPicturePriority(systemConfigMap.get(SysConf.CONTENT_PICTURE_PRIORITY));
             systemConfig.setLocalPictureBaseUrl(systemConfigMap.get(SysConf.LOCAL_PICTURE_BASE_URL));
             systemConfig.setQiNiuPictureBaseUrl(systemConfigMap.get(SysConf.QI_NIU_PICTURE_BASE_URL));
 
@@ -215,6 +216,7 @@ public class FeignUtil {
             systemConfig.setUploadQiNiu(uploadQiNiu);
             systemConfig.setUploadLocal(uploadLocal);
             systemConfig.setPicturePriority(systemConfigMap.get(SysConf.PICTURE_PRIORITY));
+            systemConfig.setContentPicturePriority(systemConfigMap.get(SysConf.CONTENT_PICTURE_PRIORITY));
             systemConfig.setLocalPictureBaseUrl(systemConfigMap.get(SysConf.LOCAL_PICTURE_BASE_URL));
             systemConfig.setQiNiuPictureBaseUrl(systemConfigMap.get(SysConf.QI_NIU_PICTURE_BASE_URL));
 
@@ -282,6 +284,7 @@ public class FeignUtil {
             systemConfig.setUploadLocal(uploadLocal);
             systemConfig.setPicturePriority(picturePriority);
             systemConfig.setContentPicturePriority(contentPicturePriority);
+            systemConfig.setContentPicturePriority(systemConfigMap.get(SysConf.CONTENT_PICTURE_PRIORITY));
             systemConfig.setLocalPictureBaseUrl(localPictureBaseUrl);
             systemConfig.setQiNiuPictureBaseUrl(qiNiuPictureBaseUrl);
 

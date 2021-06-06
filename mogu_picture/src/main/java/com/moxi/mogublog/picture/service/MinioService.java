@@ -35,7 +35,6 @@ public interface MinioService {
      * 通过URL上传图片
      *
      * @param url
-     * @param systemConfig
      * @return
      */
     String uploadPictureByUrl(String url);

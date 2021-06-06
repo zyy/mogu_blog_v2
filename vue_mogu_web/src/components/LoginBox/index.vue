@@ -236,6 +236,11 @@ export default {
             }
           }
         }
+        // 只有当开启微信登录，并且未账号密码时，才主动显示扫码页面
+        this.showPasswordLogin = !(this.loginType.password && !this.loginType.wechat)
+        if(!this.showPasswordLogin) {
+          this.refreshWechatCode()
+        }
       }
     },
     startLogin: function () {
@@ -331,8 +336,8 @@ export default {
           let count = 0
           let interval = setInterval(() => {
             count++
-            // 当检查5次未扫码的时候，将二维码失效，重试关闭接口请求
-            if(count > 5) {
+            // 当检查15次未扫码的时候，将二维码失效，重试关闭接口请求
+            if(count > 15) {
               this.wechatOrCode = ""
               clearInterval(interval)
             }
@@ -352,7 +357,7 @@ export default {
                 location.reload();
               }
             });
-          }, 3000);
+          }, 2000);
 
         } else {
           this.$message.error(response.message)

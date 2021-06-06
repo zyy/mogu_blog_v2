@@ -61,11 +61,13 @@
                 <el-input v-model="form.author" style="width: 400px"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="10">
-              <el-form-item label="备案号" prop="newPwd2">
-                <el-input v-model="form.recordNum" style="width: 400px"></el-input>
-              </el-form-item>
-            </el-col>
+
+<!--            <el-col :span="10">-->
+<!--              <el-form-item label="备案号" prop="newPwd2">-->
+<!--                <el-input v-model="form.recordNum" style="width: 400px"></el-input>-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
+
           </el-row>
 
           <el-row :gutter="24">
@@ -95,6 +97,16 @@
         </el-form>
       </el-tab-pane>
 
+      <el-tab-pane label="友链申请模板" v-permission="'/webConfig/getWebConfig'">
+        <span slot="label"><i class="el-icon-edit"></i> 版权申明</span>
+        <div class="editor-container">
+          <CKEditor ref="editor" v-if="systemConfig.editorModel == '0'" :content="form.recordNum" :height="500"></CKEditor>
+          <MarkdownEditor ref="editor" v-if="systemConfig.editorModel == '1'" :height="660" style="margin-top: 12px"></MarkdownEditor>
+        </div>
+        <div style="margin-top: 5px; margin-left: 10px;" >
+          <el-button type="primary" @click="submitForm()" v-permission="'/system/editMe'">保 存</el-button>
+        </div>
+      </el-tab-pane>
 
       <el-tab-pane v-permission="'/webConfig/getWebConfig'">
         <span slot="label">
@@ -108,7 +120,6 @@
           label-width="90px"
           ref="from"
         >
-
           <el-row :gutter="24">
             <el-col :span="4">
               <el-form-item label="阿里支付">
@@ -122,14 +133,17 @@
                   :on-success="fileSuccess_ali"
                   :data="otherData"
                 >
-                  <img v-if="form.aliPayPhoto" :src="form.aliPayPhoto" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <img v-if="form.aliPayPhoto" :src="form.aliPayPhoto" class="avatar uploadImgBody">
+                  <div v-else class="uploadImgBody">
+                    <i class="el-icon-plus avatar-uploader-icon"></i>
+                  </div>
                 </el-upload>
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="微信支付">
                 <el-upload
+
                   class="avatar-uploader"
                   name="file"
                   :action="uploadPictureHost"
@@ -140,7 +154,9 @@
                   :data="otherData"
                 >
                   <img v-if="form.weixinPayPhoto" :src="form.weixinPayPhoto" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <div v-else class="uploadImgBody">
+                    <i class="el-icon-plus avatar-uploader-icon"></i>
+                  </div>
                 </el-upload>
               </el-form-item>
             </el-col>
@@ -241,10 +257,12 @@
 
       <el-tab-pane label="友链申请模板" v-permission="'/webConfig/getWebConfig'">
         <span slot="label"><i class="el-icon-edit"></i> 友链申请模板</span>
-        <div class="editor-container">
-          <CKEditor ref="editor" v-if="systemConfig.editorModel == '0'" :content="form.dashboardNotification" :height="500"></CKEditor>
-          <MarkdownEditor ref="editor" v-if="systemConfig.editorModel == '1'" :height="660" style="margin-top: 12px"></MarkdownEditor>
-        </div>
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 10, maxRows: 15}"
+          placeholder="请输入友链申请的模板信息"
+          v-model="form.linkApplyTemplate">
+        </el-input>
         <div style="margin-top: 5px; margin-left: 10px;" >
           <el-button type="primary" @click="submitForm()" v-permission="'/system/editMe'">保 存</el-button>
         </div>
@@ -378,8 +396,8 @@ export default {
     },
     handleClick(tab, event) {
       //设置富文本内容
-      if (this.form.linkApplyTemplate) {
-        this.$refs.editor.setData(this.form.linkApplyTemplate);
+      if (this.form.recordNum) {
+        this.$refs.editor.setData(this.form.recordNum);
       }
     },
     getWebConfigFun: function() {
@@ -438,7 +456,7 @@ export default {
     },
     submitForm: function() {
       let form = this.form;
-      form.linkApplyTemplate = this.$refs.editor.getData();
+      form.recordNum = this.$refs.editor.getData();
       form.logo = this.fileIds;
       form.showList = JSON.stringify(this.form.showList)
       form.loginTypeList = JSON.stringify(this.form.loginTypeList)

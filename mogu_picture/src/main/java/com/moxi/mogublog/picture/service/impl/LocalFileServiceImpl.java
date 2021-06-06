@@ -1,5 +1,7 @@
 package com.moxi.mogublog.picture.service.impl;
 
+import cn.hutool.core.img.ImgUtil;
+import cn.hutool.core.io.FileUtil;
 import com.moxi.mogublog.commons.entity.FileSort;
 import com.moxi.mogublog.picture.service.FileSortService;
 import com.moxi.mogublog.picture.service.LocalFileService;
@@ -43,6 +45,9 @@ public class LocalFileServiceImpl implements LocalFileService {
      */
     @Value(value = "${file.upload.path}")
     private String path;
+
+    @Value(value = "${file.upload.scaleSize}")
+    private Long scaleSize;
 
     @Override
     public List<String> batchUploadFile(List<MultipartFile> multipartFileList, FileSort fileSort) throws IOException {
@@ -163,6 +168,18 @@ public class LocalFileServiceImpl implements LocalFileService {
         // 序列化文件到本地
         saveFile.createNewFile();
         multipartFile.transferTo(saveFile);
+
+        long size = multipartFile.getSize();
+        // 判断文件大小是否大于给定的阈值
+        if(size > scaleSize) {
+            // 如果大于，需要对图片进行压缩
+            ImgUtil.scale(
+                    FileUtil.file(saveUrl),
+                    FileUtil.file(saveUrl),
+                    0.5f
+            );
+        }
+
         return picurl;
     }
 }

@@ -54,6 +54,13 @@ public class WechatRestApi {
     private WebUtil webUtil;
     @Autowired
     private SystemConfigService systemConfigService;
+    @Value(value = "${wechat.appid}")
+    private String WECHAT_APPID;
+    @Value(value = "${wechat.secret}")
+    private String WECHAT_SECRET;
+    @Value(value = "${wechat.isCert}")
+    private boolean IS_CERT;
+
     @Value(value = "${data.web.project_name_en}")
     private String PROJECT_NAME_EN;
     @Value(value = "${DEFAULE_PWD}")
@@ -64,7 +71,6 @@ public class WechatRestApi {
     @ApiOperation(value = "获取微信公众号状态", notes = "获取微信公众号状态")
     @GetMapping("/wechatCheck")
     public String wechatCheck(HttpServletRequest request) {
-        System.out.println("我进来了");
         String msgSignature = request.getParameter("signature");
         String msgTimestamp = request.getParameter("timestamp");
         String msgNonce = request.getParameter("nonce");
@@ -83,125 +89,177 @@ public class WechatRestApi {
         System.out.println(map);
         String event = map.get("Event");
         if("SCAN".equals(event)) {
-            System.out.println("扫码进来了，已经关注过");
+            log.info("用户扫码进来了，已经关注过");
         } else if("subscribe".equals(event)) {
-            System.out.println("订阅公众号");
+            log.info("用户首次订阅公众号");
         } else if ("subscribe".equals(event)) {
-            System.out.println("取消订阅公众号");
+            log.info("用户取消订阅公众号");
         }
 
         String accessToken = redisUtil.get("WE_CHAT_ACCESS_TOKEN");
         // 可以当做token
         String ticket = map.get("Ticket");
-
         String toUserName = map.get("ToUserName");
-        String fromUserName = map.get("FromUserName");
+        String openid = map.get("FromUserName");
 
-        String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+fromUserName;
-        String result = HttpRequest.get(url).execute().body();
-        System.out.println(result);
+        // 判断公众号是否认证
+        if(IS_CERT) {
+            log.info("公众号已认证");
+            String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+openid;
+            String result = HttpRequest.get(url).execute().body();
 
-
-        //##############################  开始  ############################
-        Map<String, Object> data = JsonUtils.jsonToMap(result);
-        Boolean exist = false;
-        User user;
-        //判断user是否存在
-        if (data.get("openid") != null) {
-            user = userService.getUserBySourceAnduuid("wechat", data.get("openid").toString());
-            if (user != null) {
-                exist = true;
+            //##############################  开始  ############################
+            Map<String, Object> data = JsonUtils.jsonToMap(result);
+            log.info("获取用户的信息: {}", data);
+            Boolean exist = false;
+            User user;
+            //判断user是否存在
+            if (data.get("openid") != null) {
+                user = userService.getUserBySourceAnduuid("wechat", data.get("openid").toString());
+                if (user != null) {
+                    exist = true;
+                } else {
+                    user = new User();
+                }
             } else {
-                user = new User();
+                System.out.println("获取用户失败");
+                return "error";
             }
-        } else {
-            System.out.println("获取用户失败");
-            return "error";
-        }
 
-        // 判断邮箱是否存在
-        if (data.get(SysConf.EMAIL) != null) {
-            String email = data.get(SysConf.EMAIL).toString();
-            user.setEmail(email);
-        }
-
-        // 判断用户性别
-        if (data.get("sex") != null && !exist) {
-            String gender = data.get("sex").toString();
-            if (EGender.MALE.equals(gender)) {
-                user.setGender(EGender.MALE);
-            } else if (EGender.FEMALE.equals(gender)) {
-                user.setGender(EGender.FEMALE);
-            } else {
-                user.setGender(EGender.UNKNOWN);
+            // 判断邮箱是否存在
+            if (data.get(SysConf.EMAIL) != null) {
+                String email = data.get(SysConf.EMAIL).toString();
+                user.setEmail(email);
             }
-        }
 
-        // 通过头像uid获取图片
-        String pictureList = this.pictureFeignClient.getPicture(user.getAvatar(), SysConf.FILE_SEGMENTATION);
-        List<String> photoList = webUtil.getPicture(pictureList);
-        Map<String, Object> picMap = (Map<String, Object>) JsonUtils.jsonToObject(pictureList, Map.class);
+            // 判断用户性别
+            if (data.get("sex") != null && !exist) {
+                String gender = data.get("sex").toString();
+                if (EGender.MALE.equals(gender)) {
+                    user.setGender(EGender.MALE);
+                } else if (EGender.FEMALE.equals(gender)) {
+                    user.setGender(EGender.FEMALE);
+                } else {
+                    user.setGender(EGender.UNKNOWN);
+                }
+            }
 
-        // 判断该用户是否含有头像信息
-        if (SysConf.SUCCESS.equals(picMap.get(SysConf.CODE)) && photoList.size() > 0) {
-            List<Map<String, Object>> picData = (List<Map<String, Object>>) picMap.get(SysConf.DATA);
-            String fileOldName = picData.get(0).get(SysConf.FILE_OLD_NAME).toString();
+            // 通过头像uid获取图片
+            String pictureList = this.pictureFeignClient.getPicture(user.getAvatar(), SysConf.FILE_SEGMENTATION);
+            List<String> photoList = webUtil.getPicture(pictureList);
+            Map<String, Object> picMap = (Map<String, Object>) JsonUtils.jsonToObject(pictureList, Map.class);
 
-            // 判断本地的图片是否和第三方登录的一样，如果不一样，那么更新
-            // 如果旧名称为blob表示是用户自定义的，代表用户在本网站使用了自定义头像，那么就再也不同步更新网站上的了
-            if (fileOldName.equals(data.get(SysConf.AVATAR)) || SysConf.BLOB.equals(fileOldName)) {
-                user.setPhotoUrl(photoList.get(0));
+            // 判断该用户是否含有头像信息
+            if (SysConf.SUCCESS.equals(picMap.get(SysConf.CODE)) && photoList.size() > 0) {
+                List<Map<String, Object>> picData = (List<Map<String, Object>>) picMap.get(SysConf.DATA);
+                String fileOldName = picData.get(0).get(SysConf.FILE_OLD_NAME).toString();
+
+                // 判断本地的图片是否和第三方登录的一样，如果不一样，那么更新
+                // 如果旧名称为blob表示是用户自定义的，代表用户在本网站使用了自定义头像，那么就再也不同步更新网站上的了
+                if (fileOldName.equals(data.get(SysConf.AVATAR)) || SysConf.BLOB.equals(fileOldName)) {
+                    user.setPhotoUrl(photoList.get(0));
+                } else {
+                    updateUserPhoto(data, user);
+                }
             } else {
+                // 当获取头像失败时，需要从网站上进行获取
                 updateUserPhoto(data, user);
             }
-        } else {
-            // 当获取头像失败时，需要从网站上进行获取
-            updateUserPhoto(data, user);
-        }
 
-        if (data.get(SysConf.NICKNAME) != null) {
-            user.setNickName(data.get(SysConf.NICKNAME).toString());
-        }
-
-        if (user.getLoginCount() == null) {
-            user.setLoginCount(0);
-        } else {
-            user.setLoginCount(user.getLoginCount() + 1);
-        }
-        // 获取浏览器，IP来源，以及操作系统
-        user = userService.serRequestInfo(user);
-        // 暂时将token也存入到user表中，为了以后方便更新redis中的内容
-        user.setValidCode(ticket);
-        if (exist) {
-            user.updateById();
-        } else {
-            user.setUuid(data.get("openid").toString());
-            user.setSource("wechat");
-            String userName = PROJECT_NAME_EN.concat(Constants.SYMBOL_UNDERLINE).concat(user.getSource()).concat(Constants.SYMBOL_UNDERLINE).concat(user.getUuid());
-            user.setUserName(userName);
-            // 如果昵称为空，那么直接设置用户名
-            if (StringUtils.isEmpty(user.getNickName())) {
-                user.setNickName(userName);
+            if (data.get(SysConf.NICKNAME) != null) {
+                user.setNickName(data.get(SysConf.NICKNAME).toString());
             }
-            // 默认密码
-            user.setPassWord(MD5Utils.string2MD5(DEFAULE_PWD));
-            // 设置是否开启评论邮件通知【关闭】
-            user.setStartEmailNotification(EOpenStatus.CLOSE_STATUS);
-            user.insert();
-        }
-        // 过滤密码
-        user.setPassWord("");
-        if (user != null) {
-            //将从数据库查询的数据缓存到redis中
-            redisUtil.setEx(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + ticket, JsonUtils.objectToJson(user), userTokenSurvivalTime, TimeUnit.HOURS);
-        }
 
+            if (user.getLoginCount() == null) {
+                user.setLoginCount(0);
+            } else {
+                user.setLoginCount(user.getLoginCount() + 1);
+            }
+            // 获取浏览器，IP来源，以及操作系统
+            user = userService.serRequestInfo(user);
+            // 暂时将token也存入到user表中，为了以后方便更新redis中的内容
+            user.setValidCode(ticket);
+            if (exist) {
+                user.updateById();
+            } else {
+                user.setUuid(data.get("openid").toString());
+                user.setSource("wechat");
+                String userName = PROJECT_NAME_EN.concat(Constants.SYMBOL_UNDERLINE).concat(user.getSource()).concat(Constants.SYMBOL_UNDERLINE).concat(user.getUuid());
+                user.setUserName(userName);
+                // 如果昵称为空，那么直接设置用户名
+                if (StringUtils.isEmpty(user.getNickName())) {
+                    user.setNickName(userName);
+                }
+                // 默认密码
+                user.setPassWord(MD5Utils.string2MD5(DEFAULE_PWD));
+                // 设置是否开启评论邮件通知【关闭】
+                user.setStartEmailNotification(EOpenStatus.CLOSE_STATUS);
+                user.insert();
+            }
+            // 过滤密码
+            user.setPassWord("");
+            if (user != null) {
+                //将从数据库查询的数据缓存到redis中
+                redisUtil.setEx(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + ticket, JsonUtils.objectToJson(user), userTokenSurvivalTime, TimeUnit.HOURS);
+            }
+
+        } else {
+            //##############################  公众号未认证逻辑开始  ############################
+            log.info("公众号未认证");
+            Boolean exist = false;
+            User user;
+            //判断user是否存在
+            if (openid != null) {
+                user = userService.getUserBySourceAnduuid("wechat", openid);
+                if (user != null) {
+                    exist = true;
+                } else {
+                    user = new User();
+                }
+            } else {
+                System.out.println("获取用户失败");
+                return "error";
+            }
+
+            if (user.getLoginCount() == null) {
+                user.setLoginCount(0);
+            } else {
+                user.setLoginCount(user.getLoginCount() + 1);
+            }
+            // 获取浏览器，IP来源，以及操作系统
+            user = userService.serRequestInfo(user);
+            // 暂时将token也存入到user表中，为了以后方便更新redis中的内容
+            user.setValidCode(ticket);
+            if (exist) {
+                user.updateById();
+            } else {
+
+                user.setGender(EGender.UNKNOWN);
+                user.setUuid(openid);
+                user.setSource("wechat");
+                String userName = PROJECT_NAME_EN.concat(Constants.SYMBOL_UNDERLINE).concat(user.getSource()).concat(Constants.SYMBOL_UNDERLINE).concat(StringUtils.getUUID().substring(0, 5));
+                user.setUserName(userName);
+                user.setNickName(userName);
+                // 默认密码
+                user.setPassWord(MD5Utils.string2MD5(DEFAULE_PWD));
+                // 设置是否开启评论邮件通知【关闭】
+                user.setStartEmailNotification(EOpenStatus.CLOSE_STATUS);
+                user.insert();
+            }
+            // 过滤密码
+            user.setPassWord("");
+            if (user != null) {
+                //将从数据库查询的数据缓存到redis中
+                redisUtil.setEx(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + ticket, JsonUtils.objectToJson(user), userTokenSurvivalTime, TimeUnit.HOURS);
+            }
+
+        }
         //############################## 结束 ############################
 
         String returnData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 " <xml>" +
                 " <Content>" + "hello" + "</Content>" +
-                " <ToUserName>" + fromUserName + "</ToUserName>" +
+                " <ToUserName>" + openid + "</ToUserName>" +
                 " <FromUserName>" + toUserName + "</FromUserName>" +
                 " <CreateTime>" + new Date().getTime() / 1000 + "</CreateTime>" +
                 " <MsgType>text</MsgType>" +
@@ -214,29 +272,19 @@ public class WechatRestApi {
     @ApiOperation(value = "获取微信公众号登录二维码", notes = "获取微信公众号登录二维码")
     @GetMapping("/getWechatOrCodeTicket")
     public String getWechatOrCodeTicket() {
-        String requireAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxfe2c610ba4fa2839&secret=49077bace79e0b11a53c1ced6eaf289d";
+        String requireAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+WECHAT_APPID+"&secret="+WECHAT_SECRET;
         String result = HttpRequest.post(requireAccessTokenUrl).execute().body();
-        System.out.println(result);
+        log.info("获取ticket信息: {}",result);
         Map<String, Object> map = JsonUtils.jsonToMap(result);
         if(map.get("access_token") != null) {
             String accessToken = map.get("access_token").toString();
-
             redisUtil.setEx("WE_CHAT_ACCESS_TOKEN", accessToken, 1, TimeUnit.HOURS);
-
             String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
-
-
             String json = "{\"expire_seconds\": 604800, \"action_name\": \"QR_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": 123}}}";
-            String result2 = HttpRequest.post(url).body(json).execute().body();
-            System.out.println(result2);
-
-            Map<String, Object> resultMap = JsonUtils.jsonToMap(result2);
-//            if(resultMap.get("ticket") != null) {
-//                return ResultUtil.successWithData("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + resultMap.get("ticket"));
-//            }
-
+            String codeResult = HttpRequest.post(url).body(json).execute().body();
+            Map<String, Object> resultMap = JsonUtils.jsonToMap(codeResult);
+            log.info("获取二维码信息: {}", resultMap.toString());
             return ResultUtil.successWithData(resultMap);
-
         }
 
         return ResultUtil.errorWithMessage("获取失败二维码失败");
@@ -248,12 +296,12 @@ public class WechatRestApi {
 
         String json = redisUtil.get(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + ticket);
         if(StringUtils.isNotEmpty(json)) {
+            log.info("通过ticket获取用户信息：{}", json);
             return ResultUtil.successWithData(JsonUtils.jsonToMap(json));
         }
         return ResultUtil.errorWithMessage("获取用户信息失败");
 
     }
-
 
 
     /**

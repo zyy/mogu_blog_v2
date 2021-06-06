@@ -1,5 +1,5 @@
 <template>
-    <div class="tuijian" v-if="hotBlogData.length > 0">
+    <div class="sidebarDiv tuijian" v-if="hotBlogData.length > 0">
       <h2 class="hometitle">点击排行</h2>
       <ul class="tjpic" v-if="hotBlogData[0]">
 

@@ -334,7 +334,6 @@ public class FileServiceImpl extends SuperServiceImpl<FileMapper, File> implemen
 
     @Override
     public Object ckeditorUploadFile(HttpServletRequest request) {
-        String token = request.getParameter(SysConf.TOKEN);
         // 从Redis中获取七牛云配置文件
         SystemConfig systemConfig = feignUtil.getSystemConfig();
 
