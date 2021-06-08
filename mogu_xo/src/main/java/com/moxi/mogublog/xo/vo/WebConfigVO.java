@@ -93,6 +93,11 @@ public class WebConfigVO extends BaseVO<WebConfigVO> {
     private String openCreateBlog;
 
     /**
+     * 是否开启问答【0 关闭，1 开启】
+     */
+    private String openCreateQuestion;
+
+    /**
      * github地址
      */
     private String github;

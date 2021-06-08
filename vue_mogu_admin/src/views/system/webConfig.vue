@@ -91,6 +91,13 @@
             </el-form-item>
           </el-row>
 
+          <el-row>
+            <!-- 是否开启注册用户问答功能 -->
+            <el-form-item label="用户问答">
+              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openCreateQuestion" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
+            </el-form-item>
+          </el-row>
+
           <el-form-item>
             <el-button type="primary" @click="submitForm()" v-permission="'/webConfig/editWebConfig'">保 存</el-button>
           </el-form-item>

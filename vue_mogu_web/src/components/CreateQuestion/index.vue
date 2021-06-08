@@ -43,19 +43,19 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="6.5">
-            <el-form-item label="问答回复" :label-width="formLabelWidth" prop="openComment">
-              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue" border size="small">{{item.dictLabel}}</el-radio>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="问答回复" :label-width="formLabelWidth" prop="openComment">-->
+<!--              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue" border size="small">{{item.dictLabel}}</el-radio>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
 
-          <el-col :span="4.5">
-            <el-form-item label="是否发布" :label-width="lineLabelWidth" prop="isPublish">
-              <el-radio-group v-model="form.isPublish" size="small">
-                <el-radio v-for="item in blogPublishDictList" :key="item.uid" :label="item.dictValue" border>{{item.dictLabel}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="4.5">-->
+<!--            <el-form-item label="是否发布" :label-width="lineLabelWidth" prop="isPublish">-->
+<!--              <el-radio-group v-model="form.isPublish" size="small">-->
+<!--                <el-radio v-for="item in blogPublishDictList" :key="item.uid" :label="item.dictValue" border>{{item.dictLabel}}</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
 
         </el-row>
 

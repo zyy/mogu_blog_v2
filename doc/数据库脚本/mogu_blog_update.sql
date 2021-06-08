@@ -459,3 +459,9 @@ ALTER TABLE  t_web_config ADD link_apply_template VARCHAR(2018) COMMENT "友链�
 */
 ALTER TABLE t_blog_sort ADD icon VARCHAR(32) DEFAULT NULL COMMENT '分类icon图标';
 insert into `t_sys_params` (`uid`, `params_type`, `params_name`, `params_key`, `remark`, `params_value`, `status`, `create_time`, `update_time`, `sort`) values('b677d256d98ced4d057f2691215df949','1','最热分类数','HOT_BLOG_SORT_COUNT','首页显示的最热分类数','5','1','2021-06-02 18:20:37','2021-06-02 18:58:39','0');
+
+/*
+   修改t_web_config 表，增加 open_create_question 字段，是否开启问答 (0:否， 1:是)
+   @date 2021年4月9日18:14:28
+*/
+ALTER TABLE  t_web_config ADD open_create_question TINYINT(1) NOT NULL DEFAULT 0 COMMENT "是否开启问答 (0:否， 1:是)";

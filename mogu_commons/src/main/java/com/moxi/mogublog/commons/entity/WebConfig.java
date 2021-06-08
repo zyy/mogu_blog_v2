@@ -9,12 +9,10 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * <p>
  * 网站配置表
- * </p>
  *
- * @author xuzhixiang
- * @since 2018年11月11日14:54:12
+ * @author 陌溪
+ * @date 2018年11月11日14:54:12
  */
 @Data
 @TableName("t_web_config")
@@ -153,6 +151,11 @@ public class WebConfig extends SuperEntity<WebConfig> {
      * 是否开启用户创作【0 关闭，1 开启】
      */
     private String openCreateBlog;
+
+    /**
+     * 是否开启问答【0 关闭，1 开启】
+     */
+    private String openCreateQuestion;
 
 
     // 以下字段不存入数据库，封装为了方便使用

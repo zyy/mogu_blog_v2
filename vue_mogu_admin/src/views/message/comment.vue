@@ -113,7 +113,7 @@
 
 	    <el-table-column label="操作" fixed="right" min-width="150">
 	      <template slot-scope="scope" >
-<!--          <el-button @click="handleReply(scope.row)" type="success" size="small">回复</el-button>-->
+<!--          <el-button @click="handleDetail(scope.row)" type="success" size="small">详情</el-button>-->
 	        <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/comment/delete'">删除</el-button>
 	      </template>
 	    </el-table-column>
@@ -129,6 +129,8 @@
           :total="total">
         </el-pagination>
     </div>
+
+
   </div>
 </template>
 
@@ -141,8 +143,19 @@ export default {
       // xss白名单配置
       options : {
         whiteList: {
-          a: ['href', 'title', 'target', 'style'],
-          span: ['class', 'style']
+          a: ['href', 'title', 'target', 'class'],
+          span: ['class'],
+          p: ['class'],
+          h1: ['class'],
+          h2: ['class'],
+          h3: ['class'],
+          h4: ['class'],
+          pre: ['class'],
+          code: ['class'],
+          div: ['class'],
+          // img: ['src', 'alt'],
+          ul: ['class'],
+          li: ['class'],
         }
       },
       queryParams: {
@@ -247,8 +260,11 @@ export default {
 		handleFind: function() {
 			this.commentList();
 		},
-    handleReply: function(row) {
+    handleDetail: function(row) {
       console.log("点击了回复");
+      this.$alert(this.$xss(row.content, this.options), '消息详情', {
+        dangerouslyUseHTMLString: true
+      });
     },
     handleDelete: function(row) {
       this.$confirm("此操作将把该评论删除, 是否继续?", "提示", {

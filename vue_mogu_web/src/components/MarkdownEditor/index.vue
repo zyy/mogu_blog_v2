@@ -134,7 +134,8 @@
   .vditor {
     width: 100%;
     /*height: calc(100vh - 100px);*/
-    top: 20px;
+    /*top: 20px;*/
+    z-index: 99999;
     /*margin: 20px auto;*/
     text-align: left;
   }

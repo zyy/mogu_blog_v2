@@ -64,22 +64,30 @@
       </div>
 
       <div class="news_pl" :style="opemCommentCss">
-        <h2 v-if="openComment == '1'" class="title">问答评论</h2>
+        <h2 v-if="openComment == '1'" class="title">问答回复</h2>
         <ul v-if="openComment == '1'">
-
-            <QuestionCommentBox
-              :userInfo="userInfo"
-              :commentInfo="commentInfo"
-              @submit-box="submitBox"
-              :showCancel="showCancel"
-            ></QuestionCommentBox>
-
-          <div class="message_infos">
+          <div class="message_infos" style="margin-top: 5px">
             <QuestionCommentList :comments="comments" :commentInfo="commentInfo"></QuestionCommentList>
             <div class="noComment" v-if="comments.length ==0">还没有回复，快来抢沙发吧！</div>
           </div>
+
         </ul>
       </div>
+
+      <div class="news_pl" :style="opemCommentCss">
+        <h2 v-if="openComment == '1'" class="title">问答评论</h2>
+        <ul v-if="openComment == '1'">
+          <QuestionCommentBox
+            :userInfo="userInfo"
+            :commentInfo="commentInfo"
+            @submit-box="submitBox"
+            :showCancel="showCancel"
+          ></QuestionCommentBox>
+        </ul>
+      </div>
+
+
+
     </div>
     <div class="sidebar2" v-if="showSidebar">
       <side-catalog

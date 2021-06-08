@@ -153,7 +153,7 @@ export default {
       rules: {
         name: [
           {required: true, message: '分类名称不能为空', trigger: 'blur'},
-          {min: 1, max: 10, message: '长度在1到10个字符'},
+          {min: 1, max: 100, message: '长度在1到10个字符'},
         ],
         sort: [
           {required: true, message: '排序字段不能为空', trigger: 'blur'},

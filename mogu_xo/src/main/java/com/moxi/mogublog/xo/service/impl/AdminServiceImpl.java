@@ -111,7 +111,9 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         result.setSummary(admin.getSummary());
         result.setAvatar(admin.getAvatar());
         result.setPhotoList(admin.getPhotoList());
-        result.setPersonResume(admin.getPersonResume().replaceAll(" src=", " data-src="));
+        if(StringUtils.isNotEmpty(admin.getPersonResume())) {
+            result.setPersonResume(admin.getPersonResume().replaceAll(" src=", " data-src="));
+        }
         return result;
     }
 

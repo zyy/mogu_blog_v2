@@ -56,6 +56,7 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
 
         QueryWrapper<WebConfig> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
+        queryWrapper.last(SysConf.LIMIT_ONE);
         WebConfig webConfig = webConfigService.getOne(queryWrapper);
 
         //获取图片

@@ -1,7 +1,7 @@
 <template>
   <div>
 <!--    :class="item.toUid ? '':'commentBorder'"-->
-    <div v-for="item in comments" :key="item.uid" >
+    <div v-for="(item, index) in comments" :key="item.uid" >
       <div class="commentList">
         <span class="left p1">
           <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
@@ -14,6 +14,7 @@
             <el-tag style="height: 30px; margin-left:5px;" v-for="userTag in userTagDictList" :key="userTag.uid" v-if="item.user.userTag == userTag.dictValue && item.user.userTag != 0" :type="userTag.listClass">{{userTag.dictLabel}}</el-tag>
             <span class="timeAgo" v-if="item.createTime">{{timeAgo(item.createTime)}}</span>
             <span class="timeAgo" v-else>刚刚</span>
+            <el-tag type="info" v-if="!item.toUid" style="margin-left: 3px">第{{index + 1}}楼</el-tag>
           </div>
 
           <div class="rightCenter ck-content" v-html="$xss(item.content, options)" v-highlight></div>
@@ -53,17 +54,19 @@
         // xss白名单配置
         options : {
           whiteList: {
-            a: ['href', 'title', 'target'],
+            a: ['href', 'title', 'target', 'class'],
             span: ['class'],
             p: ['class'],
-            h1: [],
-            h2: [],
-            h3: [],
-            h4: [],
-            pre: [],
+            h1: ['class'],
+            h2: ['class'],
+            h3: ['class'],
+            h4: ['class'],
+            pre: ['class'],
             code: ['class'],
-            div: [],
+            div: ['class'],
             img: ['src', 'alt'],
+            ul: ['class'],
+            li: ['class'],
           }
         },
         taggleStatue: true,

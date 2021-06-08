@@ -52,7 +52,7 @@
         </li>
       </ul>
 
-      <div class="searchbox" v-bind:class="showCreateBlog?'':'searchboxDefault'">
+      <div class="searchbox" v-bind:class="showCreateBlog||showCreateQuestion?'':'searchboxDefault'">
         <div id="search_bar" :class="(showSearch || keyword.length > 0)?'search_bar search_open':'search_bar'">
           <input
             ref="searchInput"
@@ -71,12 +71,12 @@
 
       <el-dropdown @command="handleCommand" class="create">
         <span class="el-dropdown-link" >
-          <el-button v-if="showCreateBlog" type="primary" size="small" icon="el-icon-edit" class="createBlog" >创作</el-button>
+          <el-button v-if="showCreateBlog||showCreateQuestion" type="primary" size="small" icon="el-icon-edit" class="createBlog" >创作</el-button>
         </span>
 
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="createBlog">写文章</el-dropdown-item>
-          <el-dropdown-item command="createQuestion">提问题</el-dropdown-item>
+          <el-dropdown-item v-if="showCreateBlog" command="createBlog">写文章</el-dropdown-item>
+          <el-dropdown-item v-if="showCreateQuestion" command="createQuestion">提问题</el-dropdown-item>
         </el-dropdown-menu>
 
       </el-dropdown>
@@ -608,6 +608,7 @@
         formData: {}, // 表单数据
         questionFormData: {}, // 问答数据
         showCreateBlog: false, // 是否显示用户创作按钮
+        showCreateQuestion: false, // 是否显示创建问答按钮
         browserFlag: 1, // 浏览器标志【默认Chrome】
         rules: {
           qqNumber: [
@@ -1210,6 +1211,7 @@
           this.openComment = webConfigData.openComment
           document.title = this.info.title
           this.showCreateBlog = webConfigData.openCreateBlog == "1" ? true:false
+          this.showCreateQuestion = webConfigData.openCreateQuestion == "1" ? true:false
         } else {
           getWebConfig().then(response => {
             if (response.code == this.$ECode.SUCCESS) {
@@ -1219,6 +1221,7 @@
               this.openComment = this.info.openComment
               document.title = this.info.title
               this.showCreateBlog = this.info.openCreateBlog == "1" ? true:false
+              this.showCreateQuestion = this.info.openCreateQuestion == "1" ? true:false
             }
           });
         }

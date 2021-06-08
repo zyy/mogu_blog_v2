@@ -6,6 +6,7 @@ import com.moxi.mogublog.xo.service.QuestionService;
 import com.moxi.mogublog.xo.service.QuestionTagService;
 import com.moxi.mogublog.xo.vo.QuestionTagVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
+import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
@@ -72,15 +73,6 @@ public class QuestionRestApi {
         ThrowableUtils.checkParamArgument(result);
         log.info("编辑问答");
         return questionService.editQuestion(questionVO);
-    }
-
-    @ApiOperation(value = "批量删除问答", notes = "批量删除问答", response = String.class)
-    @PostMapping("/deleteBatch")
-    public String delete(@Validated({Delete.class}) @RequestBody List<QuestionVO> questionVOList, BindingResult result) {
-
-        ThrowableUtils.checkParamArgument(result);
-        log.info("批量删除问答");
-        return questionService.deleteBatchQuestion(questionVOList);
     }
 
     @ApiOperation(value = "获取标签列表", notes = "获取标签列表", response = String.class)
