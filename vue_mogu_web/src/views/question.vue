@@ -46,11 +46,11 @@
 
             <div class="bloginfo">
               <ul>
-                <li style=" padding-right: 6px">
+                <li style=" padding-right: 6px" @click="getUserCenter(item)">
                   <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
                   <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 </li>
-                <li class="author" >
+                <li class="author" @click="getUserCenter(item)">
                   <a  href="javascript:void(0);">{{item.user.nickName}}</a>
                 </li>
 
@@ -120,7 +120,7 @@ export default {
     return {
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
-      newQuestionData: [], //最新文章
+      newQuestionData: [], //最新问答
       hotBlogData: [], //最热文章
       hotTagData: [], //最新标签
       keyword: "",
@@ -223,6 +223,14 @@ export default {
         } break;
       }
       this.questionList()
+    },
+    getUserCenter: function (question) {
+      console.log("跳转到用户中心", question)
+      let routeData = this.$router.resolve({
+        path: "/userCenter",
+        query: {userUid: question.userUid}
+      });
+      window.open(routeData.href, '_blank');
     }
   }
 };

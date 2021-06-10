@@ -161,16 +161,10 @@ public class BlogVO extends BaseVO<BlogVO> {
     private String articleSource;
 
     /**
-     * 是否是Web上的创建请求
-     */
-    private Boolean webFlag;
-
-    /**
      * 无参构造方法，初始化默认值
      */
     BlogVO() {
         this.level = 0;
         this.useSort = 0;
-        this.webFlag = false;
     }
 }

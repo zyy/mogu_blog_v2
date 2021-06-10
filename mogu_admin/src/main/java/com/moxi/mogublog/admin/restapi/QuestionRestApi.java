@@ -13,6 +13,7 @@ import com.moxi.mogublog.xo.vo.QuestionTagVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mogublog.xo.vo.TagVO;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
+import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
 import com.moxi.mougblog.base.validator.group.Insert;
@@ -63,6 +64,7 @@ public class QuestionRestApi {
     public String add(@Validated({Insert.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
         ThrowableUtils.checkParamArgument(result);
+        questionVO.setQuestionSource(Constants.STR_ZERO);
         log.info("增加问答");
         return questionService.addQuestion(questionVO);
     }

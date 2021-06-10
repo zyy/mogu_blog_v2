@@ -11,6 +11,7 @@ import com.moxi.mogublog.xo.vo.QuestionTemplateVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
+import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
 import com.moxi.mougblog.base.validator.group.Insert;
@@ -71,6 +72,8 @@ public class QuestionRestApi {
     public String add(@Validated({Insert.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
         ThrowableUtils.checkParamArgument(result);
+        // 添加问答来源【用户投稿】
+        questionVO.setQuestionSource(Constants.STR_ONE);
         log.info("增加问答");
         return questionService.addQuestion(questionVO);
     }

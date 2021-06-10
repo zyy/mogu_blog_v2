@@ -74,7 +74,7 @@
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+              <a href="javascript:void(0);" @click="getUserCenter(item)">{{item.author}}</a>
             </li>
             <li class="lmname" v-if="item.blogSort">
               <span class="iconfont">&#xe603;</span>
@@ -283,12 +283,23 @@
           }
         }
       },
-      //跳转到搜索详情页
-      goToAuthor(author) {
-        let routeData = this.$router.push({
-          path: "/list",
-          query: {author: author}
-        });
+      // 跳转到个人中心页
+      getUserCenter: function (blog) {
+        console.log("跳转到用户中心", blog)
+        // 判断是后台添加，还是前台投稿
+        if(blog.articleSource == 0) {
+          let routeData = this.$router.resolve({
+            path: "/userCenter",
+            query: {adminUid: blog.adminUid}
+          });
+          window.open(routeData.href, '_blank');
+        } else {
+          let routeData = this.$router.resolve({
+            path: "/userCenter",
+            query: {userUid: blog.userUid}
+          });
+          window.open(routeData.href, '_blank');
+        }
       },
 
       //最新博客列表

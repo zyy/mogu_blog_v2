@@ -162,6 +162,9 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
             User user = new User();
             user.setAvatar(item.getAvatar());
             user.setUid(item.getUid());
+            user.setOccupation(item.getOccupation());
+            user.setGender(item.getGender());
+            user.setSummary(item.getSummary());
             user.setNickName(item.getNickName());
             user.setUserTag(item.getUserTag());
             userList.add(user);

@@ -355,7 +355,7 @@ h1.t_nav { display: none; border-bottom: #bfbfbf 1px solid; font-size: 14px; fon
 .sortBox .time {
     float: left;
     width: 17%;
-    height: 825px;
+    height: 847px;
     overflow: scroll;
     overflow-x: hidden;
     overflow-y: auto;

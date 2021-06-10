@@ -18,6 +18,8 @@ import com.moxi.mogublog.xo.service.*;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mougblog.base.enums.*;
+import com.moxi.mougblog.base.exception.exceptionType.InsertException;
+import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.exception.exceptionType.UpdateException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.BaseSysConf;
@@ -584,6 +586,9 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (!StringUtils.isEmpty(blogVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
         }
+        if (!StringUtils.isEmpty(blogVO.getAdminUid())) {
+            queryWrapper.eq(SQLConf.ADMINUID, blogVO.getAdminUid());
+        }
 
         //分页
         Page<Blog> page = new Page<>();
@@ -714,7 +719,13 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if (blogVO.getWebFlag()) {
+        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
+            // 当为用户投稿的时候
+            Object userUid = request.getAttribute(SysConf.USER_UID);
+            if(userUid == null) {
+                throw new InsertException("用户未登录，无法投稿");
+            }
+            blog.setUserUid(userUid.toString());
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
                 blog.setAuthor(request.getAttribute(SysConf.USER_NAME).toString());
@@ -723,8 +734,8 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 blog.setAuthor(blogVO.getAuthor());
                 blog.setArticlesPart(blogVO.getArticlesPart());
             }
-            blog.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         } else {
+            // 当为后台管理员添加的时候
             Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
@@ -760,7 +771,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         //保存成功后，需要发送消息到solr 和 redis
         updateSolrAndRedis(isSave, blog);
-        if (blogVO.getWebFlag()) {
+        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
             return ResultUtil.successWithMessage("博客提交成功，请等待管理员审核后上架~");
         } else {
             return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
@@ -790,9 +801,12 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if (blogVO.getWebFlag()) {
+        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
             // 判断用户是否能编辑博客
-            String userUid = request.getAttribute(SysConf.USER_UID).toString();
+            Object userUid = request.getAttribute(SysConf.USER_UID);
+            if(userUid == null) {
+                throw new UpdateException("用户未登录，无法编辑文章");
+            }
             if (!userUid.equals(blog.getUserUid())) {
                 throw new UpdateException("您无权编辑其它用户的文章");
             }
@@ -804,7 +818,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 blog.setAuthor(blogVO.getAuthor());
                 blog.setArticlesPart(blogVO.getArticlesPart());
             }
-            blog.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
+            blog.setUserUid(userUid.toString());
         } else {
             Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
             // 判断是否原创
@@ -895,7 +909,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         Blog blog = blogService.getById(blogVO.getUid());
 
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if (blogVO.getWebFlag()) {
+        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
             // 判断用户是否能编辑博客
             HttpServletRequest request = RequestHolder.getRequest();
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
@@ -1084,6 +1098,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         // 获取当前管理员
         Admin admin = adminService.getMe();
+
         // 存储需要上传的博客
         List<Blog> blogList = new ArrayList<>();
         // 开始进行图片替换操作
@@ -1095,6 +1110,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 content = content.replace(map.getKey(), map.getValue());
             }
             Blog blog = new Blog();
+            blog.setArticleSource(Constants.STR_ONE);
             blog.setBlogSortUid(blogSort.getUid());
             blog.setTagUid(tag.getUid());
             blog.setAdminUid(admin.getUid());

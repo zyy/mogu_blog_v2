@@ -352,7 +352,7 @@
                       <ul>
                         <li class="author">
                           <span class="iconfont">&#xe60f;</span>
-                          <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+                          <a href="javascript:void(0);" >{{item.user.nickName}}</a>
                         </li>
                         <li class="lmname" v-if="item.blogSort">
                           <span class="iconfont">&#xe603;</span>

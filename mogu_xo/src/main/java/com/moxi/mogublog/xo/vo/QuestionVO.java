@@ -73,6 +73,11 @@ public class QuestionVO extends BaseVO<QuestionVO> {
     private String isOriginal;
 
     /**
+     * 问答来源【0 后台添加，1 用户投稿】
+     */
+    private String questionSource;
+
+    /**
      * 排序字段，数值越大，越靠前
      */
     private Integer sort;

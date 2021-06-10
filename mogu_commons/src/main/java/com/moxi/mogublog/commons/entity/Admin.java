@@ -143,6 +143,13 @@ public class Admin extends SuperEntity<Admin> {
     private List<String> photoList;
 
     /**
+     * 用户头像
+     */
+    @TableField(exist = false)
+    private String photoUrl;
+
+
+    /**
      * 所拥有的角色名
      */
     @TableField(exist = false)

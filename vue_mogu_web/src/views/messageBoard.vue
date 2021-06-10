@@ -143,7 +143,7 @@
 <style scoped>
   .message_infos {
     width: 100%;
-    min-height: 625px;
+    min-height: 647px;
     margin-left: 10px;
   }
   .noComment {

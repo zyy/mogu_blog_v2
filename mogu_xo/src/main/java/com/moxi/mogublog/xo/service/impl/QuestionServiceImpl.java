@@ -13,6 +13,7 @@ import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.global.SQLConf;
 import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mogublog.xo.mapper.QuestionMapper;
+import com.moxi.mogublog.xo.service.AdminService;
 import com.moxi.mogublog.xo.service.QuestionService;
 import com.moxi.mogublog.xo.service.QuestionTagService;
 import com.moxi.mogublog.xo.service.UserService;
@@ -52,6 +53,8 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     private UserService userService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private AdminService adminService;
 
     @Override
     public IPage<Question> getPageList(QuestionVO questionVO) {
@@ -68,6 +71,9 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         }
         if (!StringUtils.isEmpty(questionVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, questionVO.getUserUid());
+        }
+        if (!StringUtils.isEmpty(questionVO.getAdminUid())) {
+            queryWrapper.eq(SQLConf.ADMINUID, questionVO.getAdminUid());
         }
 
         //分页
@@ -226,14 +232,20 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
 
     @Override
     public String addQuestion(QuestionVO questionVO) {
-        HttpServletRequest request = RequestHolder.getRequest();
-        if(request.getAttribute(SysConf.USER_UID) == null) {
-            throw new InsertException("用户未登录");
-        }
         Question question = new Question();
-        String userUid = request.getAttribute(SysConf.USER_UID).toString();
+        HttpServletRequest request = RequestHolder.getRequest();
+        // 判断是否是用户投稿
+        if (Constants.STR_ONE.equals(questionVO.getQuestionSource())) {
+            if(request.getAttribute(SysConf.USER_UID) == null) {
+                throw new InsertException("用户未登录");
+            }
+            String userUid = request.getAttribute(SysConf.USER_UID).toString();
+            questionVO.setUserUid(userUid);
+        } else {
+            // 当后端添加时候，修改为管理员uid
+            questionVO.setAdminUid(RequestHolder.getAdminUid());
+        }
         BeanUtils.copyProperties(questionVO, question, SysConf.STATUS);
-        question.setUserUid(userUid);
         question.insert();
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }
@@ -241,7 +253,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     @Override
     public String editQuestion(QuestionVO questionVO) {
         Question question = questionService.getById(questionVO.getUid());
-        BeanUtils.copyProperties(questionVO, question, SysConf.STATUS, SysConf.UID);
+        BeanUtils.copyProperties(questionVO, question, SysConf.STATUS, SysConf.UID, SysConf.QUESTION_SOURCE);
         question.updateById();
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
     }
@@ -270,6 +282,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     private void setQuestionTagAndUser(List<Question> questionList) {
         Set<String> questionTagUidSet = new HashSet<>();
         Set<String> userUidList = new HashSet<>();
+        Set<String> adminUidList = new HashSet<>();
         questionList.forEach(item -> {
             if (StringUtils.isNotEmpty(item.getQuestionTagUid())) {
                 List<String> tagUidsTemp = StringUtils.changeStringToString(item.getQuestionTagUid(), SysConf.FILE_SEGMENTATION);
@@ -277,9 +290,17 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                     questionTagUidSet.add(itemTagUid);
                 }
             }
-            if(StringUtils.isNotEmpty(item.getUserUid())) {
-                userUidList.add(item.getUserUid());
+            if(Constants.STR_ONE.equals(item.getQuestionSource())) {
+                if(StringUtils.isNotEmpty(item.getUserUid())) {
+                    userUidList.add(item.getUserUid());
+                }
+            } else {
+                if(StringUtils.isNotEmpty(item.getAdminUid())) {
+                    adminUidList.add(item.getAdminUid());
+                }
             }
+
+
         });
 
         // 获取问答标签
@@ -294,6 +315,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
 
         // 获取提问者
         List<User> userList = userService.getUserListAndAvatarByIds(userUidList);
+//        List<Admin> adminList = adminService.getList();
         Map<String, User> userMap = new HashMap<>();
         userList.forEach(item -> {
             userMap.put(item.getUid(), item);

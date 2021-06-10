@@ -23,6 +23,7 @@ export const constantRouterMap = [
       { path: '/messageBoard', component: () => import('@/views/messageBoard') },
       { path: '/question', component: () => import('@/views/question') },
       { path: '/qInfo', component: () => import('@/views/questionInfo') },
+      { path: '/userCenter', component: () => import('@/views/userCenter') },
     ]
   },
   { path: '/404', component: () => import('@/views/404') },

@@ -8,6 +8,7 @@ import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.xo.service.BlogService;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
+import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
 import com.moxi.mougblog.base.validator.group.Insert;
@@ -61,6 +62,7 @@ public class BlogRestApi {
 
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
+        blogVO.setArticleSource(Constants.STR_ZERO);
         return blogService.addBlog(blogVO);
     }
 
@@ -81,6 +83,7 @@ public class BlogRestApi {
 
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
+        blogVO.setArticleSource(Constants.STR_ZERO);
         return blogService.editBlog(blogVO);
     }
 
@@ -99,6 +102,7 @@ public class BlogRestApi {
     public String delete(@Validated({Delete.class}) @RequestBody BlogVO blogVO, BindingResult result) {
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
+        blogVO.setArticleSource(Constants.STR_ZERO);
         return blogService.deleteBlog(blogVO);
     }
 

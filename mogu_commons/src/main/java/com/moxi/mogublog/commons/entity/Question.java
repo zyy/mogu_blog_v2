@@ -104,6 +104,12 @@ public class Question extends SuperEntity<Question> {
     private int questionStatus;
 
 
+    /**
+     * 问答来源【0 后台添加，1 用户投稿】
+     */
+    private String questionSource;
+
+
     // 以下字段不存入数据库，封装为了方便使用
 
     /**

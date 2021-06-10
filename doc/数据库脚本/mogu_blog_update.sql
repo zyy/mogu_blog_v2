@@ -490,3 +490,9 @@ CREATE TABLE `t_question_template` (
  @date 2021年6月9日19:56:57
 */
 ALTER TABLE  t_question ADD question_template_uid VARCHAR(32) COMMENT "问答模板UID";
+
+/*
+ 在t_question表，增加问答来源【0 后台添加，1 门户添加】
+ @date 2021年6月9日19:56:57
+*/
+ALTER TABLE t_question ADD question_source TINYINT(1) NOT NULL DEFAULT 1 COMMENT '问答来源【0 后台添加，1 用户添加】';

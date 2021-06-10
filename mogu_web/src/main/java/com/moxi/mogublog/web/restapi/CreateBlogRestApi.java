@@ -62,7 +62,6 @@ public class CreateBlogRestApi {
         if (StringUtils.isEmpty(blogVO.getUserUid()) && request.getAttribute(SysConf.USER_UID) != null) {
             blogVO.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
         }
-
         ThrowableUtils.checkParamArgument(result);
         return ResultUtil.successWithData(blogService.getPageList(blogVO));
     }
@@ -82,11 +81,11 @@ public class CreateBlogRestApi {
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
         // 文章类型只能是博客类型
-        blogVO.setType(Constants.STR_ZERO);
+        blogVO.setType(Constants.STR_ONE);
         // 推荐类型默认为正常
         blogVO.setLevel(ELevel.NORMAL);
         blogVO.setIsPublish(EPublish.NO_PUBLISH);
-        blogVO.setWebFlag(true);
+        blogVO.setArticleSource(Constants.STR_ONE);
         return blogService.addBlog(blogVO);
     }
 
@@ -98,7 +97,7 @@ public class CreateBlogRestApi {
         }
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setWebFlag(true);
+        blogVO.setType(Constants.STR_ONE);
         return blogService.editBlog(blogVO);
     }
 
@@ -110,7 +109,7 @@ public class CreateBlogRestApi {
         }
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setWebFlag(true);
+        blogVO.setType(Constants.STR_ONE);
         return blogService.deleteBlog(blogVO);
     }
 

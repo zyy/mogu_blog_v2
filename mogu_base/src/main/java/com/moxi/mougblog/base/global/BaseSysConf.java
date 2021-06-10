@@ -62,6 +62,7 @@ public class BaseSysConf {
     public final static String PAGE_NAME = "pageName";
     public final static String LEFT = "left";
     public final static String RIGHT = "right";
+    public final static String QUESTION_SOURCE = "questionSource";
 
     public final static String DEFAULT_VALUE = "defaultValue";
 

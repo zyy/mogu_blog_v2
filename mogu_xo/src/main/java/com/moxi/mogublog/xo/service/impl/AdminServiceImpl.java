@@ -61,7 +61,16 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
 
     @Override
     public Admin getAdminByUid(String uid) {
-        return adminMapper.getAdminByUid(uid);
+        //获取图片
+        Admin admin = adminMapper.getAdminByUid(uid);
+        if (StringUtils.isNotEmpty(admin.getAvatar())) {
+            String pictureList = this.pictureFeignClient.getPicture(admin.getAvatar(), Constants.SYMBOL_COMMA);
+            List<String> photoList = webUtil.getPicture(pictureList);
+            if(photoList.size() > 0) {
+                admin.setPhotoUrl(photoList.get(0));
+            }
+        }
+        return admin;
     }
 
     @Override

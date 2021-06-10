@@ -20,6 +20,7 @@
                   <b>{{item.name}}</b>
                 </h2>
                 <span>{{item.resourceSort.sortName}}</span>
+                <span>{{item.resourceSort.sortName}}</span>
               </a>
             </div>
           </li>
