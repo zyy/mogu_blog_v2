@@ -410,16 +410,22 @@ export const constantRouterMap = [
     meta: { title: '问答管理', icon: 'table' },
     children: [
       {
+        path: 'question',
+        name: '问答管理',
+        component: () => import('@/views/question/question'),
+        meta: { title: '问答管理', icon: 'table' }
+      },
+      {
         path: 'questionTag',
         name: '问答标签',
         component: () => import('@/views/question/questionTag'),
         meta: { title: '问答标签', icon: 'table' }
       },
       {
-        path: 'question',
-        name: '问答管理',
-        component: () => import('@/views/question/question'),
-        meta: { title: '问答管理', icon: 'table' }
+        path: 'questionTemplate',
+        name: '问答模板',
+        component: () => import('@/views/question/questionTemplate'),
+        meta: { title: '问答模板', icon: 'table' }
       }
     ]
   },

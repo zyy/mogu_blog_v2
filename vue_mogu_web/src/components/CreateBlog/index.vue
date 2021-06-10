@@ -104,7 +104,12 @@
         <el-form-item label="外链" :label-width="formLabelWidth" v-if="form.type == 1" prop="outsideLink">
           <el-input v-model="form.outsideLink" auto-complete="off"></el-input>
         </el-form-item>
-        <CKEditor  ref="editor" :content="form.content" :height="360"></CKEditor>
+
+
+        <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
+          <CKEditor   ref="editor" :content="form.content" :height="360"></CKEditor>
+        </el-form-item>
+
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -144,7 +149,6 @@ import {formatData} from "@/utils/webUtils";
 export default {
   props: ["visible", "isEdit", "formData"],
   created() {
-    this.getDictList()
     this.blogSortList()
     this.tagList()
   },
@@ -156,6 +160,9 @@ export default {
     visible: function() {
       this.dialogFormVisible = this.visible;
     },
+  },
+  mounted() {
+    this.getDictList()
   },
   data() {
     return {
@@ -203,7 +210,8 @@ export default {
      * 字典查询
      */
     getDictList: function () {
-      let that = this;
+      // 判断是否处于编辑模式
+      let that = this
       var dictTypeList =  [ 'sys_original_status', 'sys_normal_disable']
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
@@ -217,15 +225,12 @@ export default {
           if(dictMap.sys_normal_disable.defaultValue) {
             this.openDefault = dictMap.sys_normal_disable.defaultValue;
           }
-          // 判断是否处于编辑模式
-          console.log("编辑模式", this.isEdit)
+
           if(this.isEdit) {
             this.form = this.formData
-
-            this.$nextTick(() => {
-              //DOM现在更新了
+            setTimeout(()=>{
               that.$refs.editor.setData(that.form.content); //设置富文本内容
-            });
+            },100)
             that.tagValue = [];
             if (this.form.tagList) {
               var json = this.form.tagList;
@@ -242,6 +247,7 @@ export default {
       });
     },
     getFormObject: function() {
+      console.log("是否原创", this.blogOriginalDefault)
       var formObject = {
         uid: null,
         title: null,
@@ -271,7 +277,10 @@ export default {
             editBlog(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
-                this.dialogFormVisible = false;
+                // this.$emit("beforeClose", "");
+                setTimeout(()=> {
+                  location.reload();
+                }, 500)
               } else {
                 this.$commonUtil.message.error(response.message)
               }
@@ -281,7 +290,11 @@ export default {
             addBlog(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
-                this.dialogFormVisible = false;
+                // this.$emit("beforeClose", "");
+                setTimeout(()=> {
+                  location.reload();
+                }, 500)
+
               } else {
                 this.$commonUtil.message.error(response.message)
               }

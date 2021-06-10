@@ -465,3 +465,28 @@ insert into `t_sys_params` (`uid`, `params_type`, `params_name`, `params_key`, `
    @date 2021年4月9日18:14:28
 */
 ALTER TABLE  t_web_config ADD open_create_question TINYINT(1) NOT NULL DEFAULT 0 COMMENT "是否开启问答 (0:否， 1:是)";
+
+
+/*
+   新增问答模板表
+   @date 2021年6月9日08:24:07
+*/
+CREATE TABLE `t_question_template` (
+  `uid` varchar(32) NOT NULL COMMENT '唯一uid',
+  `name` varchar(200) DEFAULT NULL COMMENT '模板名称',
+  `summary` varchar(200) DEFAULT NULL COMMENT '模板简介',
+  `content` longtext COMMENT '模板内容',  
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `create_time` timestamp NULL COMMENT '创建时间',
+  `update_time` timestamp NULL COMMENT '更新时间',  
+  `is_publish` varchar(1) DEFAULT '1' COMMENT '是否发布：0：否，1：是',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序字段',  
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';
+
+
+/*
+ 在t_question表，增加问答模板字段
+ @date 2021年6月9日19:56:57
+*/
+ALTER TABLE  t_question ADD question_template_uid VARCHAR(32) COMMENT "问答模板UID";

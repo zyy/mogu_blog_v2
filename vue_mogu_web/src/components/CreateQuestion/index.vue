@@ -24,7 +24,7 @@
 
         <el-row>
           <el-col :span="6.5">
-            <el-form-item label="标签" :label-width="formLabelWidth">
+            <el-form-item label="标签" :label-width="formLabelWidth" prop="questionTagUid">
               <el-select
                 v-model="tagValue"
                 multiple
@@ -35,6 +35,27 @@
               >
                 <el-option
                   v-for="item in tagData"
+                  :key="item.uid"
+                  :label="item.name"
+                  :value="item.uid"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="6.5">
+            <el-form-item label="问答模板" :label-width="formLabelWidth">
+              <el-select
+                v-model="form.questionTemplateUid"
+                size="small"
+                placeholder="请选择"
+                style="width:210px"
+                filterable
+                clearable
+                @change="templateChange"
+              >
+                <el-option
+                  v-for="item in templateData"
                   :key="item.uid"
                   :label="item.name"
                   :value="item.uid"
@@ -77,14 +98,14 @@
 <script>
 import CKEditor from "../CKEditor";
 import {getListByDictTypeList} from "@/api/sysDictData"
-import { getQuestionTagList, addQuestion, editQuestion } from "@/api/question";
+import { getQuestionTagList, addQuestion, editQuestion, getQuestionTemplateList } from "@/api/question";
 import {formatData} from "@/utils/webUtils";
 
 export default {
   props: ["visible", "isEdit", "formData"],
   created() {
-    this.getDictList()
     this.questionTagList()
+    this.questionTemplateList()
   },
   components: {
     CKEditor
@@ -104,6 +125,8 @@ export default {
       tableData: [], //问答数据
       tagData: [], //标签数据
       tagValue: [], //保存选中标签id(编辑时)
+      templateData: [],
+      templateValue: "",
       currentPage: 1,
       pageSize: 10,
       total: 0, //总数量
@@ -113,7 +136,6 @@ export default {
       formLabelWidth: "120px",
       lineLabelWidth: "120px", //一行的间隔数
       maxLineLabelWidth: "100px",
-      isEditForm: false,
       photoVisible: false, //控制图片选择器的显示
       isFirstPhotoVisible: true, // 图片选择器是否首次显示【用于懒加载】
       photoList: [],
@@ -152,13 +174,8 @@ export default {
           {required: true, message: '发布字段不能为空', trigger: 'blur'},
           {pattern: /^[0-9]\d*$/, message: '发布字段只能为自然数'},
         ],
-        isOriginal: [
-          {required: true, message: '原创字段不能为空', trigger: 'blur'},
-          {pattern: /^[0-9]\d*$/, message: '原创字段只能为自然数'},
-        ],
-        openComment: [
-          {required: true, message: '网站评论不能为空', trigger: 'blur'},
-          {pattern: /^[0-9]\d*$/, message: '网站评论只能为自然数'},
+        questionTagUid: [
+          {required: true, message: '问答标签不能为空', trigger: 'blur'}
         ],
         content: [
           {required: true, message: '内容不能为空', trigger: 'blur'}
@@ -170,12 +187,16 @@ export default {
       }
     };
   },
-
+  mounted() {
+    console.log("开启问答编辑")
+    this.getDictList()
+  },
   methods: {
     /**
      * 字典查询
      */
     getDictList: function () {
+      let that = this
       var dictTypeList =  ['sys_publish_status', 'sys_normal_disable', 'sys_question_status']
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
@@ -195,12 +216,26 @@ export default {
           }
         }
 
+        console.log("传递过来的问答", this.isEdit)
+        console.log("传递过来的问答", this.formData)
         if(this.isEdit) {
-
+          this.form = this.formData
+          setTimeout(()=>{
+            that.$refs.editor.setData(that.form.content); //设置富文本内容
+          },100)
+          that.tagValue = [];
+          if (this.form.questionTagList) {
+            let json = this.form.questionTagList;
+            for (var i = 0, l = json.length; i < l; i++) {
+              if (json[i] != null) {
+                that.tagValue.push(json[i]["uid"]);
+              }
+            }
+          }
+          console.log("this.form", this.form)
         } else {
           this.form = this.getFormObject()
         }
-
       });
 
     },
@@ -213,6 +248,7 @@ export default {
         tagUid: null,
         fileUid: null,
         isPublish: this.blogPublishDefault, //是否发布
+        questionTemplateUid: "", //问答模板UID
         type: this.blogTypeDefault, // 文章类型
         author: null, //作者
         openComment: this.openDefault, // 是否启动
@@ -227,12 +263,14 @@ export default {
 
         } else {
           let params = formatData(this.form);
-          if (this.isEditForm) {
+          if (this.isEdit) {
             editQuestion(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
-                this.dialogFormVisible = false;
-                location.reload();
+                // this.$emit("beforeClose", "");
+                setTimeout(()=> {
+                  location.reload();
+                }, 500)
               } else {
                 this.$commonUtil.message.error(response.message)
               }
@@ -242,8 +280,10 @@ export default {
             addQuestion(this.form).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
-                this.dialogFormVisible = false;
-                location.reload();
+                // this.$emit("beforeClose", "");
+                setTimeout(()=> {
+                  location.reload();
+                }, 500)
               } else {
                 this.$commonUtil.message.error(response.message)
               }
@@ -252,9 +292,30 @@ export default {
         }
       })
     },
-
+    questionTemplateList: function () {
+      let params = {};
+      params.pageSize = 500;
+      params.currentPage = 1;
+      getQuestionTemplateList(params).then(response => {
+        this.templateData = response.data.records;
+      });
+    },
+    templateChange: function (templateUid) {
+      let that = this
+      let templateData = this.templateData
+      for(let a=0; a<templateData.length; a++) {
+        if(templateData[a].uid == templateUid) {
+          this.$nextTick(() => {
+            //DOM现在更新了
+            that.form.content = templateData[a].content
+            that.$refs.editor.setData(that.form.content); //设置富文本内容
+          });
+          break;
+        }
+      }
+    },
     questionTagList: function() {
-      var tagParams = {};
+      let tagParams = {};
       tagParams.pageSize = 500;
       tagParams.currentPage = 1;
       getQuestionTagList(tagParams).then(response => {

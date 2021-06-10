@@ -16,6 +16,14 @@ export function getQuestionTagList(params) {
   })
 }
 
+export function getQuestionTemplateList(params) {
+  return request({
+    url: process.env.WEB_API + '/question/getTemplateList',
+    method: 'post',
+    data: params
+  })
+}
+
 export function getQuestion(params) {
   return request({
     url: process.env.WEB_API + '/question/getQuestion',

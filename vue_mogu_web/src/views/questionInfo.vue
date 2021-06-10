@@ -410,6 +410,7 @@
 <style>
   .news_pl {
     border-top: 10px solid #f6f6f6;
+    min-height: 10px;
   }
   .emoji-panel-wrap {
     box-sizing: border-box;

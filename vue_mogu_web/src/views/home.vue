@@ -45,9 +45,9 @@
           <!--没有有下拉菜单-->
           <span v-else>
             <router-link :to="webNavbar.url" v-if="webNavbar.isJumpExternalUrl == 0">
-            <a href="javascript:void(0);" @click="openHead" :class="[saveTitle == webNavbar.url ? 'title' : '']">{{ webNavbar.name }}</a>
+                <a href="javascript:void(0);" @click="openHead" :class="[(saveTitle == webNavbar.url || saveTitle == webNavbar.name) ? 'title' : '']">{{ webNavbar.name }}</a>
             </router-link>
-            <a v-if="webNavbar.isJumpExternalUrl == 1" :href="webNavbar.url" target="_blank" :class="[saveTitle == webNavbar.url ? 'title' : '']">{{ webNavbar.name }}</a>
+            <a v-if="webNavbar.isJumpExternalUrl == 1" :href="webNavbar.url" target="_blank" :class="[saveTitle == webNavbar.url || saveTitle == webNavbar.name ? 'title' : '']">{{ webNavbar.name }}</a>
           </span>
         </li>
       </ul>
@@ -249,7 +249,7 @@
       </el-tab-pane>
 
       <el-tab-pane v-if="showCreateBlog" label="我的文章" name="3">
-          <span slot="label"><i class="el-icon-message-solid"></i> 我的文章</span>
+          <span slot="label"><i class="el-icon-s-order"></i> 我的文章</span>
           <div style="width: 100%; height: 840px;overflow:auto;">
             <el-timeline>
               <div
@@ -308,9 +308,15 @@
 
                     <div class="operation">
                       <el-row :gutter="24">
-                        <el-button circle type="primary" size="small" icon="el-icon-edit" @click="createBlog(true, item)"></el-button>
-                        <!--                        <el-button circle type="warning" size="small" icon="el-icon-folder-opened"></el-button>-->
-                        <el-button circle type="danger" size="small" icon="el-icon-delete" @click="handleDelete(item)"></el-button>
+                        <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                          <el-button circle type="primary" size="small" icon="el-icon-edit" @click="createBlog(true, item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="预览" placement="top">
+                          <el-button circle type="info" size="small" icon="el-icon-search" @click="goToInfo(item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                          <el-button circle type="danger" size="small" icon="el-icon-delete" @click="handleDeleteBlog(item)"></el-button>
+                        </el-tooltip>
                       </el-row>
                     </div>
 
@@ -320,6 +326,77 @@
             </el-timeline>
           </div>
         </el-tab-pane>
+
+      <el-tab-pane v-if="showCreateQuestion" label="我的问答" name="8">
+          <span slot="label"><i class="el-icon-s-claim"></i> 我的问答</span>
+          <div style="width: 100%; height: 840px;overflow:auto;">
+            <el-timeline>
+              <div
+                v-for="item in userQuestionList"
+                :key="item.uid"
+                class="myArticle"
+              >
+                <el-timeline-item :timestamp="item.createTime" placement="top">
+                  <el-card>
+
+                    <el-row :gutter="24">
+                      <el-col :span="24">
+                        <div style="height: 70px;">
+                          <p class="blogtext" style="font-weight: bold; cursor: pointer;" @click="goToQuestionInfo(item)">{{item.title}}</p>
+                        </div>
+                      </el-col>
+
+                    </el-row>
+
+                    <div class="bloginfo">
+                      <ul>
+                        <li class="author">
+                          <span class="iconfont">&#xe60f;</span>
+                          <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+                        </li>
+                        <li class="lmname" v-if="item.blogSort">
+                          <span class="iconfont">&#xe603;</span>
+                          <a
+                            href="javascript:void(0);"
+                            @click="goToList(item.blogSort.uid)"
+                          >{{item.blogSort.sortName}}</a>
+                        </li>
+                        <li class="view">
+                          <span class="iconfont">&#xe8c7;</span>
+                          <span>{{item.clickCount}}</span>
+                        </li>
+                        <li class="like">
+                          <span class="iconfont">&#xe663;</span>
+                          {{item.collectCount}}
+                        </li>
+
+                        <li class="like">
+                          <el-tag v-if="item.isPublish==1" type="success" style="font-size: 12px">已上架</el-tag>
+                          <el-tag v-if="item.isPublish==0" type="info" style="font-size: 12px">未发布</el-tag>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="operation">
+                      <el-row :gutter="24">
+                        <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                          <el-button circle type="primary" size="small" icon="el-icon-edit" @click="createQuestion(true, item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="预览" placement="top">
+                          <el-button circle type="info" size="small" icon="el-icon-search" @click="goToQuestionInfo(item)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                          <el-button circle type="danger" size="small" icon="el-icon-delete" @click="handleDeleteQuestion(item)"></el-button>
+                        </el-tooltip>
+                      </el-row>
+                    </div>
+
+                  </el-card>
+                </el-timeline-item>
+              </div>
+            </el-timeline>
+          </div>
+      </el-tab-pane>
 
       <el-tab-pane label="我的点赞" name="4">
         <span slot="label"><i class="el-icon-star-on"></i> 我的点赞</span>
@@ -547,6 +624,7 @@
   import LoginBox from "../components/LoginBox";
   import {getListByDictTypeList} from "@/api/sysDictData"
   import {getUserBlogList, deleteBlog} from "@/api/createBlog"
+  import {getQuestionList} from "@/api/question"
   import {mapMutations} from 'vuex';
   import {timeAgo} from "../utils/webUtils";
 
@@ -600,6 +678,7 @@
         praiseList: [], //我的点赞
         feedbackList: [], //我的反馈
         userBlogList: [], // 用户博客列表
+        userQuestionList: [], // 用户问答列表
         openComment: "0", //是否开启评论
         defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
         drawerSize: "33%",
@@ -749,7 +828,18 @@
         });
         window.open(routeData.href, '_blank');
       },
-
+      //跳转到问答详情
+      goToQuestionInfo(question) {
+        if(question.isPublish == 0) {
+          this.$message.error("该问答未发布，暂时无法查看！")
+          return
+        }
+        let routeData = this.$router.resolve({
+          path: "/qInfo",
+          query: {questionOid: question.oid}
+        });
+        window.open(routeData.href, '_blank');
+      },
       // 获取导航栏列表
       getWebNavbarList() {
         var params = {};
@@ -842,8 +932,40 @@
         })
       },
 
+      // 获取用户博客列表
+      getUserQuestionList: function() {
+        let params = {}
+        params.pageSize = 10;
+        params.currentPage = 1;
+        getQuestionList(params).then(response => {
+          if(response.code == this.$ECode.SUCCESS) {
+            this.userQuestionList = response.data.records;
+          }
+        })
+      },
+
       // 删除博客
-      handleDelete: function(row) {
+      handleDeleteBlog: function(row) {
+        var that = this;
+        this.$confirm("此操作将把博客删除, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            var params = {};
+            params.uid = row.uid;
+            deleteBlog(params).then(response => {
+              that.$commonUtil.message.success(response.message)
+              that.getBlogList();
+            });
+          })
+          .catch(() => {
+            that.$commonUtil.message.info("已取消删除")
+          });
+      },
+      // 删除博客
+      handleDeleteQuestion: function(row) {
         var that = this;
         this.$confirm("此操作将把博客删除, 是否继续?", "提示", {
           confirmButtonText: "确定",
@@ -874,6 +996,11 @@
             // 获取用户文章
             this.getBlogList()
 
+          }; break;
+          case "我的问答": {
+            console.log("点击我的问答")
+            // 获取用户问答
+            this.getUserQuestionList()
           }; break;
           case "我的评论": {
             // 获取评论列表
@@ -1183,22 +1310,30 @@
        * @returns {{}}
        */
       getCurrentPageTitle: function() {
-        let test = window.location.href;
-        let start = 0;
-        let end = test.length;
+        // 判断是否是通过参数传递的title
+        let title = this.getUrlVars()["title"];
+        if(title) {
 
-        console.log("当前URL", test)
-
-        for (var i = 0; i < test.length; i++) {
-          if (test[i] == "/") {
-            start = i;
+          // 如果是通过参数传递，那么直接显示
+          this.saveTitle = title;
+        } else {
+          // 从url中获取title
+          let test = window.location.href;
+          let start = 0;
+          let end = test.length;
+          for (var i = 0; i < test.length; i++) {
+            if (test[i] == "/") {
+              start = i;
+            }
+            if (test[i] == "?" && i > start) {
+              end = i;
+            }
           }
-          if (test[i] == "?" && i > start) {
-            end = i;
-          }
+          let result = test.substring(start, end);
+          this.saveTitle = result;
         }
-        let result = test.substring(start, end);
-        this.saveTitle = result;
+
+
       },
       /**
        * 获取网站配置
@@ -1231,8 +1366,12 @@
        * @returns {{}}
        */
       getUrlVars: function () {
-        var vars = {};
-        var parts = window.location.href.replace(
+        let vars = {};
+        let url = window.location.href;
+        console.log("获取到的url", url)
+        url = decodeURI(url)
+        console.log("解码后的url", url)
+        let parts = url.replace(
           /[?&]+([^=&]+)=([^&#]*)/gi,
           function (m, key, value) {
             vars[key] = value;

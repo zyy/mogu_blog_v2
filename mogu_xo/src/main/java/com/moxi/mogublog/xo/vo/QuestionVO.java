@@ -38,6 +38,11 @@ public class QuestionVO extends BaseVO<QuestionVO> {
     private String questionTagUid;
 
     /**
+     * 问答模板UID
+     */
+    private String questionTemplateUid;
+
+    /**
      * 问答点击数
      */
     private Integer clickCount;

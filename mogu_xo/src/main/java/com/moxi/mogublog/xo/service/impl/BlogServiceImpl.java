@@ -798,7 +798,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             }
             // 判断是否原创
             if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
-                blog.setAuthor(userUid);
+                blog.setAuthor(request.getAttribute(SysConf.USER_NAME).toString());
                 blog.setArticlesPart(projectName);
             } else {
                 blog.setAuthor(blogVO.getAuthor());
