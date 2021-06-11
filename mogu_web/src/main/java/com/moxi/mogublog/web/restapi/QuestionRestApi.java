@@ -9,6 +9,7 @@ import com.moxi.mogublog.xo.service.QuestionTemplateService;
 import com.moxi.mogublog.xo.vo.QuestionTagVO;
 import com.moxi.mogublog.xo.vo.QuestionTemplateVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
+import com.moxi.mougblog.base.enums.EContributeSource;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.global.Constants;
@@ -73,7 +74,7 @@ public class QuestionRestApi {
 
         ThrowableUtils.checkParamArgument(result);
         // 添加问答来源【用户投稿】
-        questionVO.setQuestionSource(Constants.STR_ONE);
+        questionVO.setQuestionSource(EContributeSource.USER_CONTRIBUTE);
         log.info("增加问答");
         return questionService.addQuestion(questionVO);
     }
@@ -84,6 +85,7 @@ public class QuestionRestApi {
     public String edit(@Validated({Update.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
         ThrowableUtils.checkParamArgument(result);
+        questionVO.setQuestionSource(EContributeSource.USER_CONTRIBUTE);
         log.info("编辑问答");
         return questionService.editQuestion(questionVO);
     }

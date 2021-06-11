@@ -12,6 +12,7 @@ import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.enums.EBehavior;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
+import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.validator.group.GetList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -72,29 +73,20 @@ public class AboutMeRestApi {
     public String getUserByUid(@ApiParam(name = "adminUid", value = "管理员uid", required = false) @RequestParam(name = "adminUid", required = false, defaultValue = "") String adminUid,
                                @ApiParam(name = "userUid", value = "用户uid", required = false) @RequestParam(name = "userUid", required = false, defaultValue = "") String userUid) {
         if(StringUtils.isNotEmpty(adminUid)) {
-            Admin admin = adminService.getAdminByUid(adminUid);
-            Admin tempAdmin = new Admin();
-            // 数据脱敏
-            tempAdmin.setPhotoUrl(admin.getPhotoUrl());
-            tempAdmin.setSummary(admin.getSummary());
-            tempAdmin.setNickName(admin.getNickName());
-            tempAdmin.setGender(admin.getGender());
-            tempAdmin.setOccupation(admin.getOccupation());
-            return ResultUtil.successWithData(tempAdmin);
+            List<String> adminUidList = new ArrayList<>();
+            adminUidList.add(adminUid);
+            List<Admin> adminList = adminService.getAdminListByUid(adminUidList);
+            if(adminList.size() == 0) {
+                throw new QueryException(MessageConf.PARAM_INCORRECT);
+            }
+            // 获取管理员
+            return ResultUtil.successWithData(adminList.get(0));
         } else if(StringUtils.isNotEmpty(userUid)) {
             List<String> userUidList = new ArrayList<>();
             userUidList.add(userUid);
             List<User> userList = userService.getUserListAndAvatarByIds(userUidList);
             if (userList.size() > 0) {
-                User user = userList.get(0);
-                // 数据脱敏
-                User tempUser = new User();
-                tempUser.setPhotoUrl(user.getPhotoUrl());
-                tempUser.setSummary(user.getSummary());
-                tempUser.setNickName(user.getNickName());
-                tempUser.setGender(user.getGender());
-                tempUser.setOccupation(user.getOccupation());
-                return ResultUtil.successWithData(tempUser);
+                return ResultUtil.successWithData(userList.get(0));
             } else {
                 return ResultUtil.errorWithMessage("该用户不存在");
             }
@@ -118,6 +110,8 @@ public class AboutMeRestApi {
         log.info("通过用户获取问答列表");
         return ResultUtil.result(SysConf.SUCCESS, questionService.getPageList(questionVO));
     }
+
+
 
 }
 

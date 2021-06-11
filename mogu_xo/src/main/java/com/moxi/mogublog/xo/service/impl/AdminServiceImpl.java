@@ -21,6 +21,7 @@ import com.moxi.mogublog.xo.service.SysParamsService;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.AdminVO;
 import com.moxi.mougblog.base.enums.EStatus;
+import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.holder.RequestHolder;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
@@ -60,17 +61,49 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
     private RoleService roleService;
 
     @Override
-    public Admin getAdminByUid(String uid) {
-        //获取图片
-        Admin admin = adminMapper.getAdminByUid(uid);
-        if (StringUtils.isNotEmpty(admin.getAvatar())) {
-            String pictureList = this.pictureFeignClient.getPicture(admin.getAvatar(), Constants.SYMBOL_COMMA);
-            List<String> photoList = webUtil.getPicture(pictureList);
-            if(photoList.size() > 0) {
-                admin.setPhotoUrl(photoList.get(0));
+    public List<Admin> getAdminListByUid(Collection<String> uidList) {
+
+        if(uidList.size() == 0) {
+            throw new QueryException(MessageConf.PARAM_INCORRECT);
+        }
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in(SQLConf.UID, uidList);
+        List<Admin> adminList = adminService.list(queryWrapper);
+
+        final StringBuilder fileUids = new StringBuilder();
+        for(Admin admin : adminList) {
+            if (StringUtils.isNotEmpty(admin.getAvatar())) {
+                fileUids.append(admin.getAvatar() + SysConf.FILE_SEGMENTATION);
             }
         }
-        return admin;
+        //获取图片
+        Map<String, String> pictureMap = new HashMap<>(Constants.NUM_TEN);
+        String pictureResult = null;
+        if (fileUids != null) {
+            pictureResult = this.pictureFeignClient.getPicture(fileUids.toString(), SysConf.FILE_SEGMENTATION);
+        }
+        List<Map<String, Object>> picList = webUtil.getPictureMap(pictureResult);
+        picList.forEach(item -> {
+            pictureMap.put(item.get(SQLConf.UID).toString(), item.get(SQLConf.URL).toString());
+        });
+        List<Admin> result = new ArrayList<>();
+        for(Admin tempAdmin : adminList) {
+            Admin admin = new Admin();
+            // 数据脱敏
+            admin.setPhotoUrl(tempAdmin.getPhotoUrl());
+            admin.setSummary(tempAdmin.getSummary());
+            admin.setNickName(tempAdmin.getNickName());
+            admin.setGender(tempAdmin.getGender());
+            admin.setOccupation(tempAdmin.getOccupation());
+            String avatar = tempAdmin.getAvatar();
+            if (StringUtils.isNotEmpty(avatar)) {
+                if (pictureMap.get(avatar) != null && pictureMap.get(avatar) != "") {
+                    admin.setPhotoUrl(pictureMap.get(avatar));
+                }
+            }
+            result.add(admin);
+        }
+        return result;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.moxi.mogublog.commons.entity.Admin;
 import com.moxi.mogublog.xo.vo.AdminVO;
 import com.moxi.mougblog.base.service.SuperService;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,10 +18,10 @@ public interface AdminService extends SuperService<Admin> {
     /**
      * 通过UID获取Admin
      *
-     * @param uid
+     * @param uidList
      * @return
      */
-    public Admin getAdminByUid(String uid);
+    public List<Admin> getAdminListByUid(Collection<String> uidList);
 
     /**
      * 获取在线用户列表

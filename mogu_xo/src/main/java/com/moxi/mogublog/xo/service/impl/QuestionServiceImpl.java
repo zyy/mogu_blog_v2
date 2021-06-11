@@ -18,6 +18,7 @@ import com.moxi.mogublog.xo.service.QuestionService;
 import com.moxi.mogublog.xo.service.QuestionTagService;
 import com.moxi.mogublog.xo.service.UserService;
 import com.moxi.mogublog.xo.vo.QuestionVO;
+import com.moxi.mougblog.base.enums.EContributeSource;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
@@ -235,7 +236,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         Question question = new Question();
         HttpServletRequest request = RequestHolder.getRequest();
         // 判断是否是用户投稿
-        if (Constants.STR_ONE.equals(questionVO.getQuestionSource())) {
+        if (EContributeSource.USER_CONTRIBUTE.equals(questionVO.getQuestionSource())) {
             if(request.getAttribute(SysConf.USER_UID) == null) {
                 throw new InsertException("用户未登录");
             }
@@ -313,12 +314,22 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             tagMap.put(item.getUid(), item);
         });
 
-        // 获取提问者
-        List<User> userList = userService.getUserListAndAvatarByIds(userUidList);
-//        List<Admin> adminList = adminService.getList();
+        // 获取提问者的信息
+        List<User> userList = new ArrayList<>();
+        if (userUidList.size() > 0) {
+            userList = userService.getUserListAndAvatarByIds(userUidList);
+        }
+        List<Admin> adminList = new ArrayList<>();
+        if(adminUidList.size()>0) {
+            adminList = adminService.getAdminListByUid(adminUidList);
+        }
         Map<String, User> userMap = new HashMap<>();
+        Map<String, Admin> adminMap = new HashMap<>();
         userList.forEach(item -> {
             userMap.put(item.getUid(), item);
+        });
+        adminList.forEach(item -> {
+            adminMap.put(item.getUid(), item);
         });
 
         for (Question item : questionList) {
@@ -334,6 +345,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             }
 
             //获取用户
+
             if (StringUtils.isNotEmpty(item.getUserUid())) {
                 item.setUser(userMap.get(item.getUserUid()));
             }
