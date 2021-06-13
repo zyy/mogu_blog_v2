@@ -31,6 +31,7 @@ import com.moxi.mougblog.base.holder.RequestHolder;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -236,7 +237,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         Question question = new Question();
         HttpServletRequest request = RequestHolder.getRequest();
         // 判断是否是用户投稿
-        if (EContributeSource.USER_CONTRIBUTE.equals(questionVO.getQuestionSource())) {
+        if (EContributeSource.USER_PUBLISH.equals(questionVO.getQuestionSource())) {
             if(request.getAttribute(SysConf.USER_UID) == null) {
                 throw new InsertException("用户未登录");
             }
@@ -291,7 +292,8 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                     questionTagUidSet.add(itemTagUid);
                 }
             }
-            if(Constants.STR_ONE.equals(item.getQuestionSource())) {
+            // 判断用户投稿，还是后台管理员添加
+            if(EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
                 if(StringUtils.isNotEmpty(item.getUserUid())) {
                     userUidList.add(item.getUserUid());
                 }
@@ -300,8 +302,6 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                     adminUidList.add(item.getAdminUid());
                 }
             }
-
-
         });
 
         // 获取问答标签
@@ -344,11 +344,28 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                 item.setQuestionTagList(tagListTemp);
             }
 
-            //获取用户
-
-            if (StringUtils.isNotEmpty(item.getUserUid())) {
-                item.setUser(userMap.get(item.getUserUid()));
+            //获取用户【判断是用户投稿，还是后台添加】
+            if(EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
+                if (StringUtils.isNotEmpty(item.getUserUid())) {
+                    item.setUser(userMap.get(item.getUserUid()));
+                }
+            } else {
+                if (StringUtils.isNotEmpty(item.getAdminUid())) {
+                    User user = new User();
+                    Admin admin = adminMap.get(item.getAdminUid());
+                    if(admin != null) {
+                        user.setAvatar(admin.getAvatar());
+                        user.setUid(admin.getUid());
+                        user.setOccupation(admin.getOccupation());
+                        user.setGender(admin.getGender());
+                        user.setSummary(admin.getSummary());
+                        user.setNickName(admin.getNickName());
+                        user.setPhotoUrl(admin.getPhotoUrl());
+                        item.setUser(user);
+                    }
+                }
             }
+
         }
     }
 

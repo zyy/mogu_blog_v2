@@ -585,9 +585,12 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         }
         if (!StringUtils.isEmpty(blogVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
+            queryWrapper.eq(SQLConf.ARTICLE_SOURCE, EContributeSource.USER_PUBLISH);
         }
         if (!StringUtils.isEmpty(blogVO.getAdminUid())) {
+            // 如果是查询管理员，那么还需要限制后台添加条件
             queryWrapper.eq(SQLConf.ADMINUID, blogVO.getAdminUid());
+            queryWrapper.eq(SQLConf.ARTICLE_SOURCE, EContributeSource.ADMIN_PUBLISH);
         }
 
         //分页
@@ -719,7 +722,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
+        if (EContributeSource.USER_PUBLISH.equals(blogVO.getArticleSource())) {
             // 当为用户投稿的时候
             Object userUid = request.getAttribute(SysConf.USER_UID);
             if(userUid == null) {
@@ -767,6 +770,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         blog.setOutsideLink(blogVO.getOutsideLink());
         blog.setStatus(EStatus.ENABLE);
         blog.setOpenComment(blogVO.getOpenComment());
+        blog.setArticleSource(blogVO.getArticleSource());
         Boolean isSave = blogService.save(blog);
 
         //保存成功后，需要发送消息到solr 和 redis
@@ -801,7 +805,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //如果是原创，作者为用户的昵称
         String projectName = sysParamsService.getSysParamsValueByKey(SysConf.PROJECT_NAME_);
         // 判断是否是Web端的新建请求，还是后台管理员创建的文章
-        if (Constants.STR_ONE.equals(blogVO.getArticleSource())) {
+        if (EContributeSource.USER_PUBLISH.equals(blogVO.getArticleSource()) && EContributeSource.USER_PUBLISH.equals(blog.getArticleSource())) {
             // 判断用户是否能编辑博客
             Object userUid = request.getAttribute(SysConf.USER_UID);
             if(userUid == null) {
@@ -819,21 +823,32 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 blog.setArticlesPart(blogVO.getArticlesPart());
             }
             blog.setUserUid(userUid.toString());
-        } else {
+        } else if(EContributeSource.ADMIN_PUBLISH.equals(blogVO.getArticleSource())) {
             Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
-            // 判断是否原创
-            if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
-                if (admin != null) {
-                    if (StringUtils.isNotEmpty(admin.getNickName())) {
-                        blog.setAuthor(admin.getNickName());
-                    } else {
-                        blog.setAuthor(admin.getUserName());
+            // 判断是否是管理员修改后台添加的问题
+            if(EContributeSource.ADMIN_PUBLISH.equals(blog.getArticleSource())) {
+                // 判断是否原创
+                if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                    if (admin != null) {
+                        if (StringUtils.isNotEmpty(admin.getNickName())) {
+                            blog.setAuthor(admin.getNickName());
+                        } else {
+                            blog.setAuthor(admin.getUserName());
+                        }
                     }
+                    blog.setArticlesPart(projectName);
+                } else {
+                    blog.setAuthor(blogVO.getAuthor());
+                    blog.setArticlesPart(blogVO.getArticlesPart());
                 }
-                blog.setArticlesPart(projectName);
             } else {
-                blog.setAuthor(blogVO.getAuthor());
-                blog.setArticlesPart(blogVO.getArticlesPart());
+                // 判断是否原创
+                if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
+                    // 是原创，啥都不用做
+                } else {
+                    blog.setAuthor(blogVO.getAuthor());
+                    blog.setArticlesPart(blogVO.getArticlesPart());
+                }
             }
             blog.setAdminUid(admin.getUid());
         }

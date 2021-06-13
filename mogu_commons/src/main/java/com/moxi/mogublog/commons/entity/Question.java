@@ -136,4 +136,10 @@ public class Question extends SuperEntity<Question> {
     @TableField(exist = false)
     private User user;
 
+    /**
+     * 操作管理员
+     */
+    @TableField(exist = false)
+    private Admin admin;
+
 }

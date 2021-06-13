@@ -75,7 +75,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标题" width="160" align="center">
+      <el-table-column label="标题" width="250" align="center">
         <template slot-scope="scope">
           <span @click="onClick(scope.row)" style="cursor:pointer;">{{ scope.row.title }}</span>
         </template>
@@ -84,12 +84,12 @@
       <el-table-column label="作者" width="60" align="center">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" :content="scope.row.user.nickName" placement="top-start">
-            <el-avatar @click.native="goUser(scope.row.user)" size="small" v-if="scope.row.user.photoUrl" :src="scope.row.user.photoUrl"></el-avatar>
+            <el-avatar style="cursor: pointer;" @click.native="goUser(scope.row)" size="small" v-if="scope.row.user.photoUrl" :src="scope.row.user.photoUrl"></el-avatar>
           </el-tooltip>
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="200" align="center" >
+      <el-table-column label="标签" width="160" align="center" >
         <template slot-scope="scope">
           <template>
             <el-tag
@@ -119,6 +119,14 @@
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in questionStatusDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.questionStatus == item.dictValue">{{item.dictLabel}}</el-tag>
+          </template>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="问答来源" width="100" align="center" prop="questionStatus" sortable="custom" :sort-by="['questionStatus']">
+        <template slot-scope="scope">
+          <template>
+            <el-tag v-for="item in articleDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.questionSource == item.dictValue">{{item.dictLabel}}</el-tag>
           </template>
         </template>
       </el-table-column>
@@ -297,6 +305,7 @@ export default {
       blogPublishDictList: [], //是否字典
       questionStatusDictList: [], // 问答状态字典
       openDictList: [], // 是否启动字典
+      articleDictList: [], // 文章来源
       blogPublishDefault: null, //问答发布默认值
       openDefault: null, // 是否开启评论默认值
       questionStatusDefault: null, // 问答状态默认值
@@ -426,13 +435,14 @@ export default {
      */
     getDictList: function () {
 
-      var dictTypeList =  ['sys_publish_status', 'sys_normal_disable', 'sys_question_status']
+      var dictTypeList =  ['sys_publish_status', 'sys_normal_disable', 'sys_question_status', 'sys_article_source']
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
           var dictMap = response.data;
           this.blogPublishDictList = dictMap.sys_publish_status.list
           this.openDictList = dictMap.sys_normal_disable.list
           this.questionStatusDictList = dictMap.sys_question_status.list
+          this.articleDictList = dictMap.sys_article_source.list
 
           if(dictMap.sys_publish_status.defaultValue) {
             this.blogPublishDefault = dictMap.sys_publish_status.defaultValue;
@@ -462,9 +472,14 @@ export default {
       return formObject;
     },
     // 跳转到用户中心
-    goUser: function(user) {
-      console.log("go user", user)
-      this.$router.push({ path: "/user/user", query: { nickName: user.nickName } });
+    goUser: function(question) {
+      console.log("go user", question)
+      if (question.questionSource == "0") {
+        this.$router.push({ path: "/authority/admin", query: { nickName: question.user.nickName } });
+      } else if (question.questionSource == "1") {
+        this.$router.push({ path: "/user/user", query: { nickName: question.user.nickName } });
+      }
+
     },
     // 跳转到该问答详情
     onClick: function(row) {

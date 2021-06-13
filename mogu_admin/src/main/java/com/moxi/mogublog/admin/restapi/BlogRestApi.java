@@ -63,7 +63,7 @@ public class BlogRestApi {
 
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setArticleSource(Constants.STR_ZERO);
+        blogVO.setArticleSource(EContributeSource.ADMIN_PUBLISH);
         return blogService.addBlog(blogVO);
     }
 
@@ -84,7 +84,7 @@ public class BlogRestApi {
 
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setArticleSource(EContributeSource.BACKGROUND_ADD);
+        blogVO.setArticleSource(EContributeSource.ADMIN_PUBLISH);
         return blogService.editBlog(blogVO);
     }
 
@@ -103,7 +103,7 @@ public class BlogRestApi {
     public String delete(@Validated({Delete.class}) @RequestBody BlogVO blogVO, BindingResult result) {
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setArticleSource(EContributeSource.BACKGROUND_ADD);
+        blogVO.setArticleSource(EContributeSource.ADMIN_PUBLISH);
         return blogService.deleteBlog(blogVO);
     }
 

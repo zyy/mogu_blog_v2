@@ -86,10 +86,10 @@
                           <a :href=" VUE_MOGU_WEB + '/#/info?blogOid='+item.oid" target="_blank">{{item.title}}</a>
                         </el-col>
 
-                        <span v-for="(questionTag, index) in item.tagList" style="float: right">
-                          <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{questionTag.content}}</el-tag>
-                          <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{questionTag.content}}</el-tag>
-                          <el-tag style="margin-right: 3px" v-if="index%3==2" type="info">{{questionTag.content}}</el-tag>
+                        <span v-for="(blogTag, index) in item.tagList" style="float: right; margin-right: 10px">
+                          <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{blogTag.content}}</el-tag>
+                          <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{blogTag.content}}</el-tag>
+                          <el-tag style="margin-right: 3px" v-if="index%3==2" type="info">{{blogTag.content}}</el-tag>
                         </span>
                       </el-row>
 
@@ -162,7 +162,7 @@
                   <el-col>
                     <div class="blogtitle">
                       <a :href=" VUE_MOGU_WEB + '/#/qInfo?questionOid='+item.oid" target="_blank">{{item.title}}</a>
-                      <span v-for="(questionTag, index) in item.questionTagList" style="float: right">
+                      <span v-for="(questionTag, index) in item.questionTagList" style="float: right; margin-right: 10px">
                         <el-tag style="margin-right: 3px" v-if="index%3==0" type="primary">{{questionTag.name}}</el-tag>
                         <el-tag style="margin-right: 3px" v-if="index%3==1" type="danger">{{questionTag.name}}</el-tag>
                         <el-tag style="margin-right: 3px" v-if="index%3==2" type="info">{{questionTag.name}}</el-tag>

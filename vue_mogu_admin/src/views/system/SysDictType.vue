@@ -168,11 +168,11 @@ export default {
       rules: {
         dictType: [
           {required: true, message: '字典类型不能为空', trigger: 'blur'},
-          {min: 1, max: 20, message: '长度在1到20个字符'},
+          {min: 1, max: 30, message: '长度在1到30个字符'},
         ],
         dictName: [
           {required: true, message: '字典名称不能为空', trigger: 'blur'},
-          {min: 1, max: 20, message: '长度在1到20个字符'},
+          {min: 1, max: 30, message: '长度在1到30个字符'},
         ],
         isPublish: [
           {required: true, message: '发布状态不能为空', trigger: 'blur'}
@@ -293,7 +293,7 @@ export default {
     handleList: function(row) {
       var uid = row.uid;
       this.$router.push({
-        path: "SysDictData",
+        path: "sysDictData",
         query: { dictTypeUid: uid }
       });
     },

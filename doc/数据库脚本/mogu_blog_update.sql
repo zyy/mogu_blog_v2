@@ -496,3 +496,19 @@ ALTER TABLE  t_question ADD question_template_uid VARCHAR(32) COMMENT "问答模
  @date 2021年6月9日19:56:57
 */
 ALTER TABLE t_question ADD question_source TINYINT(1) NOT NULL DEFAULT 1 COMMENT '问答来源【0 后台添加，1 用户添加】';
+
+
+/*
+   新增用户关注表
+   @date 2021年6月13日16:17:02
+*/
+CREATE TABLE `t_user_watch` (
+  `uid` varchar(32) NOT NULL COMMENT '唯一uid',
+  `user_uid` varchar(32) DEFAULT NULL COMMENT '关注人UID',
+  `to_user_uid` varchar(32) DEFAULT NULL COMMENT '被关注者UID',
+  `is_admin` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否是管理员：0否，1是',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `create_time` timestamp NULL COMMENT '创建时间',
+  `update_time` timestamp NULL COMMENT '更新时间', 
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';

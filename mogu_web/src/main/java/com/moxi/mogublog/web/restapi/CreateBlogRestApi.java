@@ -11,6 +11,7 @@ import com.moxi.mogublog.xo.service.WebConfigService;
 import com.moxi.mogublog.xo.vo.BlogSortVO;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mogublog.xo.vo.TagVO;
+import com.moxi.mougblog.base.enums.EContributeSource;
 import com.moxi.mougblog.base.enums.ELevel;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
@@ -81,11 +82,11 @@ public class CreateBlogRestApi {
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
         // 文章类型只能是博客类型
-        blogVO.setType(Constants.STR_ONE);
+        blogVO.setType(Constants.STR_ZERO);
         // 推荐类型默认为正常
         blogVO.setLevel(ELevel.NORMAL);
         blogVO.setIsPublish(EPublish.NO_PUBLISH);
-        blogVO.setArticleSource(Constants.STR_ONE);
+        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
         return blogService.addBlog(blogVO);
     }
 
@@ -97,7 +98,9 @@ public class CreateBlogRestApi {
         }
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setType(Constants.STR_ONE);
+        // 文章类型只能是博客类型
+        blogVO.setType(Constants.STR_ZERO);
+        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
         return blogService.editBlog(blogVO);
     }
 
@@ -109,7 +112,9 @@ public class CreateBlogRestApi {
         }
         // 参数校验
         ThrowableUtils.checkParamArgument(result);
-        blogVO.setType(Constants.STR_ONE);
+        // 文章类型只能是博客类型
+        blogVO.setType(Constants.STR_ZERO);
+        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
         return blogService.deleteBlog(blogVO);
     }
 

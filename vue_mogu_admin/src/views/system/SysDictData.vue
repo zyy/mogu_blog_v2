@@ -245,11 +245,11 @@
         rules: {
           dictLabel: [
             {required: true, message: '字典标签不能为空', trigger: 'blur'},
-            {min: 1, max: 20, message: '长度在1到20个字符'},
+            {min: 1, max: 30, message: '长度在1到30个字符'},
           ],
           dictValue: [
             {required: true, message: '字典键值不能为空', trigger: 'blur'},
-            {min: 1, max: 20, message: '长度在1到20个字符'},
+            {min: 1, max: 30, message: '长度在1到30个字符'},
           ],
           dictTypeUid: [
             {required: true, message: '字典类型不能为空', trigger: 'blur'},

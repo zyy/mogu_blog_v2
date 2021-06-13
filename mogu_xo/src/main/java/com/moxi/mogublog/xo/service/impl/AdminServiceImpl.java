@@ -90,6 +90,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         for(Admin tempAdmin : adminList) {
             Admin admin = new Admin();
             // 数据脱敏
+            admin.setUid(tempAdmin.getUid());
             admin.setPhotoUrl(tempAdmin.getPhotoUrl());
             admin.setSummary(tempAdmin.getSummary());
             admin.setNickName(tempAdmin.getNickName());

@@ -263,7 +263,7 @@ export const constantRouterMap = [
         meta: { title: '字典管理', icon: 'web' }
       },
       {
-        path: 'SysDictData',
+        path: 'sysDictData',
         name: '字典数据',
         hidden: true, // 隐藏
         component: () => import('@/views/system/SysDictData'),

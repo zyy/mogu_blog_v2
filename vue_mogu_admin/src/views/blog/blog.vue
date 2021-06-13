@@ -134,7 +134,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标题图" width="160" align="center">
+      <el-table-column label="标题图" width="140" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.photoList"
@@ -169,7 +169,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="200" align="center" >
+      <el-table-column label="标签" width="180" align="center" >
         <template slot-scope="scope">
           <template>
             <el-tag
@@ -211,13 +211,21 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="问答来源" width="100" align="center" prop="questionStatus" sortable="custom" :sort-by="['questionStatus']">
+        <template slot-scope="scope">
+          <template>
+            <el-tag v-for="item in articleDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.articleSource == item.dictValue">{{item.dictLabel}}</el-tag>
+          </template>
+        </template>
+      </el-table-column>
+
       <el-table-column label="创建时间" width="160" align="center" prop="createTime" sortable="custom" :sort-orders="['ascending', 'descending']">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="150">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/blog/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/blog/delete'">删除</el-button>
@@ -531,6 +539,7 @@ export default {
       blogLevelDictList: [], //博客推荐等级字典
       openDictList: [], // 是否启动字典
       blogTypeDictList:[], // 文章类型字典
+      articleDictList: [], // 文章来源字典
       blogOriginalDefault: null, //博客原创默认值
       blogLevelDefault: null, //博客等级默认值
       blogPublishDefault: null, //博客发布默认值
@@ -701,7 +710,7 @@ export default {
      */
     getDictList: function () {
 
-      var dictTypeList =  ['sys_recommend_level', 'sys_original_status', 'sys_publish_status', 'sys_normal_disable', 'sys_blog_type']
+      var dictTypeList =  ['sys_recommend_level', 'sys_original_status', 'sys_publish_status', 'sys_normal_disable', 'sys_blog_type', 'sys_article_source']
 
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
@@ -711,6 +720,7 @@ export default {
           this.blogLevelDictList = dictMap.sys_recommend_level.list
           this.openDictList = dictMap.sys_normal_disable.list
           this.blogTypeDictList = dictMap.sys_blog_type.list
+          this.articleDictList = dictMap.sys_article_source.list
 
           if(dictMap.sys_original_status.defaultValue) {
             this.blogOriginalDefault = dictMap.sys_original_status.defaultValue;

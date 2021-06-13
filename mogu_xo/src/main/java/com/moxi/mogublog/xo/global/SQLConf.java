@@ -46,7 +46,8 @@ public final class SQLConf extends BaseSQLConf {
     public final static String REPLY_COUNT = "reply_count";
     public final static String IS_PUBLISH = "is_publish";
     public final static String IS_ORIGINAL = "is_original";
-
+    public final static String ARTICLE_SOURCE = "article_Source";
+    public final static String QUESTION_SOURCE = "question_Source";
     /**
      * t_web_visit表
      */

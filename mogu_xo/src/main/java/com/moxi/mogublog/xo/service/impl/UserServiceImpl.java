@@ -160,6 +160,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
         // 过滤用户敏感信息
         userCollection.forEach(item -> {
             User user = new User();
+            item.setUid(item.getUid());
             user.setAvatar(item.getAvatar());
             user.setUid(item.getUid());
             user.setOccupation(item.getOccupation());

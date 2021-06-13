@@ -11,10 +11,10 @@ public class EContributeSource {
     /**
      * 后台上架
      */
-    public static final String BACKGROUND_ADD = "0";
+    public static final String ADMIN_PUBLISH = "0";
 
     /**
      * 用户投稿
      */
-    public static final String USER_CONTRIBUTE = "1";
+    public static final String USER_PUBLISH = "1";
 }
