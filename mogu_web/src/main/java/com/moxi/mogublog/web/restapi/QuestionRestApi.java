@@ -74,7 +74,7 @@ public class QuestionRestApi {
 
         ThrowableUtils.checkParamArgument(result);
         // 添加问答来源【用户投稿】
-        questionVO.setQuestionSource(EContributeSource.USER_CONTRIBUTE);
+        questionVO.setQuestionSource(EContributeSource.USER_PUBLISH);
         log.info("增加问答");
         return questionService.addQuestion(questionVO);
     }
@@ -85,7 +85,7 @@ public class QuestionRestApi {
     public String edit(@Validated({Update.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
 
         ThrowableUtils.checkParamArgument(result);
-        questionVO.setQuestionSource(EContributeSource.USER_CONTRIBUTE);
+        questionVO.setQuestionSource(EContributeSource.USER_PUBLISH);
         log.info("编辑问答");
         return questionService.editQuestion(questionVO);
     }

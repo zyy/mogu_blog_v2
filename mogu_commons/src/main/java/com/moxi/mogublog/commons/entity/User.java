@@ -164,4 +164,10 @@ public class User extends SuperEntity<User> {
     @TableField(exist = false)
     private String photoUrl;
 
+    /**
+     * 是否关注过该用户
+     */
+    @TableField(exist = false)
+    private Boolean isWatchUser;
+
 }

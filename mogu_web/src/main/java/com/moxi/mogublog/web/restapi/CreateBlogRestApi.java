@@ -86,7 +86,7 @@ public class CreateBlogRestApi {
         // 推荐类型默认为正常
         blogVO.setLevel(ELevel.NORMAL);
         blogVO.setIsPublish(EPublish.NO_PUBLISH);
-        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
+        blogVO.setArticleSource(EContributeSource.USER_PUBLISH);
         return blogService.addBlog(blogVO);
     }
 
@@ -100,7 +100,7 @@ public class CreateBlogRestApi {
         ThrowableUtils.checkParamArgument(result);
         // 文章类型只能是博客类型
         blogVO.setType(Constants.STR_ZERO);
-        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
+        blogVO.setArticleSource(EContributeSource.USER_PUBLISH);
         return blogService.editBlog(blogVO);
     }
 
@@ -114,7 +114,7 @@ public class CreateBlogRestApi {
         ThrowableUtils.checkParamArgument(result);
         // 文章类型只能是博客类型
         blogVO.setType(Constants.STR_ZERO);
-        blogVO.setArticleSource(EContributeSource.USER_CONTRIBUTE);
+        blogVO.setArticleSource(EContributeSource.USER_PUBLISH);
         return blogService.deleteBlog(blogVO);
     }
 

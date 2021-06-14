@@ -322,7 +322,13 @@
 
                   </el-card>
                 </el-timeline-item>
+
               </div>
+              <el-timeline-item v-if="userBlogList.length == 0" placement="top">
+                <el-card>
+                  <span style="font-size: 16px">空空如也~ </span> <el-button type="warning"  @click="handleCommand('createBlog')">点击发布文章</el-button>
+                </el-card>
+              </el-timeline-item>
             </el-timeline>
           </div>
         </el-tab-pane>
@@ -394,6 +400,13 @@
                   </el-card>
                 </el-timeline-item>
               </div>
+
+              <el-timeline-item v-if="userQuestionList.length == 0" placement="top">
+                <el-card>
+                  <span style="font-size: 16px">空空如也~ </span> <el-button type="warning" @click="handleCommand('createQuestion')">点击发布问题</el-button>
+                </el-card>
+              </el-timeline-item>
+
             </el-timeline>
           </div>
       </el-tab-pane>

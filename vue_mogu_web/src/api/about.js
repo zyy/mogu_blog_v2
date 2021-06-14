@@ -40,3 +40,26 @@ export function getUserByUid (params) {
   })
 }
 
+export function getUserWatchList (params) {
+  return request({
+    url: process.env.WEB_API + '/about/getUserWatchList',
+    method: 'post',
+    data: params
+  })
+}
+
+export function addUserWatch (params) {
+  return request({
+    url: process.env.WEB_API + '/about/addUserWatch',
+    method: 'post',
+    data: params
+  })
+}
+
+export function deleteUserWatch (params) {
+  return request({
+    url: process.env.WEB_API + '/about/deleteUserWatch',
+    method: 'post',
+    data: params
+  })
+}

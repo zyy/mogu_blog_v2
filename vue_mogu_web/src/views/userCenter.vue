@@ -44,11 +44,12 @@
               <span v-if="userInfo.gender == '2'">女</span>
               <span v-if="userInfo.occupation"> | {{userInfo.occupation}}</span>
             </div>
-            <div class="summary">{{userInfo.summary}}</div>
+            <div class="summary" v-if="userInfo.summary">{{userInfo.summary}}</div>
+            <div class="summary" v-else>这家伙很懒，什么都没有留下</div>
             <div class="love">
-              <el-button type="danger" icon="el-icon-view">关注</el-button>
+              <el-button type="danger" v-if="!userInfo.isWatchUser == true" icon="el-icon-view" @click="watchUser()">关注</el-button>
+              <el-button type="info" v-else icon="el-icon-view" @click="unWatchUser()">取消关注</el-button>
             </div>
-
           </el-col>
         </el-row>
 
@@ -222,9 +223,41 @@
 <!--          <el-tab-pane name="3" label="收藏">-->
 <!--            <span :class="activeName==3?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>收藏</span></span>-->
 <!--          </el-tab-pane>-->
-<!--          <el-tab-pane name="4" label="关注">-->
-<!--            <span :class="activeName==4?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>关注</span></span>-->
-<!--          </el-tab-pane>-->
+          <el-tab-pane name="4" label="关注">
+            <span :class="activeName==4?'tab-pane-active':'tab-pane'" slot="label"><i class="el-icon-chat-dot-square"></i> <span>关注</span></span>
+            <el-tabs class="userEvent2" v-model="activeName2" @tab-click="handleClick2">
+              <el-tab-pane label="TA的粉丝" name="1"></el-tab-pane>
+              <el-tab-pane label="TA关注的人" name="2"></el-tab-pane>
+            </el-tabs>
+
+            <div style="min-height: 773px">
+              <el-row :gutter="24" v-for="(item, index) in userWatchListData">
+
+
+                <el-card v-if="item.isAdmin=='1'">
+                  <el-col :span="1">{{index+1}}</el-col>
+                  <el-col :span="1.5" >
+                    <el-avatar size="small" v-if="item.admin.photoUrl" :src="item.admin.photoUrl"></el-avatar>
+                    <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  </el-col>
+                  <el-col :span="17">{{item.admin.nickName}}</el-col>
+                  <el-col :span="2" style="line-height: 50px; margin-top: -12px; float: right;"> <el-button type="danger" @click="watchOtherUser(item)">关注</el-button></el-col>
+                </el-card>
+
+                <el-card v-if="item.isAdmin=='0'">
+                  <el-col :span="1">{{index+1}}</el-col>
+                  <el-col :span="1.5" >
+                    <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
+                    <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  </el-col>
+                  <el-col :span="17">{{item.user.nickName}}</el-col>
+                  <el-col :span="2" style="line-height: 50px; margin-top: -12px; float: right;"> <el-button type="danger" @click="watchOtherUser(item)">关注</el-button></el-col>
+                </el-card>
+
+              </el-row>
+            </div>
+
+          </el-tab-pane>
 
         </el-tabs>
 
@@ -236,7 +269,7 @@
 
 <script>
 import {Loading} from "element-ui";
-import {getQuestionListByUser, getBlogListByUser, getUserByUid} from "../api/about";
+import {getQuestionListByUser, getBlogListByUser, getUserByUid, getUserWatchList, addUserWatch, deleteUserWatch} from "../api/about";
 
 export default {
   data() {
@@ -255,6 +288,7 @@ export default {
       adminUid: "", // 管理员uid
       userUid: "", // 管理员uid
       userInfo: {}, // 用户信息【管理员或者前端用户】
+      userWatchListData: [],
     };
   },
   components: {
@@ -314,7 +348,7 @@ export default {
 
         } break;
         case "关注": {
-
+          this.userWatchList(true)
         } break;
       }
 
@@ -339,6 +373,12 @@ export default {
         case "最热问答": {
           this.orderByDescColumn = "click_count";
           this.getDataList(2)
+        } break;
+        case "TA的粉丝": {
+          this.userWatchList(true)
+        } break;
+        case "TA关注的人": {
+          this.userWatchList(false)
         } break;
       }
     },
@@ -401,9 +441,6 @@ export default {
         }; break
         //###################### 获取问答列表结束 ######################
       }
-
-
-
     },
 
     loadContent: function () {
@@ -432,6 +469,84 @@ export default {
         }
         this.loading = false;
       });
+    },
+    userWatchList: function (isWatch) {
+      let params = {}
+      if(isWatch) {
+        params.userUid = this.adminUid ? this.adminUid : this.userUid
+      } else {
+        params.toUserUid = this.adminUid ? this.adminUid : this.userUid
+      }
+      params.pageSize = this.pageSize
+      params.currentPage = this.currentPage
+      getUserWatchList(params).then(response => {
+        console.log("UserWatchList", response)
+        if(response.code == this.$ECode.SUCCESS) {
+          this.userWatchListData = response.data.records
+          console.log("userWatchListData", this.userWatchListData)
+        } else {
+          this.$message.error(response.message)
+        }
+      })
+    },
+    // 关注用户
+    watchUser: function () {
+      let params = {}
+      if(this.adminUid) {
+        params.toUserUid = this.adminUid
+        params.isAdmin = "1"
+      }else if(this.userUid) {
+        params.toUserUid = this.userUid
+        params.isAdmin = "0"
+      }
+      addUserWatch(params).then(response => {
+        console.log("关注用户", response)
+        if(response.code == this.$ECode.SUCCESS) {
+          this.$message.success(response.message)
+          this.userInfo.isWatchUser = true
+        } else {
+          this.$message.error(response.message)
+        }
+      })
+    },
+    // 关注用户
+    watchOtherUser: function (item) {
+      let params = {}
+      if(item.isAdmin == "1") {
+        params.toUserUid = item.admin.uid
+      }else {
+        params.toUserUid = item.user.uid
+      }
+      params.isAdmin = item.isAdmin
+      addUserWatch(params).then(response => {
+        console.log("关注用户", response)
+        if(response.code == this.$ECode.SUCCESS) {
+          this.$message.success(response.message)
+          this.userInfo.isWatchUser = true
+        } else {
+          this.$message.error(response.message)
+        }
+      })
+    },
+    // 取消关注
+    unWatchUser: function () {
+      let params = {}
+      if(this.adminUid) {
+        params.toUserUid = this.adminUid
+        params.isAdmin = "1"
+      }else if(this.userUid) {
+        params.toUserUid = this.userUid
+        params.isAdmin = "0"
+      }
+      deleteUserWatch(params).then(response => {
+        console.log("取消关注用户", response)
+        if(response.code == this.$ECode.SUCCESS) {
+          this.$message.success(response.message)
+          this.userInfo.isWatchUser = false
+        } else {
+          this.$message.error(response.message)
+        }
+      })
     },
   }
 };

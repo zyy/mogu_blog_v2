@@ -511,4 +511,4 @@ CREATE TABLE `t_user_watch` (
   `create_time` timestamp NULL COMMENT '创建时间',
   `update_time` timestamp NULL COMMENT '更新时间', 
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='用户关注表';

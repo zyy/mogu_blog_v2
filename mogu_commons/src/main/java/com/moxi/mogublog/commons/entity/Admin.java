@@ -185,4 +185,9 @@ public class Admin extends SuperEntity<Admin> {
     @TableField(exist = false)
     private String tokenUid;
 
+    /**
+     * 是否关注过该用户
+     */
+    @TableField(exist = false)
+    private Boolean isWatchUser;
 }
