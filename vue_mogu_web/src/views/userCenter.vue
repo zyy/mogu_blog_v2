@@ -129,7 +129,7 @@
               </div>
 
               <div class="isEnd">
-                <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="loadContent" @click="loadContent(1)" v-if="!isEnd&&!loading">点击加载更多</div>
                 <div class="lds-css ng-scope" v-if="!isEnd&&loading">
                   <div style="width:100%;height:100%" class="lds-facebook">
                     <div></div>
@@ -202,11 +202,10 @@
                     </div>
                   </el-col>
                 </el-row>
-
               </div>
 
               <div class="isEnd">
-                <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="loadContent" @click="loadContent(2)" v-if="!isEnd&&!loading">点击加载更多</div>
                 <div class="lds-css ng-scope" v-if="!isEnd&&loading">
                   <div style="width:100%;height:100%" class="lds-facebook">
                     <div></div>
@@ -214,9 +213,9 @@
                     <div></div>
                   </div>
                 </div>
-
                 <span v-if="isEnd">我也是有底线的~</span>
               </div>
+
             </div>
           </el-tab-pane>
 
@@ -231,9 +230,20 @@
             </el-tabs>
 
             <div style="min-height: 773px">
-              <el-row :gutter="24" v-for="(item, index) in userWatchListData">
 
+              <el-row :gutter="24" v-for="(item, index) in userWatchListData" v-if="activeName2 == 1">
+                <el-card>
+                  <el-col :span="1">{{index+1}}</el-col>
+                  <el-col :span="1.5" >
+                    <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
+                    <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  </el-col>
+                  <el-col :span="17">{{item.user.nickName}}</el-col>
+                  <el-col :span="2" style="line-height: 50px; margin-top: -12px; float: right;"> <el-button type="danger" @click="watchOtherUser(item)">关注</el-button></el-col>
+                </el-card>
+              </el-row>
 
+              <el-row :gutter="24" v-for="(item, index) in userWatchListData" v-if="activeName2 == 2">
                 <el-card v-if="item.isAdmin=='1'">
                   <el-col :span="1">{{index+1}}</el-col>
                   <el-col :span="1.5" >
@@ -253,10 +263,20 @@
                   <el-col :span="17">{{item.user.nickName}}</el-col>
                   <el-col :span="2" style="line-height: 50px; margin-top: -12px; float: right;"> <el-button type="danger" @click="watchOtherUser(item)">关注</el-button></el-col>
                 </el-card>
-
               </el-row>
-            </div>
 
+              <div class="isEnd" style="margin-top: 5px;">
+                <div class="loadContent" @click="loadContent(3)" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="lds-css ng-scope" v-if="!isEnd&&loading">
+                  <div style="width:100%;height:100%;" class="lds-facebook">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+                <span v-if="isEnd">我也是有底线的~</span>
+              </div>
+            </div>
           </el-tab-pane>
 
         </el-tabs>
@@ -289,6 +309,7 @@ export default {
       userUid: "", // 管理员uid
       userInfo: {}, // 用户信息【管理员或者前端用户】
       userWatchListData: [],
+      isWatch: true, // 是否是获取关注者
     };
   },
   components: {
@@ -335,6 +356,10 @@ export default {
     },
     // 一级tab点击事件
     handleClick(tab, event) {
+      // 切换选项卡时，永远选择第一个
+      this.listData = []
+      this.userWatchListData = []
+      this.activeName2 = "1"
       switch (tab.label) {
         case "博客": {
           this.orderByDescColumn = "create_time";
@@ -348,15 +373,17 @@ export default {
 
         } break;
         case "关注": {
-          this.userWatchList(true)
+          this.isWatch = false
+          this.getDataList(4)
         } break;
       }
 
     },
     // 二级tab点击事件
     handleClick2(tab, event) {
-      console.log(tab.label)
-      let falg = 0
+      this.activeName2 = tab.name
+      this.listData = []
+      this.userWatchListData = []
       switch (tab.label) {
         case "最新博客": {
           this.orderByDescColumn = "create_time";
@@ -375,10 +402,12 @@ export default {
           this.getDataList(2)
         } break;
         case "TA的粉丝": {
-          this.userWatchList(true)
+          this.isWatch = false
+          this.getDataList(4)
         } break;
         case "TA关注的人": {
-          this.userWatchList(false)
+          this.isWatch = true
+          this.getDataList(4)
         } break;
       }
     },
@@ -390,26 +419,26 @@ export default {
         text: '正在努力加载中……',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      let params = {};
-      params.currentPage = this.currentPage;
-      params.pageSize = this.pageSize;
-      params.orderByDescColumn = this.orderByDescColumn
-      params.adminUid = this.adminUid
-      params.userUid = this.userUid
-
       switch (type) {
         //###################### 获取博客列表 ######################
         case 1 : {
+          let params = {};
+          params.currentPage = this.currentPage;
+          params.pageSize = this.pageSize;
+          params.orderByDescColumn = this.orderByDescColumn
+          params.adminUid = this.adminUid
+          params.userUid = this.userUid
           getBlogListByUser(params).then(response => {
             if (response.code == this.$ECode.SUCCESS) {
               console.log("获取的博客列表", response.data)
-              let newBlogData = response.data.records;
-              that.listData = newBlogData
+              let newData = response.data.records;
+              let newTempData = that.listData.concat(newData);
+              that.listData = newTempData
               that.total = response.data.total;
               that.pageSize = response.data.size;
               that.currentPage = response.data.current;
               //全部加载完毕
-              if (newBlogData.length < this.pageSize) {
+              if (newData.length < this.pageSize) {
                 this.isEnd = true;
               }
             }
@@ -420,12 +449,19 @@ export default {
         }; break
         //###################### 获取博客列表结束 ######################
 
-        //###################### 获取问答列表 ######################
+        //###################### 获取问答列表 #########################
         case 2 : {
+          let params = {};
+          params.currentPage = this.currentPage;
+          params.pageSize = this.pageSize;
+          params.orderByDescColumn = this.orderByDescColumn
+          params.adminUid = this.adminUid
+          params.userUid = this.userUid
           getQuestionListByUser(params).then(response => {
             if (response.code == this.$ECode.SUCCESS) {
               let newData = response.data.records;
-              that.listData = newData
+              let newTempData = that.listData.concat(newData);
+              that.listData = newTempData
               that.total = response.data.total;
               that.pageSize = response.data.size;
               that.currentPage = response.data.current;
@@ -440,54 +476,48 @@ export default {
           });
         }; break
         //###################### 获取问答列表结束 ######################
+
+        //###################### 获取用户粉丝和关注人 ######################
+        case 4 : {
+          let params = {}
+          let isWatch = this.isWatch
+          console.log("isWatch", isWatch)
+          if(isWatch) {
+            params.userUid = this.adminUid ? this.adminUid : this.userUid
+          } else {
+            params.toUserUid = this.adminUid ? this.adminUid : this.userUid
+          }
+          params.pageSize = this.pageSize
+          params.currentPage = this.currentPage
+          getUserWatchList(params).then(response => {
+            console.log("UserWatchList", response)
+            if(response.code == this.$ECode.SUCCESS) {
+              let newData = response.data.records
+              console.log("newData", newData)
+              let newTempData = that.listData.concat(newData);
+              this.userWatchListData = newTempData
+              console.log("userWatchListData", this.userWatchListData)
+              //全部加载完毕
+              if (newData.length < this.pageSize) {
+                this.isEnd = true;
+              }
+            } else {
+              this.$message.error(response.message)
+            }
+
+            that.loadingInstance.close();
+          },function(err){
+            that.loadingInstance.close();
+          })
+        }; break
+        //###################### 获取问答列表结束 ######################
+
       }
     },
-
-    loadContent: function () {
+    loadContent: function (type) {
       this.loading = false;
       this.currentPage = this.currentPage + 1;
-      var params = {};
-      params.methodType = this.methodType
-      params.currentPage = this.currentPage;
-      params.pageSize = this.pageSize;
-      params.orderByDescColumn = "createTime";
-      getQuestionListByUser(params).then(response => {
-        if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
-          this.isEnd = false;
-          let records = response.data.records
-          let newData = this.newQuestionData.concat(records);
-          this.listData = newData;
-          this.total = response.data.total;
-          this.pageSize = response.data.size;
-          this.currentPage = response.data.current;
-          //全部加载完毕
-          if (records.length < this.pageSize) {
-            this.isEnd = true;
-          }
-        } else {
-          this.isEnd = true;
-        }
-        this.loading = false;
-      });
-    },
-    userWatchList: function (isWatch) {
-      let params = {}
-      if(isWatch) {
-        params.userUid = this.adminUid ? this.adminUid : this.userUid
-      } else {
-        params.toUserUid = this.adminUid ? this.adminUid : this.userUid
-      }
-      params.pageSize = this.pageSize
-      params.currentPage = this.currentPage
-      getUserWatchList(params).then(response => {
-        console.log("UserWatchList", response)
-        if(response.code == this.$ECode.SUCCESS) {
-          this.userWatchListData = response.data.records
-          console.log("userWatchListData", this.userWatchListData)
-        } else {
-          this.$message.error(response.message)
-        }
-      })
+      this.getDataList(type)
     },
     // 关注用户
     watchUser: function () {
@@ -534,7 +564,7 @@ export default {
       if(this.adminUid) {
         params.toUserUid = this.adminUid
         params.isAdmin = "1"
-      }else if(this.userUid) {
+      } else if(this.userUid) {
         params.toUserUid = this.userUid
         params.isAdmin = "0"
       }
@@ -543,6 +573,25 @@ export default {
         if(response.code == this.$ECode.SUCCESS) {
           this.$message.success(response.message)
           this.userInfo.isWatchUser = false
+        } else {
+          this.$message.error(response.message)
+        }
+      })
+    },
+    // 关注用户
+    unWatchOtherUser: function (item) {
+      let params = {}
+      if(item.isAdmin == "1") {
+        params.toUserUid = item.admin.uid
+      }else {
+        params.toUserUid = item.user.uid
+      }
+      params.isAdmin = item.isAdmin
+      deleteUserWatch(params).then(response => {
+        console.log("取消关注用户", response)
+        if(response.code == this.$ECode.SUCCESS) {
+          this.$message.success(response.message)
+          this.userInfo.isWatchUser = true
         } else {
           this.$message.error(response.message)
         }

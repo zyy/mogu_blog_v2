@@ -56,14 +56,14 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         if(StringUtils.isEmpty(userWatchVO.getUserUid()) && StringUtils.isEmpty(userWatchVO.getToUserUid())) {
             throw new QueryException(MessageConf.PARAM_INCORRECT);
         }
-        // 状态标志位，判断是否获取关注者
+        // 状态标志位，判断是否获取关注者 还是 被关注者【主要是通过userUid和toUserUid来进行判断】
         Boolean isWatch = false;
-        // 他关注了谁
+        // 获取TA关注了谁
         if(StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
             isWatch = true;
             queryWrapper.eq(SQLConf.USER_UID, userWatchVO.getUserUid());
         }
-        // 谁关注了他
+        // 获取TA的粉丝
         if(StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
             isWatch = false;
             queryWrapper.eq(SQLConf.TO_USER_UID, userWatchVO.getToUserUid());
@@ -82,17 +82,13 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
             if(finalIsWatch) {
                 // 获取他关注了谁
                 if(Constants.STR_ONE.equals(item.getIsAdmin())) {
-                    adminIdList.add(item.getUserUid());
-                } else {
-                    userIdList.add(item.getUserUid());
-                }
-            } else {
-                // 获取谁关注了他
-                if(Constants.STR_ONE.equals(item.getIsAdmin())) {
                     adminIdList.add(item.getToUserUid());
                 } else {
                     userIdList.add(item.getToUserUid());
                 }
+            } else {
+                // 获取谁关注了他【管理员无法主动关注用户】
+                userIdList.add(item.getUserUid());
             }
         });
         List<User> userList = new ArrayList<>();
@@ -114,17 +110,15 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         userWatchList.forEach(item -> {
             // 判断是关注者还是被关注者
             if(finalIsWatch) {
-                if(Constants.STR_ONE.equals(item.getIsAdmin())) {
-                    item.setAdmin(adminMap.get(item.getUserUid()));
-                } else {
-                    item.setUser(userMap.get(item.getUserUid()));
-                }
-            } else {
+                // 获取用户的粉丝
                 if(Constants.STR_ONE.equals(item.getIsAdmin())) {
                     item.setAdmin(adminMap.get(item.getToUserUid()));
                 } else {
                     item.setUser(userMap.get(item.getToUserUid()));
                 }
+            } else {
+                // 获取用户的粉丝
+                item.setUser(userMap.get(item.getUserUid()));
             }
         });
         return pageList.setRecords(userWatchList);

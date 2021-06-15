@@ -289,7 +289,7 @@ public class LoginRestApi {
 
     /**
      * 设置登录限制，返回剩余次数
-     * 密码错误五次，将会锁定10分钟
+     * 密码错误五次，将会锁定30分钟
      *
      * @param request
      */
@@ -300,7 +300,7 @@ public class LoginRestApi {
         if (StringUtils.isNotEmpty(count)) {
             Integer countTemp = Integer.valueOf(count) + 1;
             surplusCount = surplusCount - countTemp;
-            redisUtil.setEx(RedisConf.LOGIN_LIMIT + RedisConf.SEGMENTATION + ip, String.valueOf(countTemp), 10, TimeUnit.MINUTES);
+            redisUtil.setEx(RedisConf.LOGIN_LIMIT + RedisConf.SEGMENTATION + ip, String.valueOf(countTemp), 30, TimeUnit.MINUTES);
         } else {
             surplusCount = surplusCount - 1;
             redisUtil.setEx(RedisConf.LOGIN_LIMIT + RedisConf.SEGMENTATION + ip, Constants.STR_ONE, 30, TimeUnit.MINUTES);

@@ -80,11 +80,6 @@ public class UserCenterRestApi {
     public String getUserByUid(HttpServletRequest request, @ApiParam(name = "adminUid", value = "管理员uid", required = false) @RequestParam(name = "adminUid", required = false, defaultValue = "") String adminUid,
                                @ApiParam(name = "userUid", value = "用户uid", required = false) @RequestParam(name = "userUid", required = false, defaultValue = "") String userUid) {
         Object currentUserUid = request.getAttribute(SysConf.USER_UID);
-        if(currentUserUid == null) {
-            return ResultUtil.errorWithMessage("用户未登录");
-        }
-        UserWatchVO userWatchVO = new UserWatchVO();
-        userWatchVO.setUserUid(currentUserUid.toString());
         if(StringUtils.isNotEmpty(adminUid)) {
             List<String> adminUidList = new ArrayList<>();
             adminUidList.add(adminUid);
@@ -92,8 +87,16 @@ public class UserCenterRestApi {
             if(adminList.size() == 0) {
                 throw new QueryException(MessageConf.PARAM_INCORRECT);
             }
-            userWatchVO.setToUserUid(adminUid);
-            Boolean isWatchUser = userWatchService.checkUserWatch(userWatchVO);
+            // 默认没有关注用户
+            Boolean isWatchUser = false;
+            if(currentUserUid != null) {
+                UserWatchVO userWatchVO = new UserWatchVO();
+                userWatchVO.setUserUid(currentUserUid.toString());
+                userWatchVO.setToUserUid(adminUid);
+                isWatchUser = userWatchService.checkUserWatch(userWatchVO);
+            } else {
+                log.info("前端用户未登录");
+            }
             // 获取管理员
             Admin admin = adminList.get(0);
             admin.setIsWatchUser(isWatchUser);
@@ -103,8 +106,16 @@ public class UserCenterRestApi {
             userUidList.add(userUid);
             List<User> userList = userService.getUserListAndAvatarByIds(userUidList);
             if (userList.size() > 0) {
-                userWatchVO.setToUserUid(adminUid);
-                Boolean isWatchUser = userWatchService.checkUserWatch(userWatchVO);
+                // 默认没有关注用户
+                Boolean isWatchUser = false;
+                if(currentUserUid != null) {
+                    UserWatchVO userWatchVO = new UserWatchVO();
+                    userWatchVO.setUserUid(currentUserUid.toString());
+                    userWatchVO.setToUserUid(userUid);
+                    isWatchUser = userWatchService.checkUserWatch(userWatchVO);
+                } else {
+                    log.info("前端用户未登录");
+                }
                 User user = userList.get(0);
                 user.setIsWatchUser(isWatchUser);
                 return ResultUtil.successWithData(user);

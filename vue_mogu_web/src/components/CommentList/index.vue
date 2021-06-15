@@ -3,13 +3,13 @@
     <div v-for="item in comments" :key="item.uid">
       <div class="commentList">
         <span class="left p1">
-          <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
+          <img v-if="item.user" style="cursor:pointer;" @click="getUserCenter(item.user)" :src="item.user.photoUrl ? item.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
           <img v-else :src="defaultAvatar" />
         </span>
 
         <span class="right p1">
           <div class="rightTop" v-if="item.user">
-            <el-link class="userName" :underline="false">{{item.user.nickName}}</el-link>
+            <el-link class="userName" :underline="false" @click="getUserCenter(item.user)">{{item.user.nickName}}</el-link>
             <el-tag style="height: 30px; margin-left:5px;" v-for="userTag in userTagDictList" :key="userTag.uid" v-if="item.user.userTag == userTag.dictValue && item.user.userTag != 0" :type="userTag.listClass">{{userTag.dictLabel}}</el-tag>
             <span class="timeAgo" v-if="item.createTime">{{timeAgo(item.createTime)}}</span>
             <span class="timeAgo" v-else>刚刚</span>
@@ -276,6 +276,14 @@
           });
 
 
+      },
+      getUserCenter: function (user) {
+        console.log("跳转到用户中心", user)
+        let routeData = this.$router.resolve({
+          path: "/userCenter",
+          query: {userUid: user.uid}
+        });
+        window.open(routeData.href, '_blank');
       },
       // 校验是否登录
       validLogin() {
