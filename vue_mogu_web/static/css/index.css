@@ -305,7 +305,7 @@ h1.t_nav { display: none; border-bottom: #bfbfbf 1px solid; font-size: 14px; fon
 .nextinfo { line-height: 24px; width: 100%; background: #FFF; border-radius: 10px; overflow: hidden; margin: 20px 0 }
 .nextinfo p { padding: 4px 10px; border-radius: 5px; }
 .nextinfo a:hover { color: #000; text-decoration: underline }
-.diggit { float: left; width: 140px; margin: auto; background: #E2523A url(../images/dzbg.jpg) no-repeat center left 10px; color: #fff; box-shadow: 1px 2px 6px 0px rgba(0,0,0,.2); border-radius: 3px; line-height: 40px; text-align: center; padding-left: 20px; margin-left: 20%; }
+.diggit { float: left; width: 140px; margin: auto; background: #E2523A url(../images/dzbg.jpg) no-repeat center left 10px; color: #fff; box-shadow: 1px 2px 6px 0px rgba(0,0,0,.2); border-radius: 3px; line-height: 40px; text-align: center; padding-left: 20px; margin-left: 30%; }
 .diggit a { color: #fff; }
 #diggnum { margin: 5px; }
 .otherlink, .xzsm, .ffsm { width: 100%; background: #FFF; border-radius: 10px; overflow: hidden; margin: 20px 0 }

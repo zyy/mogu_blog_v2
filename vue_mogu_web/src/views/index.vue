@@ -34,23 +34,6 @@
       </el-tab-pane>
     </el-tabs>
 
-<!--    <el-menu :default-active="activeName" class="el-menu-demo" mode="horizontal" @select="handleClick">-->
-<!--      <el-menu-item index="0">-->
-<!--        <i class="el-icon-menu"></i>-->
-<!--        <span slot="title">最新</span>-->
-<!--      </el-menu-item>-->
-
-<!--      <el-menu-item index="1">-->
-<!--        <i class="el-icon-menu"></i>-->
-<!--        <span slot="title">最热</span>-->
-<!--      </el-menu-item>-->
-
-<!--      <el-menu-item v-for="(item, index) in hotBlogSortData" :name="(index+2)+''" :key="item.uid">-->
-<!--        <i class="el-icon-menu"></i>-->
-<!--        <span slot="title">{{item.sortName}}</span>-->
-<!--      </el-menu-item>-->
-<!--    </el-menu>-->
-
     <!--blogsbox begin-->
     <div class="blogsbox">
       <div

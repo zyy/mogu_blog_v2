@@ -50,11 +50,11 @@
                   <el-avatar size="small" v-if="item.user.photoUrl" :src="item.user.photoUrl"></el-avatar>
                   <el-avatar size="small" v-else src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 </li>
-                <li class="author" @click="getUserCenter(item)">
+                <li class="author"  style="margin-top: 5px; margin-left: 3px;" @click="getUserCenter(item)">
                   <a  href="javascript:void(0);">{{item.user.nickName}}</a>
                 </li>
 
-                <li class="lmname" v-if="item.blogSort">
+                <li class="lmname" style="margin-top: 5px" v-if="item.blogSort">
                   <span class="iconfont">&#xe603;</span>
                   <a
                     href="javascript:void(0);"
@@ -62,12 +62,12 @@
                   >{{item.blogSort.sortName}}</a>
                 </li>
 
-                <li class="view">
+                <li class="view" style="margin-top: 5px">
                   <span class="iconfont">&#xe8c7;</span>
                   <span>{{item.clickCount}}</span>
                 </li>
 
-                <li class="createTime">
+                <li class="createTime" style="margin-top: 5px">
                   <span class="iconfont">&#xe606;</span>
                   {{item.createTime}}
                 </li>
@@ -94,9 +94,10 @@
     </div>
 
     <div class="sidebar">
-      <!--标签云-->
-      <HotQuestion></HotQuestion>
-<!--      <TagCloud></TagCloud>-->
+
+      <Sticky :sticky-top="20" style="min-height: 1000px">
+        <HotQuestion></HotQuestion>
+      </Sticky>
 
     </div>
 
@@ -108,13 +109,14 @@ import TagCloud from "../components/TagCloud";
 import HotQuestion from "../components/HotQuestion";
 import {getQuestionList} from "../api/question";
 import { Loading } from 'element-ui';
-import {getBlogByUid} from "../api/blogContent";
+import Sticky from "@/components/Sticky";
 export default {
   name: "index",
   components: {
     //注册组件
     TagCloud,
     HotQuestion,
+    Sticky,
   },
   data() {
     return {

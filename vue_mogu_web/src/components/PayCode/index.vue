@@ -1,5 +1,6 @@
 <template>
   <div class="share">
+    <div class="social-share"></div>
     <p class="diggit" @click="praiseBlog(blogUid)">
       <a href="javascript:void(0);">很赞哦！</a>
       <span v-if="praiseCount!= 0">

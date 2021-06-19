@@ -120,7 +120,7 @@ public class QuestionVO extends BaseVO<QuestionVO> {
     /**
      * 无参构造方法，初始化默认值
      */
-    QuestionVO() {
+    public QuestionVO() {
         // 默认不开启懒加载
         this.isLazy = "0";
     }

@@ -68,10 +68,12 @@
         >{{blogContent}}</div>
 
       </div>
-      
-      <!--付款码和点赞-->
-      <PayCode v-if="openAdmiration == '1'" :blogUid="blogUid" :praiseCount.sync="blogData.collectCount"></PayCode>
 
+      <!--付款码和点赞-->
+      <PayCode style="justify-items: center" v-if="openAdmiration == '1'" :blogUid="blogUid" :praiseCount.sync="blogData.collectCount"></PayCode>
+
+      <!--社会化分享-->
+      <share :config="config" style="text-align: center"></share>
 
       <div class="otherlink" v-if="sameBlogData.length > 0">
         <h2>相关文章</h2>
@@ -112,7 +114,9 @@
   </article>
 </template>
 
+@import "../assets/dist/css/share.min.css";
 <script>
+
     import {getWebConfig} from "../api/index";
     import { getBlogByUid, getSameBlogByBlogUid } from "../api/blogContent";
     import CommentList from "../components/CommentList";
@@ -172,6 +176,10 @@
                 dialogImageUrl: "",
                 openComment: "0", // 开启评论
                 openAdmiration: "0", // 开启赞赏
+                VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
+                config:{
+                  sites: ['qq', 'qzone', 'weibo', 'wechat', 'douban'],
+                }
             };
         },
         computed: {

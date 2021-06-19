@@ -3,10 +3,7 @@ package com.moxi.mogublog.xo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.moxi.mogublog.commons.entity.Admin;
-import com.moxi.mogublog.commons.entity.User;
-import com.moxi.mogublog.commons.entity.UserWatch;
-import com.moxi.mogublog.commons.entity.WebNavbar;
+import com.moxi.mogublog.commons.entity.*;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.xo.global.MessageConf;
@@ -183,5 +180,19 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         int count = userWatchService.count(queryWrapper);
         return count > 0;
+    }
+
+    @Override
+    public Integer getUserWatchCount(UserWatchVO userWatchVO) {
+        QueryWrapper<UserWatch> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
+            queryWrapper.eq(SQLConf.USER_UID, userWatchVO.getUserUid());
+        }
+        if(StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
+            queryWrapper.eq(SQLConf.TO_USER_UID, userWatchVO.getToUserUid());
+        }
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        Integer userWatchCount = userWatchService.count(queryWrapper);
+        return userWatchCount;
     }
 }

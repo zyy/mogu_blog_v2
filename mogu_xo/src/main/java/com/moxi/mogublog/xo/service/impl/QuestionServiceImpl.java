@@ -126,6 +126,20 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     }
 
     @Override
+    public Integer getQuestionCount(QuestionVO questionVO) {
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty(questionVO.getAdminUid())) {
+            queryWrapper.eq(SQLConf.ADMINUID, questionVO.getAdminUid());
+        }
+        if(StringUtils.isNotEmpty(questionVO.getUserUid())) {
+            queryWrapper.eq(SQLConf.USER_UID, questionVO.getUserUid());
+        }
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        Integer questionCount = questionService.count(queryWrapper);
+        return questionCount;
+    }
+
+    @Override
     public Map<String, Object> getQuestionByKeyword(String keywords, Long currentPage, Long pageSize) {
         final String keyword = keywords.trim();
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();

@@ -6,28 +6,28 @@
         <el-row :gutter="24" type="flex" justify="center">
 
           <el-col :span="6" style="text-align: center">
-            <div>14</div>
+            <div class="countStyle">{{userCenterInfo.blogCount}}</div>
             <div>文章</div>
           </el-col>
 
           <el-col :span="6" style="text-align: center">
             <el-row>
-              <div>1</div>
+              <div class="countStyle">{{userCenterInfo.questionCount}}</div>
               <div>问答</div>
             </el-row>
           </el-col>
 
           <el-col :span="6" style="text-align: center">
             <el-row>
-              <div>1</div>
-              <div>关注</div>
+              <div class="countStyle">{{userCenterInfo.followCount}}</div>
+              <div>粉丝</div>
             </el-row>
           </el-col>
 
           <el-col :span="6" style="text-align: center">
             <el-row>
-              <div>1</div>
-              <div>粉丝</div>
+              <div class="countStyle">{{userCenterInfo.watchCount}}</div>
+              <div>关注</div>
             </el-row>
           </el-col>
 
@@ -289,7 +289,7 @@
 
 <script>
 import {Loading} from "element-ui";
-import {getQuestionListByUser, getBlogListByUser, getUserByUid, getUserWatchList, addUserWatch, deleteUserWatch} from "../api/about";
+import {getQuestionListByUser, getBlogListByUser, getUserByUid, getUserWatchList, addUserWatch, deleteUserWatch, getUserCenterByUid} from "../api/about";
 
 export default {
   data() {
@@ -308,6 +308,7 @@ export default {
       adminUid: "", // 管理员uid
       userUid: "", // 管理员uid
       userInfo: {}, // 用户信息【管理员或者前端用户】
+      userCenterInfo: {}, // 用户中心信息
       userWatchListData: [],
       isWatch: true, // 是否是获取关注者
     };
@@ -324,10 +325,10 @@ export default {
     // 获取列表
     this.getDataList(1);
     // 获取用户信息
-    this.getUserInfo()
+    this.initUserInfo()
   },
   methods: {
-    getUserInfo: function() {
+    initUserInfo: function() {
       let params = new URLSearchParams()
       if(this.adminUid) {
         params.append("adminUid", this.adminUid)
@@ -342,6 +343,15 @@ export default {
           this.$message.error(response.message)
         }
       })
+
+      getUserCenterByUid(params).then(response=> {
+        if(response.code == this.$ECode.SUCCESS) {
+          this.userCenterInfo = response.data
+        } else {
+          this.$message.error(response.message)
+        }
+      })
+
     },
     //跳转到文章详情
     goToInfo(uid) {
@@ -673,5 +683,8 @@ export default {
     color: aliceblue;
     cursor: pointer;
     background: rgba(0, 0, 0, 0.8);
+  }
+  .countStyle {
+    font-weight: bold;
   }
 </style>

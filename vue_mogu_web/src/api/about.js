@@ -40,6 +40,14 @@ export function getUserByUid (params) {
   })
 }
 
+export function getUserCenterByUid (params) {
+  return request({
+    url: process.env.WEB_API + '/about/getUserCenterByUid',
+    method: 'get',
+    params
+  })
+}
+
 export function getUserWatchList (params) {
   return request({
     url: process.env.WEB_API + '/about/getUserWatchList',

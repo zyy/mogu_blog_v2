@@ -29,7 +29,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 关于我 RestApi
@@ -126,6 +128,54 @@ public class UserCenterRestApi {
         log.info("通过用户获取博客列表");
         return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
     }
+
+    @ApiOperation(value = "通过ID获取用户个人中心统计信息", notes = "通过ID获取用户个人中心统计信息")
+    @GetMapping("/getUserCenterByUid")
+    public String getInfoByUid(HttpServletRequest request,
+                               @ApiParam(name = "adminUid", value = "管理员uid", required = false) @RequestParam(name = "adminUid", required = false, defaultValue = "") String adminUid,
+                               @ApiParam(name = "userUid", value = "用户uid", required = false) @RequestParam(name = "userUid", required = false, defaultValue = "") String userUid) {
+        if(StringUtils.isNotEmpty(adminUid)) {
+            // 获取发表的文章数
+            BlogVO blogVO = new BlogVO();
+            blogVO.setAdminUid(adminUid);
+            Map<String, Integer> map = new HashMap<>();
+            map.put("blogCount", blogService.getBlogCount(blogVO));
+            // 获取发表的问答数
+            QuestionVO questionVO = new QuestionVO();
+            questionVO.setAdminUid(adminUid);
+            map.put("questionCount", questionService.getQuestionCount(questionVO));
+            // 获取关注人数
+            UserWatchVO watches = new UserWatchVO();
+            watches.setUserUid(adminUid);
+            map.put("watchCount", userWatchService.getUserWatchCount(watches));
+            // 获取粉丝人数
+            UserWatchVO followes = new UserWatchVO();
+            followes.setToUserUid(adminUid);
+            map.put("followCount", userWatchService.getUserWatchCount(followes));
+            return ResultUtil.successWithData(map);
+        } else if(StringUtils.isNotEmpty(userUid)) {
+            BlogVO blogVO = new BlogVO();
+            blogVO.setUserUid(userUid);
+            Map<String, Integer> map = new HashMap<>();
+            map.put("blogCount", blogService.getBlogCount(blogVO));
+            QuestionVO questionVO = new QuestionVO();
+            questionVO.setUserUid(userUid);
+            map.put("questionCount", questionService.getQuestionCount(questionVO));
+            // 获取关注人数
+            UserWatchVO watches = new UserWatchVO();
+            watches.setUserUid(userUid);
+            map.put("watchCount", userWatchService.getUserWatchCount(watches));
+            // 获取粉丝人数
+            UserWatchVO followes = new UserWatchVO();
+            followes.setToUserUid(userUid);
+            map.put("followCount", userWatchService.getUserWatchCount(followes));
+            return ResultUtil.successWithData(map);
+        }
+
+        log.info("通过ID获取用户个人中心信息");
+        return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
+    }
+
 
     @ApiOperation(value = "通过用户获取博客列表", notes = "通过用户获取博客列表")
     @PostMapping("/getBlogListByUser")

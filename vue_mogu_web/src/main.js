@@ -28,6 +28,10 @@ Vue.use(VueLazyload, {
   attempt: 1
 })
 
+// 引入社会化分享插件
+import Share from 'vue-social-share'
+Vue.use(Share);
+
 import xss from 'xss'
 // 定义全局XSS解决方法
 Object.defineProperty(Vue.prototype, '$xss', {

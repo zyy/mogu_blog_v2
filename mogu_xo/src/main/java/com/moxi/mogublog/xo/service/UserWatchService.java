@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.moxi.mogublog.commons.entity.Link;
 import com.moxi.mogublog.commons.entity.User;
 import com.moxi.mogublog.commons.entity.UserWatch;
+import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mogublog.xo.vo.LinkVO;
 import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mogublog.xo.vo.UserWatchVO;
@@ -46,5 +47,12 @@ public interface UserWatchService extends SuperService<UserWatch> {
      * @return
      */
     Boolean checkUserWatch(UserWatchVO userWatchVO);
+
+    /**
+     * 获取粉丝或者关注者数量
+     * @param userWatchVO
+     * @return
+     */
+    Integer getUserWatchCount(UserWatchVO userWatchVO);
 
 }

@@ -25,6 +25,13 @@ public interface QuestionService extends SuperService<Question> {
     IPage<Question> getPageList(QuestionVO questionVO);
 
     /**
+     * 获取问答数目
+     * @param questionVO
+     * @return
+     */
+    public Integer getQuestionCount(QuestionVO questionVO);
+
+    /**
      * 通过关键字搜索问答列表
      *
      * @param keywords

@@ -80,6 +80,13 @@ public interface BlogService extends SuperService<Blog> {
     public Integer getBlogCount(Integer status);
 
     /**
+     * 通过VO获取博客数量
+     * @param blogVO
+     * @return
+     */
+    public Integer getBlogCount(BlogVO blogVO);
+
+    /**
      * 通过标签获取博客数目
      */
     public List<Map<String, Object>> getBlogCountByTag();

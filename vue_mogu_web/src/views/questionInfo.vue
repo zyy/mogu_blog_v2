@@ -12,18 +12,18 @@
             <li style="padding-right: 6px; text-align: center;">
               <el-avatar fit="fill" size="small" :src="questionData.user.photoUrl"></el-avatar>
             </li>
-            <li class="author">
+            <li class="author" style="margin-top: 5px;margin-left: 3px;">
               <a href="javascript:void(0);" v-if="questionData.user" @click="goToAuthor(questionData.user.nickName)">{{questionData.user.nickName}}</a>
             </li>
-            <li class="view">
+            <li class="view" style="margin-top: 5px">
               <span class="iconfont">&#xe8c7;</span>
               {{questionData.clickCount}}
             </li>
-            <li class="like">
+            <li class="like" style="margin-top: 5px">
               <span class="iconfont">&#xe663;</span>
               {{questionData.collectCount}}
             </li>
-            <li class="createTime">
+            <li class="createTime" style="margin-top: 5px">
               <span class="iconfont">&#xe606;</span>
               {{questionData.createTime}}
             </li>
@@ -49,6 +49,8 @@
         >{{questionData.content}}</div>
       </div>
 
+      <!--社会化分享-->
+      <share :config="config" style="text-align: center"></share>
 
       <div class="otherlink" v-if="sameBlogData.length > 0">
         <h2>相关问答</h2>
@@ -156,6 +158,9 @@
                 dialogImageUrl: "",
                 openComment: "0", // 开启评论
                 openAdmiration: "0", // 开启赞赏
+                config:{
+                  sites: ['qq', 'qzone', 'weibo', 'wechat', 'douban'],
+                }
             };
         },
         computed: {

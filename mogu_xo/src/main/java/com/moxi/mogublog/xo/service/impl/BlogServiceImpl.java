@@ -327,6 +327,20 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
     }
 
     @Override
+    public Integer getBlogCount(BlogVO blogVO) {
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty(blogVO.getAdminUid())) {
+            queryWrapper.eq(SQLConf.ADMINUID, blogVO.getAdminUid());
+        }
+        if(StringUtils.isNotEmpty(blogVO.getUserUid())) {
+            queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
+        }
+        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        Integer blogCount = blogService.count(queryWrapper);
+        return blogCount;
+    }
+
+    @Override
     public List<Map<String, Object>> getBlogCountByTag() {
         // 从Redis中获取标签下包含的博客数量
         String jsonArrayList = redisUtil.get(RedisConf.DASHBOARD + Constants.SYMBOL_COLON + RedisConf.BLOG_COUNT_BY_TAG);

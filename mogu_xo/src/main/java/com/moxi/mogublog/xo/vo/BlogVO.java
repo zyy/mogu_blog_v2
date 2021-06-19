@@ -165,7 +165,7 @@ public class BlogVO extends BaseVO<BlogVO> {
     /**
      * 无参构造方法，初始化默认值
      */
-    BlogVO() {
+    public BlogVO() {
         this.level = 0;
         this.useSort = 0;
     }
