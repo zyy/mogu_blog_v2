@@ -129,7 +129,7 @@
               </div>
 
               <div class="isEnd">
-                <div class="loadContent" @click="loadContent(1)" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="loadContent" @click="loadContent(1)" v-if="!isEnd&&!loading">查看更多</div>
                 <div class="lds-css ng-scope" v-if="!isEnd&&loading">
                   <div style="width:100%;height:100%" class="lds-facebook">
                     <div></div>
@@ -205,7 +205,7 @@
               </div>
 
               <div class="isEnd">
-                <div class="loadContent" @click="loadContent(2)" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="loadContent" @click="loadContent(2)" v-if="!isEnd&&!loading">查看更多</div>
                 <div class="lds-css ng-scope" v-if="!isEnd&&loading">
                   <div style="width:100%;height:100%" class="lds-facebook">
                     <div></div>
@@ -266,7 +266,7 @@
               </el-row>
 
               <div class="isEnd" style="margin-top: 5px;">
-                <div class="loadContent" @click="loadContent(3)" v-if="!isEnd&&!loading">点击加载更多</div>
+                <div class="loadContent" @click="loadContent(3)" v-if="!isEnd&&!loading">查看更多</div>
                 <div class="lds-css ng-scope" v-if="!isEnd&&loading">
                   <div style="width:100%;height:100%;" class="lds-facebook">
                     <div></div>
@@ -664,6 +664,7 @@ export default {
     text-align: center;
   }
   .loadContent {
+    border-radius: 25px;
     width: 120px;
     height: 30px;
     line-height: 30px;

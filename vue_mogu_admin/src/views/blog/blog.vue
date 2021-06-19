@@ -260,7 +260,7 @@
               <el-input v-model="form.title" auto-complete="off" @input="contentChange"></el-input>
             </el-form-item>
 
-            <el-form-item label="简介" :label-width="formLabelWidth">
+            <el-form-item label="简介" :label-width="formLabelWidth" prop="summary">
               <el-input v-model="form.summary" auto-complete="off" @input="contentChange"></el-input>
             </el-form-item>
           </el-col>
@@ -461,7 +461,7 @@ import { getTagList } from "@/api/tag";
 import { getBlogSortList } from "@/api/blogSort";
 import {formatData} from "@/utils/webUtils";
 import { getToken } from '@/utils/auth'
-import { setCookie, getCookie, delCookie } from "@/utils/cookieUtils";
+import { getCookie } from "@/utils/cookieUtils";
 import {getListByDictTypeList} from "@/api/sysDictData"
 import {addSubjectItemList} from "@/api/subjectItem";
 
@@ -566,6 +566,9 @@ export default {
       rules: {
         title: [
           {required: true, message: '标题不能为空', trigger: 'blur'}
+        ],
+        summary: [
+          {max: 200, message: '简介不能超过200个字符', trigger: 'blur'}
         ],
         blogSortUid: [
           {required: true, message: '分类不能为空', trigger: 'blur'}

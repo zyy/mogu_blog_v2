@@ -116,7 +116,7 @@
             class="loadContent"
             @click="loadContent"
             v-if="!isEnd && !loading && totalPages>0"
-          >点击加载更多</div>
+          >查看更多</div>
 
           <div class="lds-css ng-scope" v-if="!isEnd && loading">
             <div style="width:100%;height:100%" class="lds-facebook">
@@ -488,6 +488,7 @@ export default {
 }
 
 .loadContent {
+  border-radius: 25px;
   width: 120px;
   height: 30px;
   line-height: 30px;

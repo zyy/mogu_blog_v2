@@ -80,7 +80,7 @@
       </div>
 
       <div class="isEnd">
-        <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">点击加载更多</div>
+        <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">查看更多</div>
         <div class="lds-css ng-scope" v-if="!isEnd&&loading">
           <div style="width:100%;height:100%" class="lds-facebook">
             <div></div>
@@ -254,6 +254,7 @@ export default {
 }
 
 .loadContent {
+  border-radius: 25px;
   width: 120px;
   height: 30px;
   line-height: 30px;

@@ -4,6 +4,7 @@ import com.moxi.mogublog.commons.entity.BlogSort;
 import com.moxi.mogublog.commons.entity.Tag;
 import com.moxi.mougblog.base.validator.annotion.IntegerNotNull;
 import com.moxi.mougblog.base.validator.annotion.NotBlank;
+import com.moxi.mougblog.base.validator.annotion.Range;
 import com.moxi.mougblog.base.validator.group.Default;
 import com.moxi.mougblog.base.validator.group.Insert;
 import com.moxi.mougblog.base.validator.group.Update;
@@ -30,6 +31,7 @@ public class BlogVO extends BaseVO<BlogVO> {
     /**
      * 博客简介
      */
+    @Range(groups = {Insert.class, Update.class}, max = 200)
     private String summary;
 
     /**
