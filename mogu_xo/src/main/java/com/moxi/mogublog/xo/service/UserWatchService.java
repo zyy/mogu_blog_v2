@@ -1,16 +1,9 @@
 package com.moxi.mogublog.xo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.moxi.mogublog.commons.entity.Link;
-import com.moxi.mogublog.commons.entity.User;
 import com.moxi.mogublog.commons.entity.UserWatch;
-import com.moxi.mogublog.xo.vo.BlogVO;
-import com.moxi.mogublog.xo.vo.LinkVO;
-import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mogublog.xo.vo.UserWatchVO;
 import com.moxi.mougblog.base.service.SuperService;
-
-import java.util.List;
 
 /**
  * 用户关注表 服务类
@@ -30,12 +23,14 @@ public interface UserWatchService extends SuperService<UserWatch> {
 
     /**
      * 关注某人
+     *
      * @return
      */
     String addUserWatch(UserWatchVO userWatchVO);
 
     /**
      * 取消关注
+     *
      * @return
      */
     String deleteUserWatch(UserWatchVO userWatchVO);
@@ -43,6 +38,7 @@ public interface UserWatchService extends SuperService<UserWatch> {
 
     /**
      * 判断是否关注了该用户
+     *
      * @param userWatchVO
      * @return
      */
@@ -50,6 +46,7 @@ public interface UserWatchService extends SuperService<UserWatch> {
 
     /**
      * 获取粉丝或者关注者数量
+     *
      * @param userWatchVO
      * @return
      */

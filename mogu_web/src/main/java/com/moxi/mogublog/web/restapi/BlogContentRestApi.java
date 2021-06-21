@@ -118,9 +118,9 @@ public class BlogContentRestApi {
         }
 
         // 判断是否开启图片懒加载
-        if(Constants.STR_ONE.equals(isLazy)) {
+        if (Constants.STR_ONE.equals(isLazy)) {
             String blogContent = blog.getContent();
-            if(StringUtils.isNotEmpty(blogContent)) {
+            if (StringUtils.isNotEmpty(blogContent)) {
                 blog.setContent(blogContent.replaceAll(" src=", " data-src="));
             }
         }

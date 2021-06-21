@@ -36,15 +36,18 @@
 
       </div>
       <div class="sidebar">
-        <div class="about">
-          <p class="avatar" v-if="info.photoList">
-            <img :src="info.photoList[0]" alt />
-          </p>
-          <p class="abname">{{info.nickName}}</p>
-          <p class="abposition">{{info.occupation}}</p>
-          <p class="abtext">{{info.summary}}</p>
-        </div>
-        <follow-us></follow-us>
+        <Sticky :sticky-top="20" style="min-height: 1000px">
+          <div class="about">
+            <p class="avatar" v-if="info.photoList">
+              <img :src="info.photoList[0]" alt />
+            </p>
+            <p class="abname">{{info.nickName}}</p>
+            <p class="abposition">{{info.occupation}}</p>
+            <p class="abtext">{{info.summary}}</p>
+          </div>
+          <follow-us></follow-us>
+        </Sticky>
+
       </div>
     </div>
   </div>

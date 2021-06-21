@@ -1,7 +1,6 @@
 package com.moxi.mogublog.xo.mapper;
 
 import com.moxi.mogublog.commons.entity.UserWatch;
-import com.moxi.mogublog.commons.entity.WebNavbar;
 import com.moxi.mougblog.base.mapper.SuperMapper;
 
 /**

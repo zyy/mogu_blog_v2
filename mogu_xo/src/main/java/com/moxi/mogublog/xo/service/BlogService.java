@@ -81,6 +81,7 @@ public interface BlogService extends SuperService<Blog> {
 
     /**
      * 通过VO获取博客数量
+     *
      * @param blogVO
      * @return
      */
@@ -158,7 +159,7 @@ public interface BlogService extends SuperService<Blog> {
     public String editBatch(List<BlogVO> blogVOList);
 
     /**
-     * 批量删除博客
+     * 删除博客
      *
      * @param blogVO
      */

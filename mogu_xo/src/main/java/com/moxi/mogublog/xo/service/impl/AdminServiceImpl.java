@@ -63,7 +63,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
     @Override
     public List<Admin> getAdminListByUid(Collection<String> uidList) {
 
-        if(uidList.size() == 0) {
+        if (uidList.size() == 0) {
             throw new QueryException(MessageConf.PARAM_INCORRECT);
         }
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
@@ -71,7 +71,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         List<Admin> adminList = adminService.list(queryWrapper);
 
         final StringBuilder fileUids = new StringBuilder();
-        for(Admin admin : adminList) {
+        for (Admin admin : adminList) {
             if (StringUtils.isNotEmpty(admin.getAvatar())) {
                 fileUids.append(admin.getAvatar() + SysConf.FILE_SEGMENTATION);
             }
@@ -87,7 +87,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             pictureMap.put(item.get(SQLConf.UID).toString(), item.get(SQLConf.URL).toString());
         });
         List<Admin> result = new ArrayList<>();
-        for(Admin tempAdmin : adminList) {
+        for (Admin tempAdmin : adminList) {
             Admin admin = new Admin();
             // 数据脱敏
             admin.setUid(tempAdmin.getUid());
@@ -154,7 +154,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         result.setSummary(admin.getSummary());
         result.setAvatar(admin.getAvatar());
         result.setPhotoList(admin.getPhotoList());
-        if(StringUtils.isNotEmpty(admin.getPersonResume())) {
+        if (StringUtils.isNotEmpty(admin.getPersonResume())) {
             result.setPersonResume(admin.getPersonResume().replaceAll(" src=", " data-src="));
         }
         return result;

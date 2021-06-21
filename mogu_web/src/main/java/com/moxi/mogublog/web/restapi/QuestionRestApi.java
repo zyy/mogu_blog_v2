@@ -1,5 +1,6 @@
 package com.moxi.mogublog.web.restapi;
 
+import com.moxi.mogublog.commons.annotion.AvoidRepeatableCommit.AvoidRepeatableCommit;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.web.global.SysConf;
@@ -10,9 +11,7 @@ import com.moxi.mogublog.xo.vo.QuestionTagVO;
 import com.moxi.mogublog.xo.vo.QuestionTemplateVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.enums.EContributeSource;
-import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
-import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
 import com.moxi.mougblog.base.validator.group.Insert;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 问答相关 RestApi
@@ -68,6 +66,7 @@ public class QuestionRestApi {
         return questionService.getQuestion(questionVO);
     }
 
+    @AvoidRepeatableCommit
     @ApiOperation(value = "增加问答", notes = "增加问答", response = String.class)
     @PostMapping("/add")
     public String add(@Validated({Insert.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
@@ -79,7 +78,7 @@ public class QuestionRestApi {
         return questionService.addQuestion(questionVO);
     }
 
-
+    @AvoidRepeatableCommit
     @ApiOperation(value = "编辑问答", notes = "编辑问答", response = String.class)
     @PostMapping("/edit")
     public String edit(@Validated({Update.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
@@ -88,6 +87,20 @@ public class QuestionRestApi {
         questionVO.setQuestionSource(EContributeSource.USER_PUBLISH);
         log.info("编辑问答");
         return questionService.editQuestion(questionVO);
+    }
+
+    @AvoidRepeatableCommit
+    @ApiOperation(value = "删除问答", notes = "删除博客", response = String.class)
+    @PostMapping("/delete")
+    public String delete(HttpServletRequest request, @Validated({Delete.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
+        if (request.getAttribute(SysConf.USER_UID) == null) {
+            return ResultUtil.errorWithMessage("登录后才可以删除博客！");
+        }
+        // 参数校验
+        ThrowableUtils.checkParamArgument(result);
+        // 文章类型只能是博客类型
+        questionVO.setQuestionSource(EContributeSource.USER_PUBLISH);
+        return questionService.deleteQuestioin(questionVO);
     }
 
     @ApiOperation(value = "获取标签列表", notes = "获取标签列表", response = String.class)

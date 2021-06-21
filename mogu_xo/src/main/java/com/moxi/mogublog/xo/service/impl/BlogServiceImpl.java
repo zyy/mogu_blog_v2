@@ -19,7 +19,6 @@ import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mougblog.base.enums.*;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
-import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.exception.exceptionType.UpdateException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.BaseSysConf;
@@ -329,10 +328,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
     @Override
     public Integer getBlogCount(BlogVO blogVO) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
-        if(StringUtils.isNotEmpty(blogVO.getAdminUid())) {
+        if (StringUtils.isNotEmpty(blogVO.getAdminUid())) {
             queryWrapper.eq(SQLConf.ADMINUID, blogVO.getAdminUid());
         }
-        if(StringUtils.isNotEmpty(blogVO.getUserUid())) {
+        if (StringUtils.isNotEmpty(blogVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, blogVO.getUserUid());
         }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -739,7 +738,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (EContributeSource.USER_PUBLISH.equals(blogVO.getArticleSource())) {
             // 当为用户投稿的时候
             Object userUid = request.getAttribute(SysConf.USER_UID);
-            if(userUid == null) {
+            if (userUid == null) {
                 throw new InsertException("用户未登录，无法投稿");
             }
             blog.setUserUid(userUid.toString());
@@ -822,7 +821,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (EContributeSource.USER_PUBLISH.equals(blogVO.getArticleSource()) && EContributeSource.USER_PUBLISH.equals(blog.getArticleSource())) {
             // 判断用户是否能编辑博客
             Object userUid = request.getAttribute(SysConf.USER_UID);
-            if(userUid == null) {
+            if (userUid == null) {
                 throw new UpdateException("用户未登录，无法编辑文章");
             }
             if (!userUid.equals(blog.getUserUid())) {
@@ -837,10 +836,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                 blog.setArticlesPart(blogVO.getArticlesPart());
             }
             blog.setUserUid(userUid.toString());
-        } else if(EContributeSource.ADMIN_PUBLISH.equals(blogVO.getArticleSource())) {
+        } else if (EContributeSource.ADMIN_PUBLISH.equals(blogVO.getArticleSource())) {
             Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
             // 判断是否是管理员修改后台添加的问题
-            if(EContributeSource.ADMIN_PUBLISH.equals(blog.getArticleSource())) {
+            if (EContributeSource.ADMIN_PUBLISH.equals(blog.getArticleSource())) {
                 // 判断是否原创
                 if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
                     if (admin != null) {

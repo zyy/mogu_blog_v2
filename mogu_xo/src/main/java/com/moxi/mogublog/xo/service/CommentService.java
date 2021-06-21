@@ -60,7 +60,6 @@ public interface CommentService extends SuperService<Comment> {
     String deleteBatchComment(List<CommentVO> commentVOList);
 
     /**
-     *
      * @param blogUidList
      * @return
      */

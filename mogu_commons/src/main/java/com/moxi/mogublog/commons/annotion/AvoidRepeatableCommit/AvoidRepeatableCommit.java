@@ -1,4 +1,4 @@
-package com.moxi.mogublog.admin.annotion.AvoidRepeatableCommit;
+package com.moxi.mogublog.commons.annotion.AvoidRepeatableCommit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AvoidRepeatableCommit {
     /**
-     * 指定时间内不可重复提交,单位毫秒，默认1秒
+     * 指定时间内不可重复提交,单位毫秒，默认2秒
      */
-    long timeout() default 1000;
+    long timeout() default 2000;
 }

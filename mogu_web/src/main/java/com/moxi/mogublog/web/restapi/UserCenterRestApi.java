@@ -2,7 +2,6 @@ package com.moxi.mogublog.web.restapi;
 
 import com.moxi.mogublog.commons.entity.Admin;
 import com.moxi.mogublog.commons.entity.User;
-import com.moxi.mogublog.commons.entity.UserWatch;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.web.annotion.log.BussinessLog;
@@ -13,9 +12,9 @@ import com.moxi.mogublog.xo.vo.BlogVO;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mogublog.xo.vo.UserWatchVO;
 import com.moxi.mougblog.base.enums.EBehavior;
+import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
-import com.moxi.mougblog.base.validator.group.Delete;
 import com.moxi.mougblog.base.validator.group.GetList;
 import com.moxi.mougblog.base.validator.group.Insert;
 import io.swagger.annotations.Api;
@@ -82,16 +81,16 @@ public class UserCenterRestApi {
     public String getUserByUid(HttpServletRequest request, @ApiParam(name = "adminUid", value = "管理员uid", required = false) @RequestParam(name = "adminUid", required = false, defaultValue = "") String adminUid,
                                @ApiParam(name = "userUid", value = "用户uid", required = false) @RequestParam(name = "userUid", required = false, defaultValue = "") String userUid) {
         Object currentUserUid = request.getAttribute(SysConf.USER_UID);
-        if(StringUtils.isNotEmpty(adminUid)) {
+        if (StringUtils.isNotEmpty(adminUid)) {
             List<String> adminUidList = new ArrayList<>();
             adminUidList.add(adminUid);
             List<Admin> adminList = adminService.getAdminListByUid(adminUidList);
-            if(adminList.size() == 0) {
+            if (adminList.size() == 0) {
                 throw new QueryException(MessageConf.PARAM_INCORRECT);
             }
             // 默认没有关注用户
             Boolean isWatchUser = false;
-            if(currentUserUid != null) {
+            if (currentUserUid != null) {
                 UserWatchVO userWatchVO = new UserWatchVO();
                 userWatchVO.setUserUid(currentUserUid.toString());
                 userWatchVO.setToUserUid(adminUid);
@@ -103,14 +102,14 @@ public class UserCenterRestApi {
             Admin admin = adminList.get(0);
             admin.setIsWatchUser(isWatchUser);
             return ResultUtil.successWithData(admin);
-        } else if(StringUtils.isNotEmpty(userUid)) {
+        } else if (StringUtils.isNotEmpty(userUid)) {
             List<String> userUidList = new ArrayList<>();
             userUidList.add(userUid);
             List<User> userList = userService.getUserListAndAvatarByIds(userUidList);
             if (userList.size() > 0) {
                 // 默认没有关注用户
                 Boolean isWatchUser = false;
-                if(currentUserUid != null) {
+                if (currentUserUid != null) {
                     UserWatchVO userWatchVO = new UserWatchVO();
                     userWatchVO.setUserUid(currentUserUid.toString());
                     userWatchVO.setToUserUid(userUid);
@@ -134,7 +133,7 @@ public class UserCenterRestApi {
     public String getInfoByUid(HttpServletRequest request,
                                @ApiParam(name = "adminUid", value = "管理员uid", required = false) @RequestParam(name = "adminUid", required = false, defaultValue = "") String adminUid,
                                @ApiParam(name = "userUid", value = "用户uid", required = false) @RequestParam(name = "userUid", required = false, defaultValue = "") String userUid) {
-        if(StringUtils.isNotEmpty(adminUid)) {
+        if (StringUtils.isNotEmpty(adminUid)) {
             // 获取发表的文章数
             BlogVO blogVO = new BlogVO();
             blogVO.setAdminUid(adminUid);
@@ -153,7 +152,7 @@ public class UserCenterRestApi {
             followes.setToUserUid(adminUid);
             map.put("followCount", userWatchService.getUserWatchCount(followes));
             return ResultUtil.successWithData(map);
-        } else if(StringUtils.isNotEmpty(userUid)) {
+        } else if (StringUtils.isNotEmpty(userUid)) {
             BlogVO blogVO = new BlogVO();
             blogVO.setUserUid(userUid);
             Map<String, Integer> map = new HashMap<>();
@@ -176,12 +175,12 @@ public class UserCenterRestApi {
         return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
     }
 
-
     @ApiOperation(value = "通过用户获取博客列表", notes = "通过用户获取博客列表")
     @PostMapping("/getBlogListByUser")
     public String getBlogListByUser(@Validated({GetList.class}) @RequestBody BlogVO blogVO, BindingResult result) {
         ThrowableUtils.checkParamArgument(result);
         log.info("通过用户获取博客列表");
+        blogVO.setIsPublish(EPublish.PUBLISH);
         return ResultUtil.result(SysConf.SUCCESS, blogService.getPageList(blogVO));
     }
 
@@ -190,6 +189,7 @@ public class UserCenterRestApi {
     public String getQuestionListByUser(@Validated({GetList.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
         ThrowableUtils.checkParamArgument(result);
         log.info("通过用户获取问答列表");
+        questionVO.setIsPublish(EPublish.PUBLISH);
         return ResultUtil.result(SysConf.SUCCESS, questionService.getPageList(questionVO));
     }
 

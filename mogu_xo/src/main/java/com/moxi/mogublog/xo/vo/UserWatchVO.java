@@ -1,7 +1,5 @@
 package com.moxi.mogublog.xo.vo;
 
-import com.moxi.mogublog.commons.entity.Admin;
-import com.moxi.mogublog.commons.entity.User;
 import com.moxi.mougblog.base.validator.annotion.NotBlank;
 import com.moxi.mougblog.base.validator.group.Insert;
 import com.moxi.mougblog.base.validator.group.Update;

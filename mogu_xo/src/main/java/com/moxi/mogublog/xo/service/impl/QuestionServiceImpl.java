@@ -3,7 +3,10 @@ package com.moxi.mogublog.xo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.moxi.mogublog.commons.entity.*;
+import com.moxi.mogublog.commons.entity.Admin;
+import com.moxi.mogublog.commons.entity.Question;
+import com.moxi.mogublog.commons.entity.QuestionTag;
+import com.moxi.mogublog.commons.entity.User;
 import com.moxi.mogublog.utils.IpUtils;
 import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
@@ -23,6 +26,7 @@ import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
+import com.moxi.mougblog.base.exception.exceptionType.UpdateException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ECode;
@@ -31,7 +35,6 @@ import com.moxi.mougblog.base.holder.RequestHolder;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,19 +88,25 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
 
         // 判断问答方法
-        if(StringUtils.isNotEmpty(questionVO.getMethodType())) {
+        if (StringUtils.isNotEmpty(questionVO.getMethodType())) {
             String methodType = questionVO.getMethodType();
             switch (methodType) {
                 case "newQuestion": {
                     queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
-                }; break;
+                }
+                ;
+                break;
                 case "hotQuestion": {
                     queryWrapper.orderByDesc(SQLConf.REPLY_COUNT);
-                }; break;
+                }
+                ;
+                break;
                 case "waitQuestion": {
                     queryWrapper.eq(SQLConf.REPLY_COUNT, 0);
                     queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
-                }; break;
+                }
+                ;
+                break;
                 default: {
                     throw new QueryException("输入错误的参数");
                 }
@@ -128,10 +137,10 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     @Override
     public Integer getQuestionCount(QuestionVO questionVO) {
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
-        if(StringUtils.isNotEmpty(questionVO.getAdminUid())) {
+        if (StringUtils.isNotEmpty(questionVO.getAdminUid())) {
             queryWrapper.eq(SQLConf.ADMINUID, questionVO.getAdminUid());
         }
-        if(StringUtils.isNotEmpty(questionVO.getUserUid())) {
+        if (StringUtils.isNotEmpty(questionVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, questionVO.getUserUid());
         }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -186,7 +195,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             userUidList.add(item.getUid());
         });
         IPage<Question> pageList = new Page<>();
-        if(userUidList.size() == 0) {
+        if (userUidList.size() == 0) {
             return pageList;
         }
 
@@ -236,9 +245,9 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         }
 
         // 判断是否开启图片懒加载
-        if(Constants.STR_ONE.equals(questionVO.getIsLazy())) {
+        if (Constants.STR_ONE.equals(questionVO.getIsLazy())) {
             String blogContent = question.getContent();
-            if(StringUtils.isNotEmpty(blogContent)) {
+            if (StringUtils.isNotEmpty(blogContent)) {
                 question.setContent(blogContent.replaceAll(" src=", " data-src="));
             }
         }
@@ -252,7 +261,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
         HttpServletRequest request = RequestHolder.getRequest();
         // 判断是否是用户投稿
         if (EContributeSource.USER_PUBLISH.equals(questionVO.getQuestionSource())) {
-            if(request.getAttribute(SysConf.USER_UID) == null) {
+            if (request.getAttribute(SysConf.USER_UID) == null) {
                 throw new InsertException("用户未登录");
             }
             String userUid = request.getAttribute(SysConf.USER_UID).toString();
@@ -275,6 +284,24 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
     }
 
     @Override
+    public String deleteQuestioin(QuestionVO questionVO) {
+        Question question = questionService.getById(questionVO.getUid());
+
+        // 判断是否是Web端的新建请求，还是后台管理员创建的文章
+        if (EContributeSource.USER_PUBLISH.equals(questionVO.getQuestionSource())) {
+            // 判断用户是否能编辑博客
+            HttpServletRequest request = RequestHolder.getRequest();
+            String userUid = request.getAttribute(SysConf.USER_UID).toString();
+            if (!userUid.equals(question.getUserUid())) {
+                throw new UpdateException("您无权删除其它用户的问答");
+            }
+        }
+        question.setStatus(EStatus.DISABLED);
+        Boolean save = question.updateById();
+        return ResultUtil.successWithMessage("删除成功");
+    }
+
+    @Override
     public String deleteBatchQuestion(List<QuestionVO> questionVOList) {
         if (questionVOList.size() <= 0) {
             return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
@@ -293,6 +320,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
 
     /**
      * 设置问答标签和用户
+     *
      * @param questionList
      */
     private void setQuestionTagAndUser(List<Question> questionList) {
@@ -307,12 +335,12 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                 }
             }
             // 判断用户投稿，还是后台管理员添加
-            if(EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
-                if(StringUtils.isNotEmpty(item.getUserUid())) {
+            if (EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
+                if (StringUtils.isNotEmpty(item.getUserUid())) {
                     userUidList.add(item.getUserUid());
                 }
             } else {
-                if(StringUtils.isNotEmpty(item.getAdminUid())) {
+                if (StringUtils.isNotEmpty(item.getAdminUid())) {
                     adminUidList.add(item.getAdminUid());
                 }
             }
@@ -334,7 +362,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             userList = userService.getUserListAndAvatarByIds(userUidList);
         }
         List<Admin> adminList = new ArrayList<>();
-        if(adminUidList.size()>0) {
+        if (adminUidList.size() > 0) {
             adminList = adminService.getAdminListByUid(adminUidList);
         }
         Map<String, User> userMap = new HashMap<>();
@@ -359,7 +387,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
             }
 
             //获取用户【判断是用户投稿，还是后台添加】
-            if(EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
+            if (EContributeSource.USER_PUBLISH.equals(item.getQuestionSource())) {
                 if (StringUtils.isNotEmpty(item.getUserUid())) {
                     item.setUser(userMap.get(item.getUserUid()));
                 }
@@ -367,7 +395,7 @@ public class QuestionServiceImpl extends SuperServiceImpl<QuestionMapper, Questi
                 if (StringUtils.isNotEmpty(item.getAdminUid())) {
                     User user = new User();
                     Admin admin = adminMap.get(item.getAdminUid());
-                    if(admin != null) {
+                    if (admin != null) {
                         user.setAvatar(admin.getAvatar());
                         user.setUid(admin.getUid());
                         user.setOccupation(admin.getOccupation());

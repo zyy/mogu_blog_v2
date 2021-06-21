@@ -628,7 +628,7 @@ export default {
 }
 
 .tab-pane {
-  font-size: 18px;
+  font-size: 16px;
   color: #282828;
 }
 

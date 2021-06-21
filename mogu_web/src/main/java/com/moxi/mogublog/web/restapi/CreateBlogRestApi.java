@@ -1,5 +1,6 @@
 package com.moxi.mogublog.web.restapi;
 
+import com.moxi.mogublog.commons.annotion.AvoidRepeatableCommit.AvoidRepeatableCommit;
 import com.moxi.mogublog.commons.entity.WebConfig;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
@@ -67,6 +68,7 @@ public class CreateBlogRestApi {
         return ResultUtil.successWithData(blogService.getPageList(blogVO));
     }
 
+    @AvoidRepeatableCommit
     @ApiOperation(value = "增加博客", notes = "增加博客", response = String.class)
     @PostMapping("/add")
     public String add(HttpServletRequest request, @Validated({Default.class}) @RequestBody BlogVO blogVO, BindingResult result) {
@@ -90,6 +92,7 @@ public class CreateBlogRestApi {
         return blogService.addBlog(blogVO);
     }
 
+    @AvoidRepeatableCommit
     @ApiOperation(value = "编辑博客", notes = "编辑博客", response = String.class)
     @PostMapping("/edit")
     public String edit(HttpServletRequest request, @Validated({Default.class}) @RequestBody BlogVO blogVO, BindingResult result) {
@@ -104,6 +107,7 @@ public class CreateBlogRestApi {
         return blogService.editBlog(blogVO);
     }
 
+    @AvoidRepeatableCommit
     @ApiOperation(value = "删除博客", notes = "删除博客", response = String.class)
     @PostMapping("/delete")
     public String delete(HttpServletRequest request, @Validated({Delete.class}) @RequestBody BlogVO blogVO, BindingResult result) {

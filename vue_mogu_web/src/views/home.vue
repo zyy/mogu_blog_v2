@@ -637,7 +637,7 @@
   import LoginBox from "../components/LoginBox";
   import {getListByDictTypeList} from "@/api/sysDictData"
   import {getUserBlogList, deleteBlog} from "@/api/createBlog"
-  import {getQuestionList} from "@/api/question"
+  import {getQuestionList, deleteQuestion} from "@/api/question"
   import {mapMutations} from 'vuex';
   import {timeAgo} from "../utils/webUtils";
 
@@ -980,7 +980,7 @@
       // 删除博客
       handleDeleteQuestion: function(row) {
         var that = this;
-        this.$confirm("此操作将把博客删除, 是否继续?", "提示", {
+        this.$confirm("此操作将把问答删除, 是否继续?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -988,9 +988,9 @@
           .then(() => {
             var params = {};
             params.uid = row.uid;
-            deleteBlog(params).then(response => {
+            deleteQuestion(params).then(response => {
               that.$commonUtil.message.success(response.message)
-              that.getBlogList();
+              that.getUserQuestionList();
             });
           })
           .catch(() => {

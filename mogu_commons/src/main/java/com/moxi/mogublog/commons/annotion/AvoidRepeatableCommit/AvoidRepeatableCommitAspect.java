@@ -1,11 +1,9 @@
-package com.moxi.mogublog.admin.annotion.AvoidRepeatableCommit;
+package com.moxi.mogublog.commons.annotion.AvoidRepeatableCommit;
 
 import com.moxi.mogublog.utils.IpUtils;
 import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
-import com.moxi.mogublog.xo.global.RedisConf;
-import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mougblog.base.holder.RequestHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -30,13 +28,16 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AvoidRepeatableCommitAspect {
 
+    public final static String AVOID_REPEATABLE_COMMIT = "AVOID_REPEATABLE_COMMIT";
+    public final static String ERROR = "error";
+
     @Autowired
     private RedisUtil redisUtil;
 
     /**
      * @param point
      */
-    @Around("@annotation(com.moxi.mogublog.admin.annotion.AvoidRepeatableCommit.AvoidRepeatableCommit)")
+    @Around("@annotation(com.moxi.mogublog.commons.annotion.AvoidRepeatableCommit.AvoidRepeatableCommit)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
 
         HttpServletRequest request = RequestHolder.getRequest();
@@ -58,7 +59,7 @@ public class AvoidRepeatableCommitAspect {
         // 转换成HashCode
         int hashCode = Math.abs(ipKey.hashCode());
 
-        String key = String.format("%s:%s_%d", RedisConf.AVOID_REPEATABLE_COMMIT, ip, hashCode);
+        String key = String.format("%s:%s_%d", AVOID_REPEATABLE_COMMIT, ip, hashCode);
 
         log.info("ipKey={},hashCode={},key={}", ipKey, hashCode, key);
 
@@ -70,7 +71,7 @@ public class AvoidRepeatableCommitAspect {
 
         if (StringUtils.isNotBlank(value)) {
             log.info("请勿重复提交表单");
-            return ResultUtil.result(SysConf.ERROR, "请勿重复提交表单");
+            return ResultUtil.errorWithMessage("请勿重复提交表单");
         }
 
         // 设置过期时间

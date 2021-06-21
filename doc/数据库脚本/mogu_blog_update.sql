@@ -482,8 +482,18 @@ CREATE TABLE `t_question_template` (
   `is_publish` varchar(1) DEFAULT '1' COMMENT '是否发布：0：否，1：是',
   `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序字段',  
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答表';
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 COMMENT='问答模板表';
 
+insert into `t_question_template` (`uid`, `name`, `summary`, `content`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('732b83c9661290b868142ac4f7f877ed','开发实战相关','开发实战相关','<h2>问题描述</h2>\n\n<p>&nbsp;</p>\n\n<h2>问题出现的环境背景及自己尝试过哪些方法</h2>\n\n<p>&nbsp;</p>\n\n<h2>相关代码</h2>\n\n<p>粘贴代码文本（请勿用截图）</p>\n\n<p>&nbsp;</p>\n\n<h2>你期待的结果是什么？实际看到的错误信息又是什么？</h2>\n','1','2021-06-09 17:08:09','2021-06-09 18:47:05','1','0');
+insert into `t_question_template` (`uid`, `name`, `summary`, `content`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('90a2b545283d8d564a1a990955e735b1','编程问题相关','编程问题相关','<h2>题目描述</h2>\n\n<p>&nbsp;</p>\n\n<h2>题目来源及自己的思路</h2>\n\n<p>&nbsp;</p>\n\n<h2>相关代码</h2>\n\n<p>粘贴代码文本（请勿用截图）</p>\n\n<p>&nbsp;</p>\n\n<h2>你期待的结果是什么？实际看到的错误信息又是什么？</h2>\n','1','2021-06-09 18:53:14','2021-06-09 18:53:14','1','0');
+insert into `t_question_template` (`uid`, `name`, `summary`, `content`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('c92dcaeda36b513c20e41218d6ad26c4','工具软件相关','工具软件相关','<h2>问题描述</h2>\n\n<p>&nbsp;</p>\n\n<h2>问题出现的平台版本及自己尝试过哪些方法</h2>\n\n<p>&nbsp;</p>\n\n<h2>相关代码</h2>\n\n<p>粘贴代码文本（请勿用截图）</p>\n\n<p>&nbsp;</p>\n\n<h2>你期待的结果是什么？实际看到的错误信息又是什么？</h2>\n','1','2021-06-09 18:53:50','2021-06-09 18:53:50','1','0');
+
+
+INSERT INTO `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) VALUES('f8d4b1a29db0086a1465e745f78dc489','获取列表','3','问答模板 获取列表','2cfdc779041f420b309c4da77ec0c7db','/questionTemplate/getList',NULL,'0','1','2021-06-09 09:56:14','2021-06-09 09:56:14','1','1','0');
+INSERT INTO `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) VALUES('14df8d2b303589f0797cab35ebe3ae4b','批量删除','3','问答模板 批量删除','2cfdc779041f420b309c4da77ec0c7db','/questionTemplate/deleteBatch',NULL,'0','1','2021-06-09 09:55:47','2021-06-09 09:55:47','1','1','0');
+INSERT INTO `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) VALUES('d1e93bf542e130c221f3b29ff5507ae3','编辑','3','问答模板 编辑','2cfdc779041f420b309c4da77ec0c7db','/questionTemplate/edit',NULL,'0','1','2021-06-09 09:55:16','2021-06-09 09:55:16','1','1','0');
+INSERT INTO `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) VALUES('b6d9fcb52c1513b78187c025384e2ad5','新增','3','新增问答模板','2cfdc779041f420b309c4da77ec0c7db','/questionTemplate/add',NULL,'0','1','2021-06-09 09:54:54','2021-06-09 09:54:54','1','1','0');
+INSERT INTO `t_category_menu` (`uid`, `name`, `menu_level`, `summary`, `parent_uid`, `url`, `icon`, `sort`, `status`, `create_time`, `update_time`, `is_show`, `menu_type`, `is_jump_external_url`) VALUES('2cfdc779041f420b309c4da77ec0c7db','问答模板','2','问答模板','0ef5e85a09b8987a2a723b40a9f77160','/question/questionTemplate','el-icon-notebook-1','0','1','2021-06-09 08:32:24','2021-06-09 08:32:24','1','0','0');
 
 /*
  在t_question表，增加问答模板字段
@@ -496,6 +506,16 @@ ALTER TABLE  t_question ADD question_template_uid VARCHAR(32) COMMENT "问答模
  @date 2021年6月9日19:56:57
 */
 ALTER TABLE t_question ADD question_source TINYINT(1) NOT NULL DEFAULT 1 COMMENT '问答来源【0 后台添加，1 用户添加】';
+
+
+/*
+  
+ @date 2021年6月13日19:56:57
+*/
+insert into `t_sys_dict_type` (`uid`, `oid`, `dict_name`, `dict_type`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('13ff59a74df2979c0c98a2f810c8bb8c','29','文章来源','sys_article_source','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','文章来源','1','2021-06-13 11:06:22','2021-06-13 11:28:40','1','0');
+
+insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('332f266d0f5e06a8169ed8d7d39ef04b','77','13ff59a74df2979c0c98a2f810c8bb8c','后台上架','0',NULL,'warning','0','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','后台上架','1','2021-06-13 11:23:55','2021-06-13 11:56:55','1','0');
+insert into `t_sys_dict_data` (`uid`, `oid`, `dict_type_uid`, `dict_label`, `dict_value`, `css_class`, `list_class`, `is_default`, `create_by_uid`, `update_by_uid`, `remark`, `status`, `create_time`, `update_time`, `is_publish`, `sort`) values('24f8476073d8f76093e2b344ccb5708b','76','13ff59a74df2979c0c98a2f810c8bb8c','用户投稿','1',NULL,'primary','1','1f01cd1d2f474743b241d74008b12333','1f01cd1d2f474743b241d74008b12333','用户投稿','1','2021-06-13 11:21:55','2021-06-13 11:21:55','1','0');
 
 
 /*

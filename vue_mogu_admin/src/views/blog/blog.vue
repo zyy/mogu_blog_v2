@@ -1073,9 +1073,6 @@ export default {
         that.isChange = true;
         that.form.content = that.$refs.editor.getData(); //获取CKEditor中的内容
         that.form.tagUid = that.tagValue.join(",");
-        console.log("开始备份2", that.$refs.editor.getData())
-        console.log("开始备份2", that.tagValue)
-        console.log("开始备份3", that.form)
         // 将内容设置到 WebStorage中
         window.LS.set("form", JSON.stringify(that.form));
       }

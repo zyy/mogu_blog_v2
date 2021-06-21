@@ -18,7 +18,6 @@ import com.moxi.mougblog.base.enums.EGender;
 import com.moxi.mougblog.base.enums.EOpenStatus;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.global.Constants;
-import com.moxi.mougblog.base.util.RequestUtil;
 import com.moxi.mougblog.base.vo.FileVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +28,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -88,9 +90,9 @@ public class WechatRestApi {
         Map<String, String> map = SignUtil.xmlToMap(request);
         System.out.println(map);
         String event = map.get("Event");
-        if("SCAN".equals(event)) {
+        if ("SCAN".equals(event)) {
             log.info("用户扫码进来了，已经关注过");
-        } else if("subscribe".equals(event)) {
+        } else if ("subscribe".equals(event)) {
             log.info("用户首次订阅公众号");
         } else if ("subscribe".equals(event)) {
             log.info("用户取消订阅公众号");
@@ -103,9 +105,9 @@ public class WechatRestApi {
         String openid = map.get("FromUserName");
 
         // 判断公众号是否认证
-        if(IS_CERT) {
+        if (IS_CERT) {
             log.info("公众号已认证");
-            String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+openid;
+            String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + accessToken + "&openid=" + openid;
             String result = HttpRequest.get(url).execute().body();
 
             //##############################  开始  ############################
@@ -272,11 +274,11 @@ public class WechatRestApi {
     @ApiOperation(value = "获取微信公众号登录二维码", notes = "获取微信公众号登录二维码")
     @GetMapping("/getWechatOrCodeTicket")
     public String getWechatOrCodeTicket() {
-        String requireAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+WECHAT_APPID+"&secret="+WECHAT_SECRET;
+        String requireAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + WECHAT_APPID + "&secret=" + WECHAT_SECRET;
         String result = HttpRequest.post(requireAccessTokenUrl).execute().body();
-        log.info("获取ticket信息: {}",result);
+        log.info("获取ticket信息: {}", result);
         Map<String, Object> map = JsonUtils.jsonToMap(result);
-        if(map.get("access_token") != null) {
+        if (map.get("access_token") != null) {
             String accessToken = map.get("access_token").toString();
             redisUtil.setEx("WE_CHAT_ACCESS_TOKEN", accessToken, 1, TimeUnit.HOURS);
             String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
@@ -295,7 +297,7 @@ public class WechatRestApi {
     public String getUserLoginStatus(@RequestParam("ticket") String ticket) {
 
         String json = redisUtil.get(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + ticket);
-        if(StringUtils.isNotEmpty(json)) {
+        if (StringUtils.isNotEmpty(json)) {
             log.info("通过ticket获取用户信息：{}", json);
             return ResultUtil.successWithData(JsonUtils.jsonToMap(json));
         }

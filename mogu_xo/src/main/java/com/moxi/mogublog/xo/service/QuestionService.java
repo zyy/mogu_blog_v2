@@ -1,7 +1,6 @@
 package com.moxi.mogublog.xo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.moxi.mogublog.commons.entity.Blog;
 import com.moxi.mogublog.commons.entity.Question;
 import com.moxi.mogublog.xo.vo.QuestionVO;
 import com.moxi.mougblog.base.service.SuperService;
@@ -26,6 +25,7 @@ public interface QuestionService extends SuperService<Question> {
 
     /**
      * 获取问答数目
+     *
      * @param questionVO
      * @return
      */
@@ -53,6 +53,7 @@ public interface QuestionService extends SuperService<Question> {
 
     /**
      * 获取问答详情
+     *
      * @param questionVO
      * @return
      */
@@ -71,6 +72,13 @@ public interface QuestionService extends SuperService<Question> {
      * @param questionVO
      */
     String editQuestion(QuestionVO questionVO);
+
+    /**
+     * 删除问答
+     *
+     * @param questionVO
+     */
+    public String deleteQuestioin(QuestionVO questionVO);
 
     /**
      * 批量删除问答

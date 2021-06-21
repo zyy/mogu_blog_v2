@@ -267,6 +267,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
 
     /**
      * 设置用户头像
+     *
      * @param list
      */
     private void setUserAvatar(Collection<User> list) {

@@ -6,7 +6,6 @@ import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mougblog.base.service.SuperService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,6 +59,7 @@ public interface UserService extends SuperService<User> {
 
     /**
      * 通过ids获取用户列表【携带用户头像】
+     *
      * @param ids
      * @return
      */
@@ -101,8 +101,6 @@ public interface UserService extends SuperService<User> {
      * @return
      */
     String resetUserPassword(UserVO userVO);
-
-
 
 
 }

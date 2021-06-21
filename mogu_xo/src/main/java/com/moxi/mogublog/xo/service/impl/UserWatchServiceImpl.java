@@ -3,32 +3,32 @@ package com.moxi.mogublog.xo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.moxi.mogublog.commons.entity.*;
+import com.moxi.mogublog.commons.entity.Admin;
+import com.moxi.mogublog.commons.entity.User;
+import com.moxi.mogublog.commons.entity.UserWatch;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.xo.global.MessageConf;
 import com.moxi.mogublog.xo.global.SQLConf;
 import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mogublog.xo.mapper.UserWatchMapper;
-import com.moxi.mogublog.xo.mapper.WebNavbarMapper;
 import com.moxi.mogublog.xo.service.AdminService;
 import com.moxi.mogublog.xo.service.UserService;
 import com.moxi.mogublog.xo.service.UserWatchService;
-import com.moxi.mogublog.xo.service.WebNavbarService;
 import com.moxi.mogublog.xo.vo.UserWatchVO;
-import com.moxi.mogublog.xo.vo.WebNavbarVO;
 import com.moxi.mougblog.base.enums.EStatus;
-import com.moxi.mougblog.base.exception.exceptionType.InsertException;
 import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.holder.RequestHolder;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户关注 服务实现类
@@ -50,18 +50,18 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
     public IPage<UserWatch> getPageList(UserWatchVO userWatchVO) {
         QueryWrapper<UserWatch> queryWrapper = new QueryWrapper<>();
         // 判断关注者和被关注者是否为空
-        if(StringUtils.isEmpty(userWatchVO.getUserUid()) && StringUtils.isEmpty(userWatchVO.getToUserUid())) {
+        if (StringUtils.isEmpty(userWatchVO.getUserUid()) && StringUtils.isEmpty(userWatchVO.getToUserUid())) {
             throw new QueryException(MessageConf.PARAM_INCORRECT);
         }
         // 状态标志位，判断是否获取关注者 还是 被关注者【主要是通过userUid和toUserUid来进行判断】
         Boolean isWatch = false;
         // 获取TA关注了谁
-        if(StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
+        if (StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
             isWatch = true;
             queryWrapper.eq(SQLConf.USER_UID, userWatchVO.getUserUid());
         }
         // 获取TA的粉丝
-        if(StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
+        if (StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
             isWatch = false;
             queryWrapper.eq(SQLConf.TO_USER_UID, userWatchVO.getToUserUid());
         }
@@ -76,9 +76,9 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         List<String> adminIdList = new ArrayList<>();
         Boolean finalIsWatch = isWatch;
         userWatchList.forEach(item -> {
-            if(finalIsWatch) {
+            if (finalIsWatch) {
                 // 获取他关注了谁
-                if(Constants.STR_ONE.equals(item.getIsAdmin())) {
+                if (Constants.STR_ONE.equals(item.getIsAdmin())) {
                     adminIdList.add(item.getToUserUid());
                 } else {
                     userIdList.add(item.getToUserUid());
@@ -90,10 +90,10 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         });
         List<User> userList = new ArrayList<>();
         List<Admin> adminList = new ArrayList<>();
-        if(userIdList.size() > 0) {
+        if (userIdList.size() > 0) {
             userList = userService.getUserListAndAvatarByIds(userIdList);
         }
-        if(adminIdList.size() > 0) {
+        if (adminIdList.size() > 0) {
             adminList = adminService.getAdminListByUid(adminIdList);
         }
         Map<String, User> userMap = new HashMap<>();
@@ -106,9 +106,9 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         });
         userWatchList.forEach(item -> {
             // 判断是关注者还是被关注者
-            if(finalIsWatch) {
+            if (finalIsWatch) {
                 // 获取用户的粉丝
-                if(Constants.STR_ONE.equals(item.getIsAdmin())) {
+                if (Constants.STR_ONE.equals(item.getIsAdmin())) {
                     item.setAdmin(adminMap.get(item.getToUserUid()));
                 } else {
                     item.setUser(userMap.get(item.getToUserUid()));
@@ -125,7 +125,7 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
     public String addUserWatch(UserWatchVO userWatchVO) {
         HttpServletRequest request = RequestHolder.getRequest();
         Object userUid = request.getAttribute(SysConf.USER_UID);
-        if(userUid == null) {
+        if (userUid == null) {
             return ResultUtil.errorWithMessage("用户未登录");
         }
         if (userUid.equals(userWatchVO.getToUserUid())) {
@@ -138,7 +138,7 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         queryWrapper.eq(SQLConf.TO_USER_UID, userWatchVO.getToUserUid());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         int count = userWatchService.count(queryWrapper);
-        if(count > 0) {
+        if (count > 0) {
             return ResultUtil.errorWithMessage("您已关注过该用户");
         }
 
@@ -154,7 +154,7 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
     public String deleteUserWatch(UserWatchVO userWatchVO) {
         HttpServletRequest request = RequestHolder.getRequest();
         Object userUid = request.getAttribute(SysConf.USER_UID);
-        if(userUid == null) {
+        if (userUid == null) {
             return ResultUtil.errorWithMessage("用户未登录");
         }
         QueryWrapper<UserWatch> queryWrapper = new QueryWrapper<>();
@@ -163,7 +163,7 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.last(SysConf.LIMIT_ONE);
         UserWatch userWatch = userWatchService.getOne(queryWrapper);
-        if(userWatch == null) {
+        if (userWatch == null) {
             return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
         } else {
             userWatch.setStatus(EStatus.DISABLED);
@@ -185,10 +185,10 @@ public class UserWatchServiceImpl extends SuperServiceImpl<UserWatchMapper, User
     @Override
     public Integer getUserWatchCount(UserWatchVO userWatchVO) {
         QueryWrapper<UserWatch> queryWrapper = new QueryWrapper<>();
-        if(StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
+        if (StringUtils.isNotEmpty(userWatchVO.getUserUid())) {
             queryWrapper.eq(SQLConf.USER_UID, userWatchVO.getUserUid());
         }
-        if(StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
+        if (StringUtils.isNotEmpty(userWatchVO.getToUserUid())) {
             queryWrapper.eq(SQLConf.TO_USER_UID, userWatchVO.getToUserUid());
         }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);

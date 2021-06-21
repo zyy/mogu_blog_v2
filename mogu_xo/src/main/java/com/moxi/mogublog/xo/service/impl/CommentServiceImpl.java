@@ -251,13 +251,13 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
 
     @Override
     public String batchDeleteCommentByBlogUid(List<String> blogUidList) {
-        if(blogUidList.size() <= 0) {
+        if (blogUidList.size() <= 0) {
             throw new DeleteException();
         }
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         queryWrapper.in(SQLConf.BLOG_UID, blogUidList);
         List<Comment> commentList = commentService.list(queryWrapper);
-        if(commentList.size() > 0) {
+        if (commentList.size() > 0) {
             commentList.forEach(item -> {
                 item.setStatus(EStatus.DISABLED);
             });

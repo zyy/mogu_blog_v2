@@ -1,6 +1,5 @@
 package com.moxi.mogublog.xo.mapper;
 
-import com.moxi.mogublog.commons.entity.QuestionTag;
 import com.moxi.mogublog.commons.entity.QuestionTemplate;
 import com.moxi.mougblog.base.mapper.SuperMapper;
 

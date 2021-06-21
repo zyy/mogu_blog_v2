@@ -48,6 +48,14 @@ export function editQuestion(params) {
   })
 }
 
+export function deleteQuestion(params) {
+  return request({
+    url: process.env.WEB_API + '/question/delete',
+    method: 'post',
+    data: params
+  })
+}
+
 export function deleteBatchQuestion(params) {
   return request({
     url: process.env.WEB_API + '/question/deleteBatch',

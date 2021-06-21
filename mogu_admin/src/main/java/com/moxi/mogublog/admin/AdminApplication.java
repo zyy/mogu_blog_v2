@@ -29,6 +29,7 @@ import java.util.TimeZone;
 @ComponentScan(basePackages = {
         "com.moxi.mogublog.commons.config",
         "com.moxi.mogublog.commons.fallback",
+        "com.moxi.mogublog.commons.annotion",
         "com.moxi.mogublog.utils",
         "com.moxi.mogublog.admin",
         "com.moxi.mogublog.xo.utils",

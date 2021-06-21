@@ -9,7 +9,6 @@ import com.moxi.mogublog.xo.service.BlogService;
 import com.moxi.mogublog.xo.service.QuestionService;
 import com.moxi.mougblog.base.enums.EBehavior;
 import com.moxi.mougblog.base.enums.ESearchType;
-import com.moxi.mougblog.base.enums.EStatus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,6 +30,7 @@ public class SearchRestApi {
     private BlogService blogService;
     @Autowired
     private QuestionService questionService;
+
     /**
      * 使用SQL语句搜索博客，如需使用Solr或者ElasticSearch 需要启动 mogu-search
      *
@@ -51,7 +51,7 @@ public class SearchRestApi {
             return ResultUtil.result(SysConf.ERROR, MessageConf.KEYWORD_IS_NOT_EMPTY);
         }
 
-        if(ESearchType.BLOG.equals(searchType)) {
+        if (ESearchType.BLOG.equals(searchType)) {
             return ResultUtil.result(SysConf.SUCCESS, blogService.getBlogByKeyword(keywords, currentPage, pageSize));
         } else if (ESearchType.QUESTION.equals(searchType)) {
             return ResultUtil.result(SysConf.SUCCESS, questionService.getQuestionByKeyword(keywords, currentPage, pageSize));
@@ -96,7 +96,7 @@ public class SearchRestApi {
         if (StringUtils.isEmpty(author)) {
             return ResultUtil.result(SysConf.ERROR, "作者不能为空");
         }
-        if(ESearchType.BLOG.equals(searchType)) {
+        if (ESearchType.BLOG.equals(searchType)) {
             return ResultUtil.result(SysConf.SUCCESS, blogService.searchBlogByAuthor(author, currentPage, pageSize));
         } else if (ESearchType.QUESTION.equals(searchType)) {
             return ResultUtil.result(SysConf.SUCCESS, questionService.getQuestionListByAuthor(author, currentPage, pageSize));
