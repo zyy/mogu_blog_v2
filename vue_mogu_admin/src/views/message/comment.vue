@@ -258,6 +258,7 @@ export default {
       }
     },
 		handleFind: function() {
+      this.currentPage = 1
 			this.commentList();
 		},
     handleDetail: function(row) {

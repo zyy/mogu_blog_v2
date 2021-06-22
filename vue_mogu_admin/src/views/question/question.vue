@@ -543,6 +543,7 @@ export default {
       }
     },
     handleFind: function() {
+      this.currentPage = 1
       this.questionList();
     },
     handleAdd: function() {

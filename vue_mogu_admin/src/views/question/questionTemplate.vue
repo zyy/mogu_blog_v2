@@ -346,7 +346,8 @@ export default {
       }
     },
     handleFind: function() {
-      this.questionList();
+      this.currentPage = 1
+      this.questionTemplateList();
     },
     handleAdd: function() {
       this.title = "增加模板"

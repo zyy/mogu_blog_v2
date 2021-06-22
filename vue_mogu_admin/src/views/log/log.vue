@@ -230,7 +230,7 @@ export default {
       });
     },
     handleFind: function() {
-      console.log(this.value5);
+      this.currentPage = 1
       this.logList();
     },
     handleCurrentChange: function(val) {

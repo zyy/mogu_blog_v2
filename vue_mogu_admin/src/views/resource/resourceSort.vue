@@ -191,7 +191,7 @@ export default {
       });
     },
     handleFind: function() {
-      console.log(this.keyword);
+      this.currentPage = 1
       this.resourceSortList();
     },
     getFormObject: function() {
