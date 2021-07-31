@@ -43,20 +43,34 @@ public class SearchRestApi {
     @ApiOperation(value = "搜索Blog", notes = "搜索Blog")
     @GetMapping("/sqlSearchBlog")
     public String sqlSearchBlog(@ApiParam(name = "keywords", value = "关键字", required = true) @RequestParam(required = true) String keywords,
-                                @ApiParam(name = "searchType", value = "搜索类型", required = false) @RequestParam(name = "searchType", required = false, defaultValue = "1") String searchType,
                                 @ApiParam(name = "currentPage", value = "当前页数", required = false) @RequestParam(name = "currentPage", required = false, defaultValue = "1") Long currentPage,
                                 @ApiParam(name = "pageSize", value = "每页显示数目", required = false) @RequestParam(name = "pageSize", required = false, defaultValue = "10") Long pageSize) {
 
         if (StringUtils.isEmpty(keywords) || StringUtils.isEmpty(keywords.trim())) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.KEYWORD_IS_NOT_EMPTY);
         }
+        return ResultUtil.result(SysConf.SUCCESS, blogService.getBlogByKeyword(keywords, currentPage, pageSize));
+    }
 
-        if (ESearchType.BLOG.equals(searchType)) {
-            return ResultUtil.result(SysConf.SUCCESS, blogService.getBlogByKeyword(keywords, currentPage, pageSize));
-        } else if (ESearchType.QUESTION.equals(searchType)) {
-            return ResultUtil.result(SysConf.SUCCESS, questionService.getQuestionByKeyword(keywords, currentPage, pageSize));
+    /**
+     * 使用SQL语句搜索问答
+     *
+     * @param keywords
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @BussinessLog(value = "搜索问答", behavior = EBehavior.BLOG_SEARCH)
+    @ApiOperation(value = "搜索问答", notes = "搜索问答")
+    @GetMapping("/sqlSearchQuestion")
+    public String sqlSearchQuestion(@ApiParam(name = "keywords", value = "关键字", required = true) @RequestParam(required = true) String keywords,
+                                @ApiParam(name = "currentPage", value = "当前页数", required = false) @RequestParam(name = "currentPage", required = false, defaultValue = "1") Long currentPage,
+                                @ApiParam(name = "pageSize", value = "每页显示数目", required = false) @RequestParam(name = "pageSize", required = false, defaultValue = "10") Long pageSize) {
+
+        if (StringUtils.isEmpty(keywords) || StringUtils.isEmpty(keywords.trim())) {
+            return ResultUtil.result(SysConf.ERROR, MessageConf.KEYWORD_IS_NOT_EMPTY);
         }
-        return ResultUtil.result(SysConf.ERROR, MessageConf.PARAM_INCORRECT);
+        return ResultUtil.result(SysConf.SUCCESS, questionService.getQuestionByKeyword(keywords, currentPage, pageSize));
     }
 
     @BussinessLog(value = "根据标签获取相关的博客", behavior = EBehavior.BLOG_TAG)

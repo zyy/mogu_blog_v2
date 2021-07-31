@@ -164,6 +164,7 @@ import HotBlog from "../components/HotBlog";
 import FollowUs from "../components/FollowUs";
 import {
   searchBlog,
+  searchQuestion,
   searchBlogByTag,
   searchBlogBySort,
   searchBlogByAuthor
@@ -303,6 +304,7 @@ export default {
       that.search();
     },
     handleClick(tab, event) {
+      this.currentPage = 0
       this.searchlistData = []
       this.listData = []
       this.search()
@@ -316,44 +318,74 @@ export default {
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         params.append("keywords", that.keywords);
-        params.append("searchType", that.activeName);
-        searchBlog(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS) {
-            that.isEnd = false;
-            //获取总页数
-            that.total = response.data.total;
-            that.pageSize = response.data.pageSize;
-            that.currentPage = response.data.currentPage;
-            let listData = [];
-            if(that.activeName == "1") {
-              listData = response.data.questionList
-              that.totalPages = response.data.questionList.length;
-            } else {
+
+        if(that.activeName == 0) {
+          searchBlog(params).then(response => {
+            if (response.code == this.$ECode.SUCCESS) {
+              that.isEnd = false;
+              //获取总页数
+              that.total = response.data.total;
+              that.pageSize = response.data.pageSize;
+              that.currentPage = response.data.currentPage;
+              let listData = [];
               listData = response.data.blogList
               that.totalPages = response.data.blogList.length;
-            }
 
-            // 判断搜索的博客是否有内容
-            if(response.data.total <= 0) {
+              // 判断搜索的博客是否有内容
+              if(response.data.total <= 0) {
+                that.isEnd = true;
+                that.loading = false;
+                this.listData = []
+                return;
+              }
+
+              //全部加载完毕
+              if (listData.length < that.pageSize) {
+                that.isEnd = true;
+              }
+
+              listData = that.searchlistData.concat(listData);
+              that.searchlistData = listData;
+              this.listData = listData;
+            } else {
               that.isEnd = true;
-              that.loading = false;
-              this.listData = []
-              return;
             }
+            that.loading = false;
+          });
+        } else {
+          searchQuestion(params).then(response => {
+            if (response.code == this.$ECode.SUCCESS) {
+              that.isEnd = false;
+              //获取总页数
+              that.total = response.data.total;
+              that.pageSize = response.data.pageSize;
+              that.currentPage = response.data.currentPage;
+              let listData = [];
+              listData = response.data.questionList
+              that.totalPages = response.data.questionList.length;
 
-            //全部加载完毕
-            if (listData.length < that.pageSize) {
+              // 判断搜索的博客是否有内容
+              if(response.data.total <= 0) {
+                that.isEnd = true;
+                that.loading = false;
+                this.listData = []
+                return;
+              }
+
+              //全部加载完毕
+              if (listData.length < that.pageSize) {
+                that.isEnd = true;
+              }
+
+              listData = that.searchlistData.concat(listData);
+              that.searchlistData = listData;
+              this.listData = listData;
+            } else {
               that.isEnd = true;
             }
-
-            listData = that.searchlistData.concat(listData);
-            that.searchlistData = listData;
-            this.listData = listData;
-          } else {
-            that.isEnd = true;
-          }
-          that.loading = false;
-        });
+            that.loading = false;
+          });
+        }
       } else if (this.tagUid != undefined) {
         this.showSearchType = false
         var params = new URLSearchParams();

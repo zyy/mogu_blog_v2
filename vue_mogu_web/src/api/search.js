@@ -13,6 +13,18 @@ export function searchBlog (params) {
 }
 
 /**
+ * 通过SQL搜索问答
+ * @param params
+ */
+export function searchQuestion (params) {
+  return request({
+    url: process.env.WEB_API + '/search/sqlSearchQuestion',
+    method: 'get',
+    params
+  })
+}
+
+/**
  * 通过ElasticSearch搜索博客
  * @param params
  */
