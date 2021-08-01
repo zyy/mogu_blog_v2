@@ -21,11 +21,17 @@
 
     <dependencies>
 
-        <!-- 因为 这里暂时不需要用到solr所以需要排除掉 -->
+        <!-- 因为 这里暂时不需要用到mq所以需要排除掉 -->
         <dependency>
             <artifactId>mogu_xo</artifactId>
             <groupId>com.moxi</groupId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-amqp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

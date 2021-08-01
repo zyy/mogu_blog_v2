@@ -59,7 +59,7 @@ public class BlogListener {
                     redisUtil.set(RedisConf.MONTH_SET, "");
 
                     // 删除ElasticSearch博客索引
-//                    searchFeignClient.deleteElasticSearchByUids(uid);
+                    searchFeignClient.deleteElasticSearchByUids(uid);
 
                     // 删除Solr博客索引
 //                    searchFeignClient.deleteSolrIndexByUids(uid);
@@ -78,7 +78,7 @@ public class BlogListener {
                     updateSearch(map);
 
                     // 增加ES索引
-//                    searchFeignClient.addElasticSearchIndexByUid(uid);
+                    searchFeignClient.addElasticSearchIndexByUid(uid);
 
                     // 增加solr索引
 //                    searchFeignClient.addSolrIndexByUid(uid);
@@ -90,7 +90,7 @@ public class BlogListener {
                     updateSearch(map);
 
                     // 更新ES索引
-//                    searchFeignClient.addElasticSearchIndexByUid(uid);
+                    searchFeignClient.addElasticSearchIndexByUid(uid);
 
                     // 更新Solr索引
 //                    searchFeignClient.updateSolrIndexByUid(uid);
@@ -102,7 +102,7 @@ public class BlogListener {
                     updateSearch(map);
 
                     // 删除ES索引
-//                    searchFeignClient.deleteElasticSearchByUid(uid);
+                    searchFeignClient.deleteElasticSearchByUid(uid);
 
                     // 删除Solr索引
 //                    searchFeignClient.deleteSolrIndexByUid(uid);

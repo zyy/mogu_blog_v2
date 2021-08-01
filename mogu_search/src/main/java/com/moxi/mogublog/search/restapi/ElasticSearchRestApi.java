@@ -49,21 +49,13 @@ public class ElasticSearchRestApi {
     @GetMapping("/elasticSearchBlog")
     public String searchBlog(HttpServletRequest request,
                              @RequestParam(required = false) String keywords,
-                             @RequestParam(name = "searchType", required = false, defaultValue = "1") String searchType,
-                             @RequestParam(name = "currentPage", required = false, defaultValue = "1") Integer
-                                     currentPage,
-                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer
-                                     pageSize) {
+                             @RequestParam(name = "currentPage", required = false, defaultValue = "1") Integer currentPage,
+                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         if (StringUtils.isEmpty(keywords)) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.KEYWORD_IS_NOT_EMPTY);
         }
-        if(ESearchType.BLOG.equals(searchType)) {
-            return ResultUtil.result(SysConf.SUCCESS, searchService.search(keywords, currentPage, pageSize));
-        }  else if (ESearchType.QUESTION.equals(searchType)) {
-            return ResultUtil.result(SysConf.ERROR, "问答搜索暂时没有启用");
-        }
-        return ResultUtil.result(SysConf.ERROR, MessageConf.PARAM_INCORRECT);
+        return ResultUtil.result(SysConf.SUCCESS, searchService.search(keywords, currentPage, pageSize));
     }
 
     @ApiOperation(value = "通过uids删除ElasticSearch博客索引", notes = "通过uids删除ElasticSearch博客索引", response = String.class)
@@ -122,9 +114,10 @@ public class ElasticSearchRestApi {
 
             List<ESBlogIndex> esBlogIndexList = blogList.stream()
                     .map(searchService::buidBlog).collect(Collectors.toList());
-
-            //存入索引库
-            blogRepository.saveAll(esBlogIndexList);
+            if(esBlogIndexList.size() > 0) {
+                //存入索引库
+                blogRepository.saveAll(esBlogIndexList);
+            }
             // 翻页
             page++;
         } while (size == 15);
