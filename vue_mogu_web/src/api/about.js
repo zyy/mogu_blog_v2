@@ -32,6 +32,14 @@ export function getQuestionListByUser (params) {
   })
 }
 
+export function getQuestionList (params) {
+  return request({
+    url: process.env.WEB_API + '/about/getQuestionList',
+    method: 'post',
+    data: params
+  })
+}
+
 export function getUserByUid (params) {
   return request({
     url: process.env.WEB_API + '/about/getUserByUid',

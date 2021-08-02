@@ -168,7 +168,8 @@ export default {
       },
       rules: {
         title: [
-          {required: true, message: '标题不能为空', trigger: 'blur'}
+          {required: true, message: '标题不能为空', trigger: 'blur'},
+          {min: 0, max: 25, message: '长度在0到25个字符'},
         ],
         isPublish: [
           {required: true, message: '发布字段不能为空', trigger: 'blur'},

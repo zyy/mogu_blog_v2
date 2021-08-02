@@ -53,10 +53,6 @@ public class QuestionRestApi {
     public String getList(HttpServletRequest request, @Validated({GetList.class}) @RequestBody QuestionVO questionVO, BindingResult result) {
         ThrowableUtils.checkParamArgument(result);
         log.info("获取问答列表");
-        // 前端没有传递用户UID时，将查询在线用户的博客列表
-        if (StringUtils.isEmpty(questionVO.getUserUid()) && request.getAttribute(SysConf.USER_UID) != null) {
-            questionVO.setUserUid(request.getAttribute(SysConf.USER_UID).toString());
-        }
         return ResultUtil.result(SysConf.SUCCESS, questionService.getPageList(questionVO));
     }
 

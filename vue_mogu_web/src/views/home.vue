@@ -636,8 +636,9 @@
   import {getCommentListByUser, getPraiseListByUser, getUserReceiveCommentCount, readUserReceiveCommentCount} from "../api/comment";
   import LoginBox from "../components/LoginBox";
   import {getListByDictTypeList} from "@/api/sysDictData"
+  import {getQuestionList} from "@/api/about"
   import {getUserBlogList, deleteBlog} from "@/api/createBlog"
-  import {getQuestionList, deleteQuestion} from "@/api/question"
+  import {deleteQuestion} from "@/api/question"
   import {mapMutations} from 'vuex';
   import {timeAgo} from "../utils/webUtils";
 
