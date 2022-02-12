@@ -96,7 +96,7 @@
 			"transparentTitle": "always",
 			"allowsBounceVertical": "NO"
 		},
-		"navigationBarBackgroundColor": "#0081ff",
+		"navigationBarBackgroundColor": "#ffffff",
 		"navigationBarTitleText": "ColorUi for UniApp",
 		"navigationStyle": "custom",
 		"navigationBarTextStyle": "white"

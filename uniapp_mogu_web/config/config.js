@@ -3,8 +3,8 @@ export const appConfig = {
     tokenKey: 'Authorization',
 	
 	// 开发环境
-    WEB_API: 'http://localhost:8607/mogu-web',
-	PICTURE_API: 'http://localhost:8607/mogu-picture',
+    WEB_API: 'http://106.55.9.180:8607/mogu-web',
+	PICTURE_API: 'http://106.55.9.180:8607/mogu-picture',
 	
 	// 演示环境
 	// WEB_API: 'http://120.78.126.96:8607/mogu-web',
